@@ -9,6 +9,8 @@
  *  Copyright (c) 2014, Carnegie Mellon University.  All Rights Reserved.
  */
 
+package SearchEngine.Assassin;
+
 import java.io.*;
 import java.util.*;
 

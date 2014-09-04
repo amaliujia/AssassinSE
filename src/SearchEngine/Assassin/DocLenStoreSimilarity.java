@@ -1,6 +1,4 @@
-/*
- *  Copyright (c) 2013, Carnegie Mellon University.  All Rights Reserved.
- */
+package SearchEngine.Assassin;
 
 import org.apache.lucene.index.FieldInvertState;
 import org.apache.lucene.search.similarities.BasicStats;

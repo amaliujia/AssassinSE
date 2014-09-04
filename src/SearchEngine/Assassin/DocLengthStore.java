@@ -1,6 +1,4 @@
-/*
- *  Copyright (c) 2013, Carnegie Mellon University.  All Rights Reserved.
- */
+package SearchEngine.Assassin;
 
 import java.io.IOException;
 import java.util.HashMap;

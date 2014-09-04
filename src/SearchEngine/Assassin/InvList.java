@@ -1,3 +1,5 @@
+package SearchEngine.Assassin;
+
 /**
  *  This class implements the inverted list data structure and
  *  provides methods for accessing and manipulating inverted lists.

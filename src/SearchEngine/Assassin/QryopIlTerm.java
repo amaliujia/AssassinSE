@@ -7,7 +7,7 @@
  *
  *  Copyright (c) 2014, Carnegie Mellon University.  All Rights Reserved.
  */
-
+package SearchEngine.Assassin;
 import java.io.*;
 
 public class QryopIlTerm extends QryopIl {
