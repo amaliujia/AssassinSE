@@ -4,8 +4,6 @@
  *  query operator behaves.  Passing around a retrieval model object
  *  during query evaluation allows this information to be shared with
  *  query operators (and nested query operators) conveniently.
- *
- *  Copyright (c) 2014, Carnegie Mellon University.  All Rights Reserved.
  */
 package SearchEngine.Assassin;
 public abstract class RetrievalModel {

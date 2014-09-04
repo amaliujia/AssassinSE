@@ -6,7 +6,6 @@
  *  Second, it is a place to store data structures and methods that are
  *  common to all query operators that return score lists.
  *  
- *  Copyright (c) 2014, Carnegie Mellon University.  All Rights Reserved.
  */
 package SearchEngine.Assassin;
 import java.io.*;

@@ -1,8 +1,6 @@
 /**
  *  This class implements the document score list data structure
  *  and provides methods for accessing and manipulating them.
- *
- *  Copyright (c) 2014, Carnegie Mellon University.  All Rights Reserved.
  */
 package SearchEngine.Assassin;
 import java.util.*;

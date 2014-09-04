@@ -6,7 +6,6 @@
  *  easily extended to other retrieval models.  For more information,
  *  see the ReadMe.txt file.
  *
- *  Copyright (c) 2014, Carnegie Mellon University.  All Rights Reserved.
  */
 
 package SearchEngine.Assassin;

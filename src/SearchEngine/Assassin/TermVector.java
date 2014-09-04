@@ -5,8 +5,6 @@
  *                It indicates a stopword.
  *    stemsFreq:  The frequency (tf) of each entry in stems.
  *    positions:  The index of the stem that occurred at this position. 
- *
- *  Copyright (c) 2014, Carnegie Mellon University.  All Rights Reserved.
  */
 package SearchEngine.Assassin;
 import java.io.*;

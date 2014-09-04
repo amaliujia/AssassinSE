@@ -4,8 +4,6 @@
  *  produces an inverted list.  The SCORE operator uses this
  *  information to produce a score list that contains document ids and
  *  scores.
- *
- *  Copyright (c) 2014, Carnegie Mellon University.  All Rights Reserved.
  */
 package SearchEngine.Assassin;
 import java.io.*;

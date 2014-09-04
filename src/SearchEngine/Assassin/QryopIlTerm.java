@@ -5,7 +5,6 @@
  *  operator to store a term, doing so makes it easy to build
  *  structured queries with nested query operators.
  *
- *  Copyright (c) 2014, Carnegie Mellon University.  All Rights Reserved.
  */
 package SearchEngine.Assassin;
 import java.io.*;

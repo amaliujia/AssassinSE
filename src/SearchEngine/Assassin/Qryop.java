@@ -6,7 +6,6 @@
  *  common interface to query operators, and is a place to store data
  *  structures and methods that are common to all query operators.
  *
- *  Copyright (c) 2014, Carnegie Mellon University.  All Rights Reserved.
  */
 package SearchEngine.Assassin;
 

@@ -1,7 +1,5 @@
 /**
  *  This class implements the AND operator for all retrieval models.
- *
- *  Copyright (c) 2014, Carnegie Mellon University.  All Rights Reserved.
  */
 package SearchEngine.Assassin;
 import java.io.*;

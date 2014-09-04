@@ -38,3 +38,5 @@ index/_18_Lucene41_0.doc
 index/segments.gen
 
 index/segments_1
+
+*.class

@@ -1,7 +1,5 @@
 /**
  *  The unranked Boolean retrieval model has no parameters.
- *
- *  Copyright (c) 2014, Carnegie Mellon University.  All Rights Reserved.
  */
 package SearchEngine.Assassin;
 

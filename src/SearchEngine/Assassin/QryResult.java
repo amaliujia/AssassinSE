@@ -8,8 +8,6 @@
  *  Encapsulating the two types of Qryop results in a single class
  *  makes it easy to build structured queries with nested query
  *  operators.
- *
- *  Copyright (c) 2014, Carnegie Mellon University.  All Rights Reserved.
  */
 
 package SearchEngine.Assassin;

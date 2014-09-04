@@ -5,7 +5,6 @@
  *  conceptual variants, e.g., #SYN (cat cats) or #SYN (cat kitty) or
  *  #SYN (astronaut cosmonaut).
  *
- *  Copyright (c) 2014, Carnegie Mellon University.  All Rights Reserved.
  */
 package SearchEngine.Assassin;
 import java.io.*;
