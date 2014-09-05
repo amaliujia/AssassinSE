@@ -6,6 +6,7 @@
  *  query operators (and nested query operators) conveniently.
  */
 package SearchEngine.Assassin;
+
 public abstract class RetrievalModel {
 
   /**

@@ -5,7 +5,6 @@
  *  It implements an unranked Boolean retrieval model, however it is
  *  easily extended to other retrieval models.  For more information,
  *  see the ReadMe.txt file.
- *
  */
 
 package SearchEngine.Assassin;

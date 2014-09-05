@@ -31,4 +31,7 @@ public class RetrievalModelUnrankedBoolean extends RetrievalModel {
     return false;
   }
 
+   public RetrievalModelUnrankedBoolean(){
+     
+   }
 }

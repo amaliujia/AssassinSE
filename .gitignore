@@ -40,3 +40,13 @@ index/segments.gen
 index/segments_1
 
 *.class
+
+*.class
+
+*.class
+
+bin/SearchEngine/Assassin/RetrievalModel.class
+
+bin/SearchEngine/Assassin/QryEval.class
+
+bin/SearchEngine/Assassin/RetrievalModelUnrankedBoolean.class
