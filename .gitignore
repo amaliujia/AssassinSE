@@ -42,3 +42,7 @@ index/segments_1
 *.class
 
 *.in
+
+bin/SearchEngine/Assassin/Makefile
+
+bin/SearchEngine/Assassin/Sample.param
