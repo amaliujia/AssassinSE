@@ -41,20 +41,4 @@ index/segments_1
 
 *.class
 
-*.class
-
-*.class
-
-bin/SearchEngine/Assassin/RetrievalModel.class
-
-bin/SearchEngine/Assassin/QryEval.class
-
-bin/SearchEngine/Assassin/RetrievalModelUnrankedBoolean.class
-
-bin/SearchEngine/Assassin/InvList$DocPosting.class
-
-bin/SearchEngine/Assassin/InvList.class
-
-bin/SearchEngine/Assassin/QryopIlTerm.class
-
 *.in
