@@ -30,8 +30,4 @@ public class RetrievalModelUnrankedBoolean extends RetrievalModel {
 			parameterName);
     return false;
   }
-
-   public RetrievalModelUnrankedBoolean(){
-     
-   }
 }

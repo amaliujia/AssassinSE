@@ -7,8 +7,8 @@
  *  common to all query operators that return inverted lists.
  *  
  */
-
 package SearchEngine.Assassin;
+
 import java.io.*;
 import java.util.*;
 

@@ -1,17 +1,14 @@
-package SearchEngine.Assassin;
-
 /**
  *  This class implements the inverted list data structure and
  *  provides methods for accessing and manipulating inverted lists.
  *  Its purpose is to provide a simpler view of inverted lists than
  *  Lucene's native implementation.
- *
- *  Copyright (c) 2014, Carnegie Mellon University.  All Rights Reserved.
  */
+
+package SearchEngine.Assassin;
 
 import java.util.*;
 import java.io.*;
-
 import org.apache.lucene.index.*;
 import org.apache.lucene.util.*;
 import org.apache.lucene.search.*;

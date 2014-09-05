@@ -85,7 +85,7 @@ public class TermVector {
       for (int j = 0; j < ithPositions.freq(); j++)
         positions[ithPositions.nextPosition()] = i + 1;
     }
-  }
+ }
 
   /**
    *  Get the number of positions in this field (the length of the

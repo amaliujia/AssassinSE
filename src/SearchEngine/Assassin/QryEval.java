@@ -95,7 +95,7 @@ public class QryEval {
     System.out.println(s.getDocLength("body", 0));
 
     // How to use the term vector.
-    TermVector tv = new TermVector(1, "body");
+    TermVector tv = new TermVector(2, "body");
     System.out.println(tv.stemString(100)); // get the string for the 100th stem
     System.out.println(tv.stemDf(100)); // get its df
     System.out.println(tv.totalStemFreq(100)); // get its ctf
@@ -107,7 +107,7 @@ public class QryEval {
      *  However your software will not create queries like this.  Your
      *  software will use a query parser.  See parseQuery.
      *
-     *  The general pattern is to tokenize the  query term (so that it
+     *  The general pattern is to tokenize the query term (so that it
      *  gets converted to lowercase, stopped, stemmed, etc), create a
      *  Term node to fetch the inverted list, create a Score node to
      *  convert an inverted list to a score list, evaluate the query,

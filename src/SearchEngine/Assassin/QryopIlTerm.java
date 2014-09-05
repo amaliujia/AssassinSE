@@ -4,7 +4,6 @@
  *  query "#AND (apple pie).  Although it may seem odd to use a query
  *  operator to store a term, doing so makes it easy to build
  *  structured queries with nested query operators.
- *
  */
 package SearchEngine.Assassin;
 import java.io.*;
