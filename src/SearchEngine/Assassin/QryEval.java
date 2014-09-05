@@ -92,13 +92,13 @@ public class QryEval {
      */
 
     // Lookup the document length of the body field of doc 0.
-    System.out.println(s.getDocLength("body", 0));
+//    System.out.println(s.getDocLength("body", 0));
 
     // How to use the term vector.
-    TermVector tv = new TermVector(2, "body");
-    System.out.println(tv.stemString(100)); // get the string for the 100th stem
-    System.out.println(tv.stemDf(100)); // get its df
-    System.out.println(tv.totalStemFreq(100)); // get its ctf
+//    TermVector tv = new TermVector(2, "body");
+//    System.out.println(tv.stemString(100)); // get the string for the 100th stem
+//    System.out.println(tv.stemDf(100)); // get its df
+//    System.out.println(tv.totalStemFreq(100)); // get its ctf
     
     /**
      *  The index is open. Start evaluating queries. The examples
@@ -118,39 +118,60 @@ public class QryEval {
      */
 
     //  A one-word query.
-    printResults("pea",
-        (new QryopSlScore(
-    	     new QryopIlTerm(tokenizeQuery("pea")[0]))).evaluate(model));
+//    printResults("pea",
+//        (new QryopSlScore(
+//    	     new QryopIlTerm(tokenizeQuery("pea")[0]))).evaluate(model));
 
     //  A more complex query.
-    printResults("#AND (aparagus broccoli cauliflower #SYN(peapods peas))",
-        (new QryopSlAnd(
-            new QryopIlTerm(tokenizeQuery("asparagus")[0]),
-            new QryopIlTerm(tokenizeQuery("broccoli")[0]),
-            new QryopIlTerm(tokenizeQuery("cauliflower")[0]),
-            new QryopIlSyn(
-                new QryopIlTerm(tokenizeQuery("peapods")[0]), 
-                new QryopIlTerm(tokenizeQuery("peas")[0])))).evaluate(model));
+//    printResults("#AND (aparagus broccoli cauliflower #SYN(peapods peas))",
+//        (new QryopSlAnd(
+//            new QryopIlTerm(tokenizeQuery("asparagus")[0]),
+//            new QryopIlTerm(tokenizeQuery("broccoli")[0]),
+//            new QryopIlTerm(tokenizeQuery("cauliflower")[0]),
+//            new QryopIlSyn(
+//                new QryopIlTerm(tokenizeQuery("peapods")[0]), 
+//                new QryopIlTerm(tokenizeQuery("peas")[0])))).evaluate(model));
 
     //  A different way to create the previous query.  This doesn't use
     //  a stack, but it may make it easier to see how you would parse a
     //  query with a stack-based architecture.
-    Qryop op1 = new QryopSlAnd();
-    op1.add (new QryopIlTerm(tokenizeQuery("asparagus")[0]));
-    op1.add (new QryopIlTerm(tokenizeQuery("broccoli")[0]));
-    op1.add (new QryopIlTerm(tokenizeQuery("cauliflower")[0]));
-    Qryop op2 = new QryopIlSyn();
-    op2.add (new QryopIlTerm(tokenizeQuery("peapods")[0]));
-    op2.add (new QryopIlTerm(tokenizeQuery("peas")[0]));
-    op1.add (op2);
-    printResults("#AND (aparagus broccoli cauliflower #SYN(peapods peas))",
-		 op1.evaluate(model));
+//    Qryop op1 = new QryopSlAnd();
+//    op1.add (new QryopIlTerm(tokenizeQuery("asparagus")[0]));
+//    op1.add (new QryopIlTerm(tokenizeQuery("broccoli")[0]));
+//    op1.add (new QryopIlTerm(tokenizeQuery("cauliflower")[0]));
+//    Qryop op2 = new QryopIlSyn();
+//    op2.add (new QryopIlTerm(tokenizeQuery("peapods")[0]));
+//    op2.add (new QryopIlTerm(tokenizeQuery("peas")[0]));
+//    op1.add (op2);
+//    printResults("#AND (aparagus broccoli cauliflower #SYN(peapods peas))",
+//		 op1.evaluate(model));
 
     //  Using the example query parser.  Notice that this does no
     //  lexical processing of query terms.  Add that to the query
     //  parser.
+    FileInputStream f;
+    InputStreamReader fileReader;
+    BufferedReader bufferReader;
+    ArrayList<String> queries = new ArrayList<String>();
+    try{
+       String str = "";
+       f = new FileInputStream("./queries.txt");
+       fileReader = new InputStreamReader(f);
+       bufferReader = new BufferedReader(fileReader);
+       while((str = bufferReader.readLine()) != null){
+         //int index = str.indexOf(':');
+         queries.add(str);
+       }
+    }catch(Exception e){
+      System.out.println("Error on dealing with queries file!");
+    }
+    
+    for(String s1 : queries){
+      System.out.println(s1);
+    }
+    
     Qryop qTree;
-    String query = new String ("#AND(apple pie)");
+    String query = new String ("#AND(cheap internet)");
     qTree = parseQuery (query);
     printResults (query, qTree.evaluate (model));
 
@@ -254,7 +275,7 @@ public class QryEval {
     qString = qString.trim();
 
     if (qString.charAt(0) != '#') {
-      qString = "#or(" + qString + ")";
+      qString = "#OR(" + qString + ")";
     }
 
     // Tokenize the query.
@@ -272,13 +293,16 @@ public class QryEval {
 
       if (token.matches("[ ,(\t\n\r]")) {
         // Ignore most delimiters.
-      } else if (token.equalsIgnoreCase("#and")) {
+      } else if (token.equalsIgnoreCase("#AND")) {
         currentOp = new QryopSlAnd();
         stack.push(currentOp);
-      } else if (token.equalsIgnoreCase("#syn")) {
+      } else if (token.equalsIgnoreCase("#SYN")) {
         currentOp = new QryopIlSyn();
         stack.push(currentOp);
-      } else if (token.startsWith(")")) { // Finish current query operator.
+      } else if(token.equalsIgnoreCase("#OR")){
+        currentOp = new QryopSlOR();
+        stack.push(currentOp);
+      }else if (token.startsWith(")")) { // Finish current query operator.
         // If the current query operator is not an argument to
         // another query operator (i.e., the stack is empty when it
         // is removed), we're done (assuming correct syntax - see

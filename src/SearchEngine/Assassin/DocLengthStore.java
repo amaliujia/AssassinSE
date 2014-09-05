@@ -3,6 +3,7 @@ package SearchEngine.Assassin;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.NumericDocValues;
 import org.apache.lucene.index.MultiDocValues;

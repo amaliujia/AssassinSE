@@ -2,6 +2,7 @@
  *  This class implements the AND operator for all retrieval models.
  */
 package SearchEngine.Assassin;
+
 import java.io.*;
 import java.util.*;
 
