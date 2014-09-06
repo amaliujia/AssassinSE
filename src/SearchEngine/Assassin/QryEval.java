@@ -11,7 +11,7 @@ package SearchEngine.Assassin;
 
 import java.io.*;
 import java.util.*;
-import java.util.Hashtable;
+import java.util.Map.Entry;
 
 import org.apache.lucene.analysis.Analyzer.TokenStreamComponents;
 import org.apache.lucene.analysis.TokenStream;
@@ -33,7 +33,7 @@ public class QryEval {
   //  own headaches.
 
   public static IndexReader READER;
-
+  public static BufferedWriter writer;
   //  Create and configure an English analyzer that will be used for
   //  query parsing.
 
@@ -76,7 +76,7 @@ public class QryEval {
 
     // open the index
     READER = DirectoryReader.open(FSDirectory.open(new File(params.get("indexPath"))));
-
+    
     if (READER == null) {
       System.err.println(usage);
       System.exit(1);
@@ -86,126 +86,46 @@ public class QryEval {
 
     RetrievalModel model = new RetrievalModelUnrankedBoolean();
 
-    /*
-     *  The code below is an unorganized set of examples that show
-     *  you different ways of accessing the index.  Some of these
-     *  are only useful in HW2 or HW3.
-     */
-
-    // Lookup the document length of the body field of doc 0.
-//    System.out.println(s.getDocLength("body", 0));
-
-    // How to use the term vector.
-//    TermVector tv = new TermVector(2, "body");
-//    System.out.println(tv.stemString(100)); // get the string for the 100th stem
-//    System.out.println(tv.stemDf(100)); // get its df
-//    System.out.println(tv.totalStemFreq(100)); // get its ctf
-    
-    /**
-     *  The index is open. Start evaluating queries. The examples
-     *  below show query trees for two simple queries.  These are
-     *  meant to illustrate how query nodes are created and connected.
-     *  However your software will not create queries like this.  Your
-     *  software will use a query parser.  See parseQuery.
-     *
-     *  The general pattern is to tokenize the query term (so that it
-     *  gets converted to lowercase, stopped, stemmed, etc), create a
-     *  Term node to fetch the inverted list, create a Score node to
-     *  convert an inverted list to a score list, evaluate the query,
-     *  and print results.
-     * 
-     *  Modify the software so that you read a query from a file,
-     *  parse it, and form the query tree automatically.
-     */
-
-    //  A one-word query.
-//    printResults("pea",
-//        (new QryopSlScore(
-//    	     new QryopIlTerm(tokenizeQuery("pea")[0]))).evaluate(model));
-
-    //  A more complex query.
-//    printResults("#AND (aparagus broccoli cauliflower #SYN(peapods peas))",
-//        (new QryopSlAnd(
-//            new QryopIlTerm(tokenizeQuery("asparagus")[0]),
-//            new QryopIlTerm(tokenizeQuery("broccoli")[0]),
-//            new QryopIlTerm(tokenizeQuery("cauliflower")[0]),
-//            new QryopIlSyn(
-//                new QryopIlTerm(tokenizeQuery("peapods")[0]), 
-//                new QryopIlTerm(tokenizeQuery("peas")[0])))).evaluate(model));
-
-    //  A different way to create the previous query.  This doesn't use
-    //  a stack, but it may make it easier to see how you would parse a
-    //  query with a stack-based architecture.
-//    Qryop op1 = new QryopSlAnd();
-//    op1.add (new QryopIlTerm(tokenizeQuery("asparagus")[0]));
-//    op1.add (new QryopIlTerm(tokenizeQuery("broccoli")[0]));
-//    op1.add (new QryopIlTerm(tokenizeQuery("cauliflower")[0]));
-//    Qryop op2 = new QryopIlSyn();
-//    op2.add (new QryopIlTerm(tokenizeQuery("peapods")[0]));
-//    op2.add (new QryopIlTerm(tokenizeQuery("peas")[0]));
-//    op1.add (op2);
-//    printResults("#AND (aparagus broccoli cauliflower #SYN(peapods peas))",
-//		 op1.evaluate(model));
-
     //  Using the example query parser.  Notice that this does no
     //  lexical processing of query terms.  Add that to the query
     //  parser.
     FileInputStream f;
     InputStreamReader fileReader;
     BufferedReader bufferReader;
-    Hashtable<String, String> queries = new Hashtable<String, String>();
-    //ArrayList<String> queries = new ArrayList<String>();
+
+    ArrayList<String> queries = new ArrayList<String>();
+    ArrayList<String> keys = new ArrayList<String>();
     try{
        String str = "";
-       f = new FileInputStream("./queries.txt");
+       f = new FileInputStream(params.get("queryFilePath"));
        fileReader = new InputStreamReader(f);
        bufferReader = new BufferedReader(fileReader);
        while((str = bufferReader.readLine()) != null){
+         if(str.length() <= 10)  continue;
          String[] queryPair=  str.split(":");
-         queries.put(queryPair[0], queryPair[1]);
+         keys.add(queryPair[0]);
+         queries.add(queryPair[1]);
        }
+       f.close();
     }catch(Exception e){
       System.out.println("Error on dealing with queries file!");
     }
     
     Qryop qTree;
-    
-    for (Iterator it = queries.keySet().iterator(); it.hasNext(); ) {
-      String key = (String) it.next();
-      String que = queries.get(key);
-      qTree = parseQuery (que);
-      printResults (key, que, qTree.evaluate (model));
-    }
-
-    /*
-     *  Create the trec_eval output.  Your code should write to the
-     *  file specified in the parameter file, and it should write the
-     *  results that you retrieved above.  This code just allows the
-     *  testing infrastructure to work on QryEval.
-     */
-    BufferedWriter writer = null;
-
-    try {
-      writer = new BufferedWriter(new FileWriter(new File("teval.in")));
-
-      writer.write("1 Q0 clueweb09-enwp01-75-20596 1 1.0 run-1");
-      writer.write("1 Q0 clueweb09-enwp01-58-04573 2 0.9 run-1");
-      writer.write("1 Q0 clueweb09-enwp01-24-11888 3 0.8 run-1");
-      writer.write("2 Q0 clueweb09-enwp00-70-20490 1 0.9 run-1");
-    } catch (Exception e) {
-      e.printStackTrace();
-    } finally {
-      try {
-        writer.close();
-      } catch (Exception e) {
+    String outputPath = params.get("trecEvalOutputPath");
+    writer = new BufferedWriter(new FileWriter(new File(outputPath)));
+      for(int i = 0; i < keys.size(); i++){
+        String key = keys.get(i);
+        String que = queries.get(i);
+        qTree = parseQuery (que);
+        printResults (key, que, qTree.evaluate (model));
       }
-    }
 
-    // Later HW assignments will use more RAM, so you want to be aware
-    // of how much memory your program uses.
-
-    printMemoryUsage(false);
-
+      try{
+        writer.close();
+      }catch (Exception e){
+        System.out.println("error: close files");
+      }
   }
 
   /**
@@ -377,17 +297,37 @@ public class QryEval {
    */
   static void printResults(String queryID, String queryName, QryResult result) throws IOException {
 
-    System.out.println(queryName + ":  ");
-    if (result.docScores.scores.size() < 1) {
-      System.out.println("\tNo results.");
-    } else {
-      for (int i = 0; i < result.docScores.scores.size(); i++) {
-        System.out.println("\t" + queryID + "\tQ0\t"
-			   + getExternalDocid (result.docScores.getDocid(i))
-			   + "\t"
-			   + result.docScores.getDocidScore(i)
-			   + "\trun-1");
+    /*
+     *  Create the trec_eval output.  Your code should write to the
+     *  file specified in the parameter file, and it should write the
+     *  results that you retrieved above.  This code just allows the
+     *  testing infrastructure to work on QryEval.
+     */
+
+    try {
+      //writer.write(queryName + ":\n");
+      if (result.docScores.scores.size() < 1) {
+          //writer.write("\tNo results.\n");
+          writer.write(queryID + "\tQ0\tdummy\t1\t0\trun-1\n");
+      } else {
+        for (int i = 0; i < result.docScores.scores.size(); i++) {
+           writer.write(queryID + "\tQ0\t"
+           + getExternalDocid (result.docScores.getDocid(i))
+           + "\t1\t"
+           + result.docScores.getDocidScore(i)
+           + "\trun-1\n");
+        }
       }
+      
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+        try {
+          
+        }catch (Exception e) {
+           System.out.println("writer cannot be closed");
+        }
     }
   }
 
