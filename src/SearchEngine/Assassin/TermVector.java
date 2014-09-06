@@ -6,7 +6,9 @@
  *    stemsFreq:  The frequency (tf) of each entry in stems.
  *    positions:  The index of the stem that occurred at this position. 
  */
+
 package SearchEngine.Assassin;
+
 import java.io.*;
 
 import org.apache.lucene.index.DocsAndPositionsEnum;
@@ -85,7 +87,7 @@ public class TermVector {
       for (int j = 0; j < ithPositions.freq(); j++)
         positions[ithPositions.nextPosition()] = i + 1;
     }
- }
+  }
 
   /**
    *  Get the number of positions in this field (the length of the

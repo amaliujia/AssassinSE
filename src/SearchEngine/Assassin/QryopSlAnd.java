@@ -62,16 +62,16 @@ public class QryopSlAnd extends QryopSl {
     //  improves the efficiency of exact-match AND without changing
     //  the result.
 
-    for (int i=0; i<(this.daatPtrs.size()-1); i++) {
-      for (int j=i+1; j<this.daatPtrs.size(); j++) {
-	if (this.daatPtrs.get(i).scoreList.scores.size() >
-	    this.daatPtrs.get(j).scoreList.scores.size()) {
-	    ScoreList tmpScoreList = this.daatPtrs.get(i).scoreList;
-	    this.daatPtrs.get(i).scoreList = this.daatPtrs.get(j).scoreList;
-	    this.daatPtrs.get(j).scoreList = tmpScoreList;
-	}
+      for (int i=0; i<(this.daatPtrs.size()-1); i++) {
+          for (int j=i+1; j<this.daatPtrs.size(); j++) {
+            if(this.daatPtrs.get(i).scoreList.scores.size() >
+                this.daatPtrs.get(j).scoreList.scores.size()){
+                  ScoreList tmpScoreList = this.daatPtrs.get(i).scoreList;
+                  this.daatPtrs.get(i).scoreList = this.daatPtrs.get(j).scoreList;
+                  this.daatPtrs.get(j).scoreList = tmpScoreList;
+              }
+          }
       }
-    }
 
     //  Exact-match AND requires that ALL scoreLists contain a
     //  document id.  Use the first (shortest) list to control the
@@ -93,20 +93,18 @@ public class QryopSlAnd extends QryopSl {
 
       for (int j=1; j<this.daatPtrs.size(); j++) {
 
-	DaaTPtr ptrj = this.daatPtrs.get(j);
+             DaaTPtr ptrj = this.daatPtrs.get(j);
 
-	while (true) {
-	  if (ptrj.nextDoc >= ptrj.scoreList.scores.size())
-	    break EVALUATEDOCUMENTS;		// No more docs can match
-	  else
-	    if (ptrj.scoreList.getDocid (ptrj.nextDoc) > ptr0Docid)
-	      continue EVALUATEDOCUMENTS;	// The ptr0docid can't match.
-	  else
-	    if (ptrj.scoreList.getDocid (ptrj.nextDoc) < ptr0Docid)
-	      ptrj.nextDoc ++;			// Not yet at the right doc.
-	  else
-	      break;				// ptrj matches ptr0Docid
-	}
+             while (true) {
+                if (ptrj.nextDoc >= ptrj.scoreList.scores.size())
+                    break EVALUATEDOCUMENTS;		// No more docs can match
+                else if (ptrj.scoreList.getDocid (ptrj.nextDoc) > ptr0Docid)
+                    continue EVALUATEDOCUMENTS;	// The ptr0docid can't match.
+                else if (ptrj.scoreList.getDocid (ptrj.nextDoc) < ptr0Docid)
+                      ptrj.nextDoc ++;			// Not yet at the right doc.
+                else
+                      break;				// ptrj matches ptr0Docid
+             }
       }
 
       //  The ptr0Docid matched all query arguments, so save it.
