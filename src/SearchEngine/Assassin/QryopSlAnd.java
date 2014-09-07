@@ -3,10 +3,12 @@
  */
 package SearchEngine.Assassin;
 
+import sun.misc.Sort;
+
 import java.io.*;
 import java.util.*;
 
-public class QryopSlAnd extends QryopSl {
+public class QryopSlAnd extends QryopSl{
 
   /**
    *  It is convenient for the constructor to accept a variable number
@@ -112,7 +114,7 @@ public class QryopSlAnd extends QryopSl {
     }
 
     freeDaaTPtrs ();
-
+    result.sort();
     return result;
   }
 
@@ -145,4 +147,5 @@ public class QryopSlAnd extends QryopSl {
 
     return ("#AND( " + result + ")");
   }
+
 }

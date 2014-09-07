@@ -11,11 +11,16 @@
  */
 
 package SearchEngine.Assassin;
+
+import sun.misc.Sort;
+
 public class QryResult {
 
   // Store the results of different types of query operators.
 
   ScoreList docScores = new ScoreList();
   InvList invertedList = new InvList();
-
+  public void sort(){
+      docScores.sort();
+  }
 }

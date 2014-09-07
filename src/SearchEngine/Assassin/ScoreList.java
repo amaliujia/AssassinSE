@@ -3,21 +3,15 @@
  *  and provides methods for accessing and manipulating them.
  */
 package SearchEngine.Assassin;
+
+import sun.rmi.transport.Connection;
+
+import java.lang.reflect.Array;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class ScoreList {
-
-  //  A little utilty class to create a <docid, score> object.
-
-  protected class ScoreListEntry {
-    private int docid;
-    private double score;
-
-    private ScoreListEntry(int docid, double score) {
-      this.docid = docid;
-      this.score = score;
-    }
-  }
 
   List<ScoreListEntry> scores = new ArrayList<ScoreListEntry>();
 
@@ -37,7 +31,7 @@ public class ScoreList {
    *  @return The internal document id.
    */
   public int getDocid(int n) {
-    return this.scores.get(n).docid;
+    return this.scores.get(n).getDocid();
   }
 
   /**
@@ -46,7 +40,12 @@ public class ScoreList {
    *  @return The document's score.
    */
   public double getDocidScore(int n) {
-    return this.scores.get(n).score;
+    return this.scores.get(n).getScore();
   }
+
+
+   public void sort(){
+        Collections.sort(scores);
+   }
 
 }

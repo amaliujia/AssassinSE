@@ -67,7 +67,6 @@ public class QryopSlOR extends QryopSl {
        double docScore = 1.0;
        for(int j = 0; j < this.daatPtrs.size(); j++){
          DaaTPtr ptrj = this.daatPtrs.get(j);
-         System.out.println(j + ": " + ptrj.nextDoc);
          while(true){
            if(ptrj.nextDoc >= ptrj.scoreList.scores.size()){
              break;
@@ -84,19 +83,15 @@ public class QryopSlOR extends QryopSl {
            }
          } 
        }
-       if(smallestForThisIteration == 17){
-         if(longestPtr == currentPtr){
-           System.out.println("Oh ha");
-         }
-         System.out.println("Big Event");
-       }
        if(currentPtr != null){
          result.docScores.add(currentPtr.scoreList.getDocid(currentPtr.nextDoc), docScore);
          currentID = smallestForThisIteration;
          currentPtr.nextDoc++;
        }
        }
-    return result;
+      freeDaaTPtrs ();
+      result.sort();
+      return result;
   }
   
 

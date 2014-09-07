@@ -9,10 +9,12 @@
  */
 package SearchEngine.Assassin;
 
+import sun.misc.Sort;
+
 import java.io.*;
 import java.util.*;
 
-public abstract class Qryop {
+public abstract class Qryop{
 
   //  DaaTPtrs are used by query operators for Document-at-a-Time (DAAT)
   //  query evaluation
@@ -79,5 +81,6 @@ public abstract class Qryop {
    *  @return The string version of this query operator.
    */
   public abstract String toString();
+
 
 }
