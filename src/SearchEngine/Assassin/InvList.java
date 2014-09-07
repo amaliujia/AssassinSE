@@ -9,6 +9,7 @@ package SearchEngine.Assassin;
 
 import java.util.*;
 import java.io.*;
+
 import org.apache.lucene.index.*;
 import org.apache.lucene.util.*;
 import org.apache.lucene.search.*;
@@ -75,9 +76,10 @@ public class InvList {
     BytesRef termBytes = new BytesRef(termString);
     Term term = new Term(fieldString, termBytes);
 
-    if (QryEval.READER.docFreq(term) < 1)
+    if (QryEval.READER.docFreq(term) < 1){
+      System.out.println("Failed to fetch invertied list for " + termString + " " + fieldString);
       return;
-
+    }
     //  Lookup the inverted list.
 
     DocsAndPositionsEnum iList =

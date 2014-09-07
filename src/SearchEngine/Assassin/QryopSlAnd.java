@@ -101,14 +101,13 @@ public class QryopSlAnd extends QryopSl {
                 else if (ptrj.scoreList.getDocid (ptrj.nextDoc) > ptr0Docid)
                     continue EVALUATEDOCUMENTS;	// The ptr0docid can't match.
                 else if (ptrj.scoreList.getDocid (ptrj.nextDoc) < ptr0Docid)
-                      ptrj.nextDoc ++;			// Not yet at the right doc.
+                      ptrj.nextDoc++;			// Not yet at the right doc.
                 else
                       break;				// ptrj matches ptr0Docid
              }
       }
 
       //  The ptr0Docid matched all query arguments, so save it.
-
       result.docScores.add (ptr0Docid, docScore);
     }
 

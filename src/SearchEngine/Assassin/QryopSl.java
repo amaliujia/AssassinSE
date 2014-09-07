@@ -24,11 +24,10 @@ public abstract class QryopSl extends Qryop {
   public void allocDaaTPtrs (RetrievalModel r) throws IOException {
 
     for (int i = 0; i < this.args.size(); i++) {
-
       //  If this argument doesn't return ScoreLists, wrap it
       //  in a #SCORE operator.
 
-      if (! QryopSl.class.isInstance (this.args.get(i)))
+      if (!QryopSl.class.isInstance (this.args.get(i)))
           this.args.set(i, new QryopSlScore(this.args.get(i)));
 
       DaaTPtr ptri = new DaaTPtr ();

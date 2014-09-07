@@ -215,13 +215,13 @@ public class QryEval {
 
       if (token.matches("[ ,(\t\n\r]")) {
         // Ignore most delimiters.
-      } else if (token.equalsIgnoreCase("#AND")) {
+      } else if (token.equalsIgnoreCase("#AND") || token.equalsIgnoreCase("#And") || token.equalsIgnoreCase("#and")) {
         currentOp = new QryopSlAnd();
         stack.push(currentOp);
       } else if (token.equalsIgnoreCase("#SYN")) {
         currentOp = new QryopIlSyn();
         stack.push(currentOp);
-      } else if(token.equalsIgnoreCase("#OR")){
+      } else if(token.equalsIgnoreCase("#OR") || token.equalsIgnoreCase("#Or")){
         currentOp = new QryopSlOR();
         stack.push(currentOp);
       }else if (token.startsWith(")")) { // Finish current query operator.
@@ -305,22 +305,20 @@ public class QryEval {
      */
 
     try {
-      //writer.write(queryName + ":\n");
       if (result.docScores.scores.size() < 1) {
-          //writer.write("\tNo results.\n");
           writer.write(queryID + "\tQ0\tdummy\t1\t0\trun-1\n");
       } else {
-        for (int i = 0; i < result.docScores.scores.size(); i++) {
+        for (int i = 0; i < result.docScores.scores.size() && i < 100; i++) {
            writer.write(queryID + "\tQ0\t"
            + getExternalDocid (result.docScores.getDocid(i))
            + "\t1\t"
            + result.docScores.getDocidScore(i)
-           + "\trun-1\n");
+           + "\trun-1");
+           if(i != 99 || i != result.docScores.scores.size() - 1)
         }
+        
       }
-      
-      
-    } catch (Exception e) {
+    }catch (Exception e) {
       e.printStackTrace();
     } finally {
         try {
