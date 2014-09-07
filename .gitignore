@@ -48,3 +48,7 @@ bin/SearchEngine/Assassin/Makefile
 bin/SearchEngine/Assassin/Sample.param
 
 HW1-queries-UB.teIn
+
+AssassinSE.iml
+
+.idea/*

@@ -182,7 +182,7 @@ public class QryEval {
    * 
    * @param qString
    *          A string containing a query.
-   * @param qTree
+   * @param   qTree
    *          A query tree
    * @throws IOException
    */
@@ -313,19 +313,12 @@ public class QryEval {
            + getExternalDocid (result.docScores.getDocid(i))
            + "\t1\t"
            + result.docScores.getDocidScore(i)
-           + "\trun-1");
-           if(i != 99 || i != result.docScores.scores.size() - 1)
+           + "\trun-1\n");
         }
         
       }
     }catch (Exception e) {
       e.printStackTrace();
-    } finally {
-        try {
-          
-        }catch (Exception e) {
-           System.out.println("writer cannot be closed");
-        }
     }
   }
 
