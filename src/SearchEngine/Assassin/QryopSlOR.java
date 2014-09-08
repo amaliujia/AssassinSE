@@ -90,7 +90,7 @@ public class QryopSlOR extends QryopSl {
        }
        }
       freeDaaTPtrs ();
-      result.sort();
+      //result.sort();
       return result;
   }
   
