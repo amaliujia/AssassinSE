@@ -81,10 +81,10 @@ public QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException {
         DaaTPtr ptr0 = this.daatPtrs.get(0);
 
         EVALUATEDOCUMENTS:
-        for ( ; ptr0.nextDoc < ptr0.scoreList.scores.size(); ptr0.nextDoc ++) {
+        for ( ; ptr0.nextDoc < ptr0.scoreList.scores.size(); ptr0.nextDoc++) {
 
             int ptr0Docid = ptr0.scoreList.getDocid (ptr0.nextDoc);
-            double docScore = ptr0.scoreList.getDocidScore((ptr0.nextDoc));
+            double docScore = 0;
 
             //  Do the other query arguments have the ptr0Docid?
 
@@ -105,7 +105,16 @@ public QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException {
             }
 
             //  The ptr0Docid matched all query arguments, so save it.
-            result.docScores.add (ptr0Docid, docScore);
+            double minScore = Integer.MAX_VALUE;
+            for (int j=0; j<this.daatPtrs.size(); j++) {
+                  DaaTPtr ptrj = this.daatPtrs.get(j);
+                  if(ptrj.scoreList.getDocidScore(ptrj.nextDoc) < minScore) {
+                      minScore = ptrj.scoreList.getDocidScore(ptrj.nextDoc);
+                  }
+
+            }
+            docScore = minScore;
+            result.docScores.add(ptr0Docid, docScore);
         }
 
         freeDaaTPtrs ();

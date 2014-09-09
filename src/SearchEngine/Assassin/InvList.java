@@ -94,6 +94,7 @@ public class InvList {
     while (iList.nextDoc() != DocIdSetIterator.NO_MORE_DOCS) {
 
       int tf = iList.freq();
+
       int[] positions = new int[tf];
 
       for (int j = 0; j < tf; j++)
@@ -103,6 +104,7 @@ public class InvList {
       this.df++;
       this.ctf += tf;
     }
+
   }
 
   /**

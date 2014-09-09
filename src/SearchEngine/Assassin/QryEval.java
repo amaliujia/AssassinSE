@@ -318,7 +318,9 @@ public class QryEval {
         for (int i = 0; i < result.docScores.scores.size() && i < 100; i++) {
            writer.write(queryID + "\tQ0\t"
            + getExternalDocid (result.docScores.getDocid(i))
-           + "\t1\t"
+           + "\t"
+           + (i+1)
+           + "\t"
            + result.docScores.getDocidScore(i)
            + "\trun-1\n");
         }

@@ -35,9 +35,72 @@ public class QryopSlOR extends QryopSl {
     if(r instanceof RetrievalModelUnrankedBoolean){
       return (evaluateBoolean(r));
     }else if(r instanceof RetrievalModelRankedBoolean){
-        return (evaluateBoolean(r));
+        return (evaluateRankedBoolean(r));
     }
     return null;
+  }
+
+  public QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException {
+      allocDaaTPtrs(r);
+      QryResult result = new QryResult();
+
+      //  Exact-match OR requires that ALL scoreLists contain a
+      //  document id.  Use the first (shortest) list to control the
+      //  search for matches.
+
+      //  Named loops are a little ugly.  However, they make it easy
+      //  to terminate an outer loop from within an inner loop.
+      //  Otherwise it is necessary to use flags, which is also ugly.
+      DaaTPtr currentPtr = null;
+      int currentID = -1;
+      int []a = new int[this.daatPtrs.size()];
+      for(int i = 0; i < this.daatPtrs.size(); i++)  a[i] = -1;
+
+      while(true) {
+          int smallestForThisIteration = Integer.MAX_VALUE;
+          currentPtr = null;
+          double docScore = 1.0;
+          for (int j = 0; j < this.daatPtrs.size(); j++) {
+              if (a[j] == -1) {
+                  DaaTPtr ptrj = this.daatPtrs.get(j);
+                  while (true) {
+                      if (ptrj.nextDoc >= ptrj.scoreList.scores.size()) {
+                          a[j] = 1;
+                          break;
+                      } else if (ptrj.scoreList.getDocid(ptrj.nextDoc) <= currentID) {
+                          ptrj.nextDoc++;
+                          continue;
+                      } else if (ptrj.scoreList.getDocid(ptrj.nextDoc) > currentID) {
+                          int doc = ptrj.nextDoc;
+                          if (ptrj.scoreList.getDocid(doc) < smallestForThisIteration) {
+                              smallestForThisIteration = ptrj.scoreList.getDocid(doc);
+                              currentPtr = ptrj;
+                              docScore = ptrj.scoreList.getDocidScore(j);
+                          }
+                          break;
+                      }
+                  }
+              }
+          }
+          if (currentPtr != null) {
+              result.docScores.add(currentPtr.scoreList.getDocid(currentPtr.nextDoc), docScore);
+              currentID = smallestForThisIteration;
+              currentPtr.nextDoc++;
+          }
+          int count = 0;
+          for (; count < this.daatPtrs.size(); count++) {
+              if (a[count] == -1) {
+                  break;
+              }
+          }
+          if (count == this.daatPtrs.size()) {
+              break;
+          }
+      }
+
+      freeDaaTPtrs ();
+      result.sort();
+      return result;
   }
 
   public QryResult evaluateBoolean(RetrievalModel r) throws IOException{
@@ -112,10 +175,9 @@ public class QryopSlOR extends QryopSl {
          }
 
       freeDaaTPtrs ();
-      for(int i = 0; i < result.docScores.scores.size(); i++){
-          System.out.print(result.docScores.getDocid(i) + " ");
-      }
-      //result.sort();
+//      for(int i = 0; i < result.docScores.scores.size(); i++){
+//          System.out.print(result.docScores.getDocid(i) + " ");
+//      }
       return result;
   }
   
