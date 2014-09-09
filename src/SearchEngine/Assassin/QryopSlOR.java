@@ -59,7 +59,7 @@ public class QryopSlOR extends QryopSl {
       while(true) {
           int smallestForThisIteration = Integer.MAX_VALUE;
           currentPtr = null;
-          double docScore = 1.0;
+          double docScore = -1;
           for (int j = 0; j < this.daatPtrs.size(); j++) {
               if (a[j] == -1) {
                   DaaTPtr ptrj = this.daatPtrs.get(j);
@@ -75,13 +75,18 @@ public class QryopSlOR extends QryopSl {
                           if (ptrj.scoreList.getDocid(doc) < smallestForThisIteration) {
                               smallestForThisIteration = ptrj.scoreList.getDocid(doc);
                               currentPtr = ptrj;
-                              docScore = ptrj.scoreList.getDocidScore(j);
+                              docScore = ptrj.scoreList.getDocidScore(doc);
+                          } else if (ptrj.scoreList.getDocid(doc) == smallestForThisIteration) {
+                              if (ptrj.scoreList.getDocidScore(doc) > docScore) {
+                                  docScore = ptrj.scoreList.getDocidScore(doc);
+                              }
                           }
                           break;
                       }
                   }
               }
-          }
+           }
+
           if (currentPtr != null) {
               result.docScores.add(currentPtr.scoreList.getDocid(currentPtr.nextDoc), docScore);
               currentID = smallestForThisIteration;
@@ -107,21 +112,6 @@ public class QryopSlOR extends QryopSl {
     allocDaaTPtrs(r);
     QryResult result = new QryResult();
 
-//    int longestLenOfInvertedList = -1;
-//    DaaTPtr longestPtr = null;
-//    for(int i=0; i<(this.daatPtrs.size()); i++){
-////        if(this.daatPtrs.get(i).scoreList.scores.size() > longestLenOfInvertedList){
-////          longestLenOfInvertedList = this.daatPtrs.get(i).scoreList.scores.size();
-////          longestPtr = this.daatPtrs.get(i);
-////        }
-//        while(this.daatPtrs.get(i).nextDoc < this.daatPtrs.get(i).scoreList.scores.size()){
-//            System.out.print(this.daatPtrs.get(i).scoreList.getDocid(this.daatPtrs.get(i).nextDoc) + " ");
-//            this.daatPtrs.get(i).nextDoc++;
-//        }
-//        System.out.println("");
-//    }
-
- 
     //  Exact-match OR requires that ALL scoreLists contain a
     //  document id.  Use the first (shortest) list to control the
     //  search for matches.
@@ -133,11 +123,11 @@ public class QryopSlOR extends QryopSl {
     int currentID = -1;
     int []a = new int[this.daatPtrs.size()];
     for(int i = 0; i < this.daatPtrs.size(); i++)  a[i] = -1;
-     while(true) {
+        while(true) {
          int smallestForThisIteration = Integer.MAX_VALUE;
          currentPtr = null;
          double docScore = 1.0;
-         for (int j = 0; j < this.daatPtrs.size(); j++) {
+         for(int j = 0; j < this.daatPtrs.size(); j++){
              if (a[j] == -1) {
                  DaaTPtr ptrj = this.daatPtrs.get(j);
                  while (true) {
@@ -175,9 +165,7 @@ public class QryopSlOR extends QryopSl {
          }
 
       freeDaaTPtrs ();
-//      for(int i = 0; i < result.docScores.scores.size(); i++){
-//          System.out.print(result.docScores.getDocid(i) + " ");
-//      }
+      result.sort();
       return result;
   }
   

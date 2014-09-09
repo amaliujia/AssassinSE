@@ -22,7 +22,7 @@ public class ScoreList {
    *  @return void
    */
   public void add(int docid, double score) {
-    scores.add(new ScoreListEntry(docid, score));
+      scores.add(new ScoreListEntry(docid, score));
   }
 
   /**
