@@ -1,4 +1,4 @@
 indexPath=index
-retrievalAlgorithm=UnrankedBoolean
-queryFilePath=BOWOR
+retrievalAlgorithm=RankedBoolean
+queryFilePath=queries.txt
 trecEvalOutputPath=HW1-queries-UB.teIn

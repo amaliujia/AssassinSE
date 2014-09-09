@@ -52,3 +52,11 @@ HW1-queries-UB.teIn
 AssassinSE.iml
 
 .idea/*
+
+*.doc
+
+*.pos
+
+index1/segments_1
+
+index1/segments.gen

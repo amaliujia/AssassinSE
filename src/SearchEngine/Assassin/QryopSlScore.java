@@ -49,9 +49,45 @@ public class QryopSlScore extends QryopSl {
 
     if (r instanceof RetrievalModelUnrankedBoolean)
       return (evaluateBoolean (r));
-
+    else if(r instanceof RetrievalModelRankedBoolean){
+      return (evaluateRankedBoolean(r));
+    }
     return null;
   }
+
+
+    /**
+     *  Evaluate the query operator for boolean retrieval models.
+     *  @param r A retrieval model that controls how the operator behaves.
+     *  @return The result of evaluating the query.
+     *  @throws IOException
+     */
+    public QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException {
+
+        // Evaluate the query argument.
+
+        QryResult result = args.get(0).evaluate(r);
+
+        // Each pass of the loop computes a score for one document. Note:
+        // If the evaluate operation above returned a score list (which is
+        // very possible), this loop gets skipped.
+
+        for (int i = 0; i < result.invertedList.df; i++) {
+
+            // DIFFERENT RETRIEVAL MODELS IMPLEMENT THIS DIFFERENTLY.
+
+            result.docScores.add(result.invertedList.postings.get(i).docid,
+                    result.invertedList.postings.get(i).tf);
+        }
+
+        // The SCORE operator should not return a populated inverted list.
+        // If there is one, replace it with an empty inverted list.
+
+        if (result.invertedList.df > 0)
+            result.invertedList = new InvList();
+
+        return result;
+    }
 
  /**
    *  Evaluate the query operator for boolean retrieval models.

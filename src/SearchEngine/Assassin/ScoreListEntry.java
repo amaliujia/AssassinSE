@@ -24,7 +24,7 @@ public class ScoreListEntry implements Comparable<ScoreListEntry> {
 
     public int compareTo(ScoreListEntry b) {
         if(this.getScore() == b.getScore())       return 0;
-        else if(this.getScore() < b.getScore())   return -1;
-        else return 1;
+        else if(this.getScore() < b.getScore())   return 1;
+        else return -1;
     }
 }

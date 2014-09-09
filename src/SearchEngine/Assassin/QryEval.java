@@ -84,8 +84,18 @@ public class QryEval {
 
     DocLengthStore s = new DocLengthStore(READER);
 
-    RetrievalModel model = new RetrievalModelUnrankedBoolean();
+    RetrievalModel model = null;
+    String modelType = params.get("retrievalAlgorithm");
+    if(modelType.equals("UnrankedBoolean"))
+            model = new RetrievalModelUnrankedBoolean();
+    else
+            model = new RetrievalModelRankedBoolean();
 
+
+    if(model == null){
+        System.out.println("Model Created error!");
+        return;
+    }
     //  Using the example query parser.  Notice that this does no
     //  lexical processing of query terms.  Add that to the query
     //  parser.
@@ -117,7 +127,6 @@ public class QryEval {
       for(int i = 0; i < keys.size(); i++){
         String key = keys.get(i);
         String que = queries.get(i);
-        //System.out.println(key + " " + que + "\n");
         qTree = parseQuery (que);
         printResults (key, qTree.evaluate (model));
       }
@@ -246,7 +255,7 @@ public class QryEval {
         // creating the query term, and you should check to see whether
         // the token specifies a particular field (e.g., apple.title).
          if(c.length != 0)
-            currentOp.add(new QryopIlTerm(token));
+            currentOp.add(new QryopIlTerm(c[0]));
       }
     }
 

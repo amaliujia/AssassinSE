@@ -70,7 +70,6 @@ public class InvList {
     //  Store the field name.  This is used by other query operators.
 
     this.field = new String (fieldString);
-
     //  Prepare to access the index.
 
     BytesRef termBytes = new BytesRef(termString);
