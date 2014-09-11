@@ -72,11 +72,36 @@ public class QryopIlNear extends QryopIl {
                     }
                 }
             }
-            for(int j = 0; j < this.daatPtrs.size(); j++){
-                DaaTPtr
+
+            DaaTPtr ptr0 = this.daatPtrs.get(0);
+            InvList.DocPosting post = ptr0.invList.postings.get(ptr0.nextDoc);
+            double score = 1.0;
+            POSTIONEND:
+            for(; post.nextPostion < post.positions.size(); post.nextPostion++){
+                int first = post.positions.get(post.nextPostion);
+                for(int j = 1; j < post.positions.size(); j++){
+                    DaaTPtr ptrj = this.daatPtrs.get(j);
+                    InvList.DocPosting postj = ptrj.invList.postings.get(ptrj.nextDoc);
+                    while (true){
+                        if(postj.positions.get(postj.nextPostion) > postj.positions.size()){
+                                post.nextPostion = post.positions.size();
+                                break POSTIONEND;
+                        }else if(postj.positions.get(postj.nextPostion) <= first){
+                                postj.nextPostion++;
+                                continue;
+                        }else if(postj.positions.get(postj.nextPostion) <= (first + 2)){
+                                first = postj.positions.get(postj.nextPostion);
+                                break;
+                        }else{
+                             break POSTIONEND;
+                        }
+                    }
+                }
+                result.docScores.add(ptr0.invList.getDocid(ptr0.nextDoc), score);
+                break ;
             }
         }
-
+       // result.sort();
         return result;
     }
 

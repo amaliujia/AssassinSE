@@ -23,12 +23,14 @@ public class InvList {
     public int docid = 0;
     public int tf = 0;
     public Vector<Integer> positions = new Vector<Integer>();
+    public int nextPostion;
 
     public DocPosting(int d, int... locations) {
       this.docid = d;
       this.tf = locations.length;
       for (int i = 0; i < locations.length; i++)
         this.positions.add(locations[i]);
+      nextPostion = 0;
     }
 
     public DocPosting(int d, List<Integer> locations) {
@@ -36,6 +38,7 @@ public class InvList {
       this.tf = locations.size();
       for (int i = 0; i < locations.size(); i++)
         this.positions.add(locations.get(i));
+      nextPostion = 0;
     }
   }
 

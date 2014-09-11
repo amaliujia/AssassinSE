@@ -106,7 +106,7 @@ public class QryopIlSyn extends QryopIl {
     for (int i=0; i<this.daatPtrs.size(); i++) {
       DaaTPtr ptri = this.daatPtrs.get(i);
       if (nextDocid > ptri.invList.getDocid (ptri.nextDoc))
-	nextDocid = ptri.invList.getDocid (ptri.nextDoc);
+	     nextDocid = ptri.invList.getDocid (ptri.nextDoc);
       }
 
     return (nextDocid);
