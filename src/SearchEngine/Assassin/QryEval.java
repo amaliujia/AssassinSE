@@ -220,19 +220,20 @@ public class QryEval {
     while (tokens.hasMoreTokens()) {
 
       token = tokens.nextToken();
+      String [] dealNear = token.split("/");
 
-      if (token.matches("[ ,(\t\n\r]")) {
+      if (dealNear[0].matches("[ ,(\t\n\r]")) {
         // Ignore most delimiters.
-      } else if (token.equalsIgnoreCase("#AND") || token.equalsIgnoreCase("#And") || token.equalsIgnoreCase("#and")) {
+      } else if (dealNear[0].equalsIgnoreCase("#AND") || dealNear[0].equalsIgnoreCase("#And") || dealNear[0].equalsIgnoreCase("#and")) {
         currentOp = new QryopSlAnd();
         stack.push(currentOp);
-      } else if (token.equalsIgnoreCase("#SYN")) {
-        currentOp = new QryopIlSyn();
+      } else if (dealNear[0].equalsIgnoreCase("#NEAR")) {
+        currentOp = new QryopIlNear(Integer.parseInt(dealNear[1]));
         stack.push(currentOp);
-      } else if(token.equalsIgnoreCase("#OR") || token.equalsIgnoreCase("#Or")){
+      } else if(dealNear[0].equalsIgnoreCase("#OR") || dealNear[0].equalsIgnoreCase("#Or")){
         currentOp = new QryopSlOR();
         stack.push(currentOp);
-      }else if (token.startsWith(")")) { // Finish current query operator.
+      }else if (dealNear[0].startsWith(")")) { // Finish current query operator.
         // If the current query operator is not an argument to
         // another query operator (i.e., the stack is empty when it
         // is removed), we're done (assuming correct syntax - see
@@ -241,7 +242,7 @@ public class QryEval {
         // processing back to the higher-level operator.
 
         stack.pop();
-        
+
         if (stack.empty())
           break;
 

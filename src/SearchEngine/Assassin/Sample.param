@@ -1,4 +1,0 @@
-queryFilePath=Sample.qry
-indexPath=index
-trecEvalOutputPath=Sample.teIn
-retrievalAlgorithm=UnrankedBoolean

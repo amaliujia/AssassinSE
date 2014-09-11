@@ -66,12 +66,12 @@ public class QryopIlSyn extends QryopIl {
       List<Integer> positions = new ArrayList<Integer>();
 
       for (int i=0; i<this.daatPtrs.size(); i++) {
-	DaaTPtr ptri = this.daatPtrs.get(i);
+	    DaaTPtr ptri = this.daatPtrs.get(i);
 
-	if (ptri.invList.getDocid (ptri.nextDoc) == nextDocid) {
-	  positions.addAll (ptri.invList.postings.get(ptri.nextDoc).positions);
-	  ptri.nextDoc ++;
-	}
+	    if (ptri.invList.getDocid (ptri.nextDoc) == nextDocid) {
+	      positions.addAll (ptri.invList.postings.get(ptri.nextDoc).positions);
+	      ptri.nextDoc ++;
+	    }
       }
 
       Collections.sort (positions);
@@ -123,15 +123,12 @@ public class QryopIlSyn extends QryopIl {
     for (int i=0; i<this.args.size(); i++) {
 
       if (! (this.args.get(i) instanceof QryopIl)) 
-	QryEval.fatalError ("Error:  Invalid argument in " +
+	    QryEval.fatalError ("Error:  Invalid argument in " +
 			    this.toString());
-      else
-	if ((i>0) &&
-	    (! ptrs.get(i).invList.field.equals (ptrs.get(0).invList.field)))
-	  QryEval.fatalError ("Error:  Arguments must be in the same field:  " +
+      else if ((i>0) && (! ptrs.get(i).invList.field.equals (ptrs.get(0).invList.field)))
+	    QryEval.fatalError ("Error:  Arguments must be in the same field:  " +
 			      this.toString());
     }
-
     return true;
   }
 

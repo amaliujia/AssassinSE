@@ -1,0 +1,111 @@
+package SearchEngine.Assassin;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Created by amaliujia on 14-9-9.
+ */
+public class QryopIlNear extends QryopIl {
+    private int distance;
+
+    public void setDistance(int d){this.distance = d;}
+    public int getDistance(int d){return this.distance;}
+
+    public QryopIlNear(int d){this.distance = d;}
+
+
+    public void QryopIlNear(Qryop... q){
+        for(int i = 0; i < q.length; i++){
+            this.args.add(q[i]);
+        }
+    }
+
+    @Override
+    public void add(Qryop q) throws IOException {
+        this.args.add(q);
+    }
+
+    @Override
+    public QryResult evaluate(RetrievalModel r) throws IOException {
+        allocDaaTPtrs(r);
+        syntaxCheckArgResults(this.daatPtrs);
+
+        QryResult result = new QryResult();
+
+        // Sort list first, use the shortest one as base
+        // This sort can improve code performance
+        int minInvList = Integer.MAX_VALUE;
+        DaaTPtr basePtr = null;
+        int baseIndex = -1;
+        for (int i=0; i<(this.daatPtrs.size()-1); i++) {
+                if(this.daatPtrs.get(i).invList.postings.size() < minInvList){
+                    basePtr = this.daatPtrs.get(i);
+                    minInvList = basePtr.invList.postings.size();
+                    baseIndex = i;
+                }
+        }
+
+        EVALUATEDOCUMENTS:
+        for ( ; basePtr.nextDoc < basePtr.invList.postings.size(); basePtr.nextDoc++) {
+
+            int baseDocid = basePtr.invList.getDocid(basePtr.nextDoc);
+            //double docScore = 0;
+
+            //  Do the other query arguments have the baseDocid?
+            // If so, at least this doc have all terms we try to find
+
+            for (int j = 0; j<this.daatPtrs.size(); j++) {
+                if(j != baseIndex){
+                    DaaTPtr ptrj = this.daatPtrs.get(j);
+
+                    while (true) {
+                        if (ptrj.nextDoc >= ptrj.invList.postings.size())
+                            break EVALUATEDOCUMENTS;        // No more docs can match
+                        else if (ptrj.invList.getDocid(ptrj.nextDoc) > baseDocid)
+                            continue EVALUATEDOCUMENTS;    // The ptr0docid can't match.
+                        else if (ptrj.invList.getDocid(ptrj.nextDoc) < baseDocid)
+                            ptrj.nextDoc++;            // Not yet at the right doc.
+                        else
+                            break;                // ptrj matches ptr0Docid
+                    }
+                }
+            }
+            for(int j = 0; j < this.daatPtrs.size(); j++){
+                DaaTPtr
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public String toString() {
+       String result = new String();
+       for(Iterator<Qryop> i = this.args.iterator(); i.hasNext();){
+         result += (i.next().toString() + " ");
+       }
+       return "#Near( " + result + ")";
+    }
+
+    /**
+     *  syntaxCheckArgResults does syntax checking that can only be done
+     *  after query arguments are evaluated.
+     *  @param ptrs A list of DaaTPtrs for this query operator.
+     *  @return True if the syntax is valid, false otherwise.
+     */
+    public Boolean syntaxCheckArgResults (List<DaaTPtr> ptrs) {
+
+        for (int i=0; i<this.args.size(); i++) {
+
+            if (! (this.args.get(i) instanceof QryopIl))
+                QryEval.fatalError ("Error:  Invalid argument in " +
+                        this.toString());
+            else if ((i>0) && (! ptrs.get(i).invList.field.equals (ptrs.get(0).invList.field)))
+                QryEval.fatalError ("Error:  Arguments must be in the same field:  " +
+                        this.toString());
+        }
+        return true;
+    }
+}
