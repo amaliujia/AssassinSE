@@ -79,17 +79,17 @@ public class QryopIlNear extends QryopIl {
             POSTIONEND:
             for(; post.nextPostion < post.positions.size(); post.nextPostion++){
                 int first = post.positions.get(post.nextPostion);
-                for(int j = 1; j < post.positions.size(); j++){
+                for(int j = 1; j < this.daatPtrs.size(); j++){
                     DaaTPtr ptrj = this.daatPtrs.get(j);
                     InvList.DocPosting postj = ptrj.invList.postings.get(ptrj.nextDoc);
                     while (true){
-                        if(postj.positions.get(postj.nextPostion) > postj.positions.size()){
+                        if(postj.nextPostion >= postj.positions.size()){
                                 post.nextPostion = post.positions.size();
                                 break POSTIONEND;
                         }else if(postj.positions.get(postj.nextPostion) <= first){
                                 postj.nextPostion++;
                                 continue;
-                        }else if(postj.positions.get(postj.nextPostion) <= (first + 2)){
+                        }else if(postj.positions.get(postj.nextPostion) <= (first + this.distance)){
                                 first = postj.positions.get(postj.nextPostion);
                                 break;
                         }else{
