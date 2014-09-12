@@ -255,8 +255,14 @@ public class QryEval {
         // NOTE: You should do lexical processing of the token before
         // creating the query term, and you should check to see whether
         // the token specifies a particular field (e.g., apple.title).
-         if(c.length != 0)
-            currentOp.add(new QryopIlTerm(c[0]));
+         if(c.length != 0){
+             String[] fieldName = token.split("\\.");
+                if(fieldName.length == 1)
+                    currentOp.add(new QryopIlTerm(c[0]));
+                else
+                    currentOp.add(new QryopIlTerm(fieldName[0], fieldName[1]));
+         }
+
       }
     }
 
