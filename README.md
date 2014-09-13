@@ -12,4 +12,4 @@ Milestones
 
 3. Construct Ranked Boolean Retrieval Model.
 
-4. Support nested queries.
+4. Support structured queries.
