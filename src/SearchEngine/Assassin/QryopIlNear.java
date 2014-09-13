@@ -29,9 +29,16 @@ public class QryopIlNear extends QryopIl {
 
     @Override
     public QryResult evaluate(RetrievalModel r) throws IOException {
+        if (r instanceof RetrievalModelUnrankedBoolean)
+            return (evaluateBoolean (r));
+        else if(r instanceof RetrievalModelRankedBoolean)
+            return (evaluateRankedBoolean(r));
+        return null;
+    }
+
+    public  QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException{
         allocDaaTPtrs(r);
         syntaxCheckArgResults(this.daatPtrs);
-
         QryResult result = new QryResult();
 
         // Sort list first, use the shortest one as base
@@ -40,12 +47,16 @@ public class QryopIlNear extends QryopIl {
         DaaTPtr basePtr = null;
         int baseIndex = -1;
         for (int i=0; i<(this.daatPtrs.size()-1); i++) {
-                if(this.daatPtrs.get(i).invList.postings.size() < minInvList){
-                    basePtr = this.daatPtrs.get(i);
-                    minInvList = basePtr.invList.postings.size();
-                    baseIndex = i;
-                }
+            if(this.daatPtrs.get(i).invList.postings.size() < minInvList){
+                basePtr = this.daatPtrs.get(i);
+                minInvList = basePtr.invList.postings.size();
+                baseIndex = i;
+            }
         }
+        // first use algorithm which is similar to #AND to find a doc containg all terms in query
+        // Then fetch postion of this doc for every term, and test if these temrs satisfies near condition\
+        // if so, push into result.
+        // if not, jump to next loop.
 
         EVALUATEDOCUMENTS:
         for ( ; basePtr.nextDoc < basePtr.invList.postings.size(); basePtr.nextDoc++) {
@@ -74,26 +85,115 @@ public class QryopIlNear extends QryopIl {
             }
 
             DaaTPtr ptr0 = this.daatPtrs.get(0);
-            InvList.DocPosting post = ptr0.invList.postings.get(ptr0.nextDoc);
-            double score = 1.0;
+            DocPosting post = ptr0.invList.postings.get(ptr0.nextDoc);
+            double tf = 0;
+            int isFirst = 0;
+            DocPosting returnPosting = null;
             POSTIONEND:
             for(; post.nextPostion < post.positions.size(); post.nextPostion++){
                 int first = post.positions.get(post.nextPostion);
                 for(int j = 1; j < this.daatPtrs.size(); j++){
                     DaaTPtr ptrj = this.daatPtrs.get(j);
-                    InvList.DocPosting postj = ptrj.invList.postings.get(ptrj.nextDoc);
+                    DocPosting postj = ptrj.invList.postings.get(ptrj.nextDoc);
                     while (true){
                         if(postj.nextPostion >= postj.positions.size()){
-                                post.nextPostion = post.positions.size();
-                                break POSTIONEND;
+                            post.nextPostion = post.positions.size();
+                            break POSTIONEND;
                         }else if(postj.positions.get(postj.nextPostion) <= first){
-                                postj.nextPostion++;
-                                continue;
+                            postj.nextPostion++;
+                            continue;
                         }else if(postj.positions.get(postj.nextPostion) <= (first + this.distance)){
-                                first = postj.positions.get(postj.nextPostion);
-                                break;
+                            first = postj.positions.get(postj.nextPostion);
+                            break;
                         }else{
-                             break POSTIONEND;
+                            break POSTIONEND;
+                        }
+                    }
+                }
+                if(isFirst == 0){
+                     returnPosting = new DocPosting(ptr0.invList.getDocid(ptr0.nextDoc));
+                     isFirst = 1;
+                }
+                returnPosting.tf++;
+            }
+            if(isFirst == 1) {
+                result.invertedList.postings.add(returnPosting);
+                result.invertedList.df++;
+            }
+        }
+        return result;
+    }
+
+    public QryResult evaluateBoolean(RetrievalModel r) throws IOException{
+        allocDaaTPtrs(r);
+        syntaxCheckArgResults(this.daatPtrs);
+
+        QryResult result = new QryResult();
+
+        // Sort list first, use the shortest one as base
+        // This sort can improve code performance
+        int minInvList = Integer.MAX_VALUE;
+        DaaTPtr basePtr = null;
+        int baseIndex = -1;
+        for (int i=0; i<(this.daatPtrs.size()-1); i++) {
+            if(this.daatPtrs.get(i).invList.postings.size() < minInvList){
+                basePtr = this.daatPtrs.get(i);
+                minInvList = basePtr.invList.postings.size();
+                baseIndex = i;
+            }
+        }
+        // first use algorithm which is similar to #AND to find a doc containg all terms in query
+        // Then fetch postion of this doc for every term, and test if these temrs satisfies near condition\
+        // if so, push into result.
+        // if not, jump to next loop.
+        EVALUATEDOCUMENTS:
+        for ( ; basePtr.nextDoc < basePtr.invList.postings.size(); basePtr.nextDoc++) {
+
+            int baseDocid = basePtr.invList.getDocid(basePtr.nextDoc);
+            //double docScore = 0;
+
+            //  Do the other query arguments have the baseDocid?
+            // If so, at least this doc have all terms we try to find
+
+            for (int j = 0; j<this.daatPtrs.size(); j++) {
+                if(j != baseIndex){
+                    DaaTPtr ptrj = this.daatPtrs.get(j);
+
+                    while (true) {
+                        if (ptrj.nextDoc >= ptrj.invList.postings.size())
+                            break EVALUATEDOCUMENTS;        // No more docs can match
+                        else if (ptrj.invList.getDocid(ptrj.nextDoc) > baseDocid)
+                            continue EVALUATEDOCUMENTS;    // The ptr0docid can't match.
+                        else if (ptrj.invList.getDocid(ptrj.nextDoc) < baseDocid)
+                            ptrj.nextDoc++;            // Not yet at the right doc.
+                        else
+                            break;                // ptrj matches ptr0Docid
+                    }
+                }
+            }
+
+            DaaTPtr ptr0 = this.daatPtrs.get(0);
+            DocPosting post = ptr0.invList.postings.get(ptr0.nextDoc);
+            double score = 1.0;
+
+            POSTIONEND:
+            for(; post.nextPostion < post.positions.size(); post.nextPostion++){
+                int first = post.positions.get(post.nextPostion);
+                for(int j = 1; j < this.daatPtrs.size(); j++){
+                    DaaTPtr ptrj = this.daatPtrs.get(j);
+                    DocPosting postj = ptrj.invList.postings.get(ptrj.nextDoc);
+                    while (true){
+                        if(postj.nextPostion >= postj.positions.size()){
+                            post.nextPostion = post.positions.size();
+                            break POSTIONEND;
+                        }else if(postj.positions.get(postj.nextPostion) <= first){
+                            postj.nextPostion++;
+                            continue;
+                        }else if(postj.positions.get(postj.nextPostion) <= (first + this.distance)){
+                            first = postj.positions.get(postj.nextPostion);
+                            break;
+                        }else{
+                            break POSTIONEND;
                         }
                     }
                 }
@@ -101,7 +201,7 @@ public class QryopIlNear extends QryopIl {
                 break ;
             }
         }
-       // result.sort();
+        // result.sort();
         return result;
     }
 

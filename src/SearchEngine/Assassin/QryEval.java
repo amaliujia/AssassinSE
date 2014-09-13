@@ -44,6 +44,7 @@ public class QryEval {
     analyzer.setStopwordRemoval(true);
     analyzer.setStemmer(EnglishAnalyzerConfigurable.StemmerType.KSTEM);
   }
+  public static RetrievalModel model = null;
 
   /**
    *  @param args The only argument is the path to the parameter file.
@@ -84,7 +85,7 @@ public class QryEval {
 
     DocLengthStore s = new DocLengthStore(READER);
 
-    RetrievalModel model = null;
+    //RetrievalModel model = null;
     String modelType = params.get("retrievalAlgorithm");
     if(modelType.equals("UnrankedBoolean"))
             model = new RetrievalModelUnrankedBoolean();
@@ -248,6 +249,7 @@ public class QryEval {
 
         Qryop arg = currentOp;
         currentOp = stack.peek();
+        //arg.evaluate(model);
         currentOp.add(arg);
       } else {
          String[] c = tokenizeQuery(token);
