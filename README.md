@@ -11,3 +11,5 @@ Milestones
 2. Build Unranked Boolean Retrieval Model.
 
 3. Construct Ranked Boolean Retrieval Model.
+
+4. Support nested queries.
