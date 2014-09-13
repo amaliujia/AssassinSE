@@ -1,5 +1,6 @@
 package SearchEngine.Assassin;
 
+import javax.print.Doc;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -53,16 +54,11 @@ public class QryopIlNear extends QryopIl {
                 baseIndex = i;
             }
         }
-        // first use algorithm which is similar to #AND to find a doc containg all terms in query
-        // Then fetch postion of this doc for every term, and test if these temrs satisfies near condition\
-        // if so, push into result.
-        // if not, jump to next loop.
 
         EVALUATEDOCUMENTS:
         for ( ; basePtr.nextDoc < basePtr.invList.postings.size(); basePtr.nextDoc++) {
 
             int baseDocid = basePtr.invList.getDocid(basePtr.nextDoc);
-            //double docScore = 0;
 
             //  Do the other query arguments have the baseDocid?
             // If so, at least this doc have all terms we try to find
@@ -83,22 +79,22 @@ public class QryopIlNear extends QryopIl {
                     }
                 }
             }
-
             DaaTPtr ptr0 = this.daatPtrs.get(0);
             DocPosting post = ptr0.invList.postings.get(ptr0.nextDoc);
             double tf = 0;
             int isFirst = 0;
             DocPosting returnPosting = null;
-            POSTIONEND:
-            for(; post.nextPostion < post.positions.size(); post.nextPostion++){
+
+             OK:
+             for(; post.nextPostion < post.positions.size(); post.nextPostion++){
                 int first = post.positions.get(post.nextPostion);
                 for(int j = 1; j < this.daatPtrs.size(); j++){
                     DaaTPtr ptrj = this.daatPtrs.get(j);
                     DocPosting postj = ptrj.invList.postings.get(ptrj.nextDoc);
                     while (true){
                         if(postj.nextPostion >= postj.positions.size()){
-                            post.nextPostion = post.positions.size();
-                            break POSTIONEND;
+                           // post.nextPostion = post.positions.size();
+                            break OK ;
                         }else if(postj.positions.get(postj.nextPostion) <= first){
                             postj.nextPostion++;
                             continue;
@@ -106,7 +102,7 @@ public class QryopIlNear extends QryopIl {
                             first = postj.positions.get(postj.nextPostion);
                             break;
                         }else{
-                            break POSTIONEND;
+                            continue OK;
                         }
                     }
                 }
@@ -115,11 +111,14 @@ public class QryopIlNear extends QryopIl {
                      isFirst = 1;
                 }
                 returnPosting.tf++;
-            }
-            if(isFirst == 1) {
+                //returnPosting.positions.add(this.daatPtrs.get(this.daatPtrs.size() - 1).invList.postings.get(this.daatPtrs.get(this.daatPtrs.size() - 1).nextDoc).positions.get(this.daatPtrs.get(this.daatPtrs.size() - 1).invList.postings.get(this.daatPtrs.get(this.daatPtrs.size() - 1).nextDoc).nextPostion));
+
+              }
+
+               if(isFirst == 1) {
                 result.invertedList.postings.add(returnPosting);
                 result.invertedList.df++;
-            }
+                }
         }
         return result;
     }
@@ -184,7 +183,7 @@ public class QryopIlNear extends QryopIl {
                     DocPosting postj = ptrj.invList.postings.get(ptrj.nextDoc);
                     while (true){
                         if(postj.nextPostion >= postj.positions.size()){
-                            post.nextPostion = post.positions.size();
+                            //post.nextPostion = post.positions.size();
                             break POSTIONEND;
                         }else if(postj.positions.get(postj.nextPostion) <= first){
                             postj.nextPostion++;
@@ -193,15 +192,16 @@ public class QryopIlNear extends QryopIl {
                             first = postj.positions.get(postj.nextPostion);
                             break;
                         }else{
-                            break POSTIONEND;
+                            continue POSTIONEND;
                         }
                     }
                 }
+//                DocPosting returnPosting = new DocPosting(ptr0.invList.getDocid(ptr0.nextDoc));
+//                result.invertedList.postings.add(returnPosting);
                 result.docScores.add(ptr0.invList.getDocid(ptr0.nextDoc), score);
                 break ;
             }
         }
-        // result.sort();
         return result;
     }
 
