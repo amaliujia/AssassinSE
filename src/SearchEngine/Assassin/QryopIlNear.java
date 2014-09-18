@@ -183,7 +183,6 @@ public class QryopIlNear extends QryopIl {
                     DocPosting postj = ptrj.invList.postings.get(ptrj.nextDoc);
                     while (true){
                         if(postj.nextPostion >= postj.positions.size()){
-                            //post.nextPostion = post.positions.size();
                             break POSTIONEND;
                         }else if(postj.positions.get(postj.nextPostion) <= first){
                             postj.nextPostion++;
@@ -196,8 +195,8 @@ public class QryopIlNear extends QryopIl {
                         }
                     }
                 }
-//                DocPosting returnPosting = new DocPosting(ptr0.invList.getDocid(ptr0.nextDoc));
-//                result.invertedList.postings.add(returnPosting);
+                DocPosting returnPosting = new DocPosting(ptr0.invList.getDocid(ptr0.nextDoc));
+                result.invertedList.postings.add(returnPosting);
                 result.docScores.add(ptr0.invList.getDocid(ptr0.nextDoc), score);
                 break ;
             }
