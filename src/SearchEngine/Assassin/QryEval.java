@@ -22,6 +22,8 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
+import static java.lang.System.exit;
+
 public class QryEval {
 
   static String usage = "Usage:  java " + System.getProperty("sun.java.command")
@@ -34,7 +36,8 @@ public class QryEval {
 
   public static IndexReader READER;
   public static BufferedWriter writer;
-  //  Create and configure an English analyzer that will be used for
+
+    //  Create and configure an English analyzer that will be used for
   //  query parsing.
 
   public static EnglishAnalyzerConfigurable analyzer =
@@ -55,7 +58,7 @@ public class QryEval {
     // must supply parameter file
     if (args.length < 1) {
       System.err.println(usage);
-      System.exit(1);
+      exit(1);
     }
 
     // read in the parameter file; one parameter per line in format of key=value
@@ -72,26 +75,51 @@ public class QryEval {
     // parameters required for this example to run
     if (!params.containsKey("indexPath")) {
       System.err.println("Error: Parameters were missing.");
-      System.exit(1);
+      exit(1);
     }
 
     // open the index
     READER = DirectoryReader.open(FSDirectory.open(new File(params.get("indexPath"))));
-    
+
     if (READER == null) {
       System.err.println(usage);
-      System.exit(1);
+      exit(1);
     }
 
-    DocLengthStore s = new DocLengthStore(READER);
+    DocLengthStore docLengthStore = new DocLengthStore(READER);
+    DataCenter dataCenter = DataCenter.sharedDataCenter();
+    dataCenter.docLengthStore = docLengthStore;
+    dataCenter.numDocs = READER.numDocs();
+
+//      System.out.println (docLengthStore.getDocLength("body", 21));
+//
+//      System.out.println ("url:\t" +
+//              "numdocs=" +
+//              QryEval.READER.getDocCount ("url") + "\t" +
+//              "sumTotalTF=" +
+//              QryEval.READER.getSumTotalTermFreq("url") + "\t" +
+//              "avglen="+
+//              QryEval.READER.getSumTotalTermFreq("url") /
+//                      (float) QryEval.READER.getDocCount ("url"));
 
     //RetrievalModel model = null;
     String modelType = params.get("retrievalAlgorithm");
     if(modelType.equals("UnrankedBoolean"))
             model = new RetrievalModelUnrankedBoolean();
-    else
+    else if(modelType.equals("RankedBoolean"))
             model = new RetrievalModelRankedBoolean();
+    else if(modelType.equals("BM25")) {
+            model = new RetrievalModelBM25();
+    }else {
+        return;
+    }
 
+    if(model instanceof RetrievalModelBM25){
+        dataCenter.k1 = Double.parseDouble(params.get("BM25:k_1"));
+        dataCenter.b = Double.parseDouble(params.get("BM25:b"));
+        dataCenter.k3 = Double.parseDouble(params.get("BM25:k_3"));
+        System.out.println("BM25 parameters  " + dataCenter.k1 + "  " + dataCenter.b + "  " + dataCenter.k3);
+    }
 
     if(model == null){
         System.out.println("Model Created error!");
@@ -128,8 +156,8 @@ public class QryEval {
       for(int i = 0; i < keys.size(); i++){
         String key = keys.get(i);
         String que = queries.get(i);
-        qTree = parseQuery (que);
-        printResults (key, qTree.evaluate (model));
+        qTree = parseQuery (que, model);
+        printResults (key, qTree.evaluate (model), qTree);
       }
 
       try{
@@ -148,7 +176,7 @@ public class QryEval {
    */
   static void fatalError (String message) {
     System.err.println (message);
-    System.exit(1);
+    exit(1);
   }
 
   /**
@@ -195,7 +223,7 @@ public class QryEval {
    *          A string containing a query.
    * @throws IOException
    */
-  static Qryop parseQuery(String qString) throws IOException {
+  static Qryop parseQuery(String qString, RetrievalModel model) throws IOException {
 
     Qryop currentOp = null;
     Stack<Qryop> stack = new Stack<Qryop>();
@@ -204,11 +232,17 @@ public class QryEval {
     // is a tiny bit easier if unnecessary whitespace is removed.
 
     qString = qString.trim();
+    if(model instanceof RetrievalModelRankedBoolean || model instanceof RetrievalModelUnrankedBoolean) {
+        if (qString.charAt(0) != '#') {
+            qString = "#OR(" + qString + ")";
+        }
+    } else if(model instanceof RetrievalModelBM25) {
+        if (qString.charAt(0) != '#') {
+            qString = "#SUM(" + qString + ")";
+        }
+    } else {
 
-    if (qString.charAt(0) != '#') {
-      qString = "#OR(" + qString + ")";
     }
-
     // Tokenize the query.
 
     StringTokenizer tokens = new StringTokenizer(qString, "\t\n\r ,()", true);
@@ -233,6 +267,9 @@ public class QryEval {
         stack.push(currentOp);
       } else if(dealNear[0].equalsIgnoreCase("#OR") || dealNear[0].equalsIgnoreCase("#Or")){
         currentOp = new QryopSlOR();
+        stack.push(currentOp);
+      }else if(dealNear[0].equalsIgnoreCase("#SUM")){
+        currentOp = new QryopIlSum();
         stack.push(currentOp);
       }else if (dealNear[0].startsWith(")")) { // Finish current query operator.
         // If the current query operator is not an argument to
@@ -311,7 +348,7 @@ public class QryEval {
    * @param result Result object generated by {@link Qryop#evaluate(RetrievalModel)}.
    * @throws IOException 
    */
-  static void printResults(String queryID, QryResult result) throws IOException {
+  static void printResults(String queryID, QryResult result, Qryop qTree) throws IOException {
 
     /*
      *  Create the trec_eval output.  Your code should write to the
@@ -319,25 +356,28 @@ public class QryEval {
      *  results that you retrieved above.  This code just allows the
      *  testing infrastructure to work on QryEval.
      */
+      if (qTree instanceof QryopSl) {
+          try {
+              if (result.docScores.scores.size() < 1) {
+                  writer.write(queryID + "\tQ0\tdummy\t1\t0\trun-1\n");
+              } else {
+                  for (int i = 0; i < result.docScores.scores.size() && i < 100; i++) {
+                      writer.write(queryID + "\tQ0\t"
+                              + getExternalDocid(result.docScores.getDocid(i))
+                              + "\t"
+                              + (i + 1)
+                              + "\t"
+                              + result.docScores.getDocidScore(i)
+                              + "\trun-1\n");
+                  }
 
-    try {
-      if (result.docScores.scores.size() < 1) {
-          writer.write(queryID + "\tQ0\tdummy\t1\t0\trun-1\n");
-      } else {
-        for (int i = 0; i < result.docScores.scores.size() && i < 100; i++) {
-           writer.write(queryID + "\tQ0\t"
-           + getExternalDocid (result.docScores.getDocid(i))
-           + "\t"
-           + (i+1)
-           + "\t"
-           + result.docScores.getDocidScore(i)
-           + "\trun-1\n");
-        }
-        
+              }
+          } catch (Exception e) {
+              e.printStackTrace();
+          }
+      }else if(qTree instanceof QryopIl){
+
       }
-    }catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   /**
