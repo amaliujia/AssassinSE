@@ -14,13 +14,16 @@ package SearchEngine.Assassin;
 
 import sun.misc.Sort;
 
+import java.io.IOException;
+
 public class QryResult {
 
   // Store the results of different types of query operators.
 
   ScoreList docScores = new ScoreList();
   InvList invertedList = new InvList();
-  public void sort(){
+  public void sort() throws IOException{
       docScores.sort();
+      invertedList.sort();
   }
 }

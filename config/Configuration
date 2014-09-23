@@ -1,6 +1,6 @@
 indexPath=index1
-retrievalAlgorithm=BM25
-queryFilePath=query/BM25
+retrievalAlgorithm=UnrankedBoolean
+queryFilePath=query/BOWOR
 trecEvalOutputPath=output/HW1-queries-UB.teIn
 BM25:k_1=1
 BM25:b=0.1

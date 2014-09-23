@@ -10,11 +10,13 @@ package SearchEngine.Assassin;
 import java.util.*;
 import java.io.*;
 
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.*;
 import org.apache.lucene.util.*;
 import org.apache.lucene.search.*;
 
 import javax.print.Doc;
+import javax.swing.text.html.parser.Entity;
 
 public class InvList {
 
@@ -24,6 +26,7 @@ public class InvList {
   public int df = 0;
   public String field;
   public Vector<DocPosting> postings = new Vector<DocPosting>();
+  public ArrayList<SortEntity> targetList;
 
   /**
    *  Constructor.  An empty inverted list. Useful for some query operators.
@@ -128,6 +131,12 @@ public class InvList {
     return this.postings.get(n).tf;
   }
 
+    /**
+     *  Get the scores in the n'th document of the inverted list.
+     *  @param n The index of the requested document term frequency.
+     *  @return The document's freq score.
+     */
+   public double getBM25Freq(int n) {return  this.postings.get(n).frqBM25;}
   /**
    *  Print the inverted list.  This is handy for debugging.
    */
@@ -146,4 +155,24 @@ public class InvList {
       System.out.println();
     }
   }
+
+  public void sort() throws IOException {
+      targetList = new ArrayList<SortEntity>();
+      DocPosting post;
+      SortEntity entity;
+
+//      for(int i = 0; i < this.postings.size(); i++){
+//          post = this.postings.get(i);
+//          entity = new SortEntity(post.getDocid(), getExternalDocid(post.getDocid()), post.frqBM25);
+//          targetList.add(entity);
+//      }
+//      Collections.sort(targetList);
+      Collections.sort(postings);
+  }
+
+   private String getExternalDocid (int iid) throws IOException {
+        Document d = QryEval.READER.document (iid);
+        String eid = d.get("externalId");
+        return eid;
+   }
 }

@@ -1,5 +1,8 @@
 package SearchEngine.Assassin;
 
+import org.apache.lucene.document.Document;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 
@@ -8,12 +11,13 @@ import java.util.Vector;
  */
 //  Utility class that makes it easier to construct postings.
 
-public class DocPosting {
+public class DocPosting implements Comparable<DocPosting>{
 
     public int docid = 0;
     public int tf = 0;
     public Vector<Integer> positions = new Vector<Integer>();
     public int nextPostion;
+    public double frqBM25;
 
     public DocPosting(int d, int... locations) {
         this.docid = d;
@@ -21,6 +25,7 @@ public class DocPosting {
         for (int i = 0; i < locations.length; i++)
             this.positions.add(locations[i]);
         nextPostion = 0;
+        this.frqBM25 = 0;
     }
 
     public DocPosting(int d, List<Integer> locations) {
@@ -29,14 +34,40 @@ public class DocPosting {
         for (int i = 0; i < locations.size(); i++)
             this.positions.add(locations.get(i));
         nextPostion = 0;
+        this.frqBM25 = 0;
     }
 
     public DocPosting(int d){
         this.docid = d;
+        this.frqBM25 = 0;
     }
 
     public DocPosting(){
-
+       this.frqBM25 = 0;
     }
 
+    public int getDocid(){
+        return docid;
+    }
+
+    public int compareTo(DocPosting b) {
+        if(this.frqBM25 == b.frqBM25){
+            String externalIdA = null;
+            String externalIdB = null;
+            try{
+                externalIdA = getExternalDocid(this.getDocid());
+                externalIdB = getExternalDocid(b.getDocid());
+            }catch (Exception e){
+                System.out.println("Failed to get extern id");
+            }
+            return externalIdA.compareTo(externalIdB);
+        }
+        else if(this.frqBM25 < b.frqBM25)   return 1;
+        else return -1;
+    }
+    public String getExternalDocid (int iid) throws IOException {
+        Document d = QryEval.READER.document (iid);
+        String eid = d.get ("externalId");
+        return eid;
+    }
 }

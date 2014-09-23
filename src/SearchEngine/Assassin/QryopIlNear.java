@@ -120,6 +120,7 @@ public class QryopIlNear extends QryopIl {
                 result.invertedList.df++;
                 }
         }
+        freeDaaTPtrs();
         return result;
     }
 
@@ -201,6 +202,7 @@ public class QryopIlNear extends QryopIl {
                 break ;
             }
         }
+        freeDaaTPtrs();
         return result;
     }
 
