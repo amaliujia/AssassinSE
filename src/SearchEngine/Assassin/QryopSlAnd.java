@@ -3,10 +3,7 @@
  */
 package SearchEngine.Assassin;
 
-import sun.misc.Sort;
-
 import java.io.*;
-import java.util.*;
 
 public class QryopSlAnd extends QryopSl{
 

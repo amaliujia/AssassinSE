@@ -9,6 +9,7 @@ package SearchEngine.Assassin;
 import java.io.*;
 import java.util.*;
 
+
 public class QryopSlScore extends QryopSl {
 
   /**
@@ -80,11 +81,6 @@ public class QryopSlScore extends QryopSl {
            double docScore = (double)Math.log(((double)N - df + 0.5)/(df + 0.5)) *
                    ((tf)/(tf + k1 * ((1.0-b)+b*((double)docLen/avgLen))))*
                    ((k1 + 1.0) * 1.0)/(k3 + 1.0);
-//                   (double)Math.log(((double)N - df + 0.5)/(df + 0.5)) *
-//                   ((tf)/(tf + k1 * ((1.0-b)+b*((double)docLen/(int)avgLen)))) *
-//                   (((k1 + 1.0) * 1.0)/(k3 + 1.0));
-         //  if(g < 20) {System.out.println(result.invertedList.getDocid(i) + "  " + docScore);g++;}
-           //if(g == 0) {System.out.println(N + "  " + df + "  " + field + "  " + docLen + "  " + avgLen + " " + tf); g++;}
            result.docScores.add(docid, docScore);
        }
 

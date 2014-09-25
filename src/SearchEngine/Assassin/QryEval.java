@@ -11,7 +11,6 @@ package SearchEngine.Assassin;
 
 import java.io.*;
 import java.util.*;
-import java.util.Map.Entry;
 
 import org.apache.lucene.analysis.Analyzer.TokenStreamComponents;
 import org.apache.lucene.analysis.TokenStream;
