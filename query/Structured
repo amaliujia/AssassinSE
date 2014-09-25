@@ -1,3 +1,6 @@
+1:#AND(brooks.title brothers.title) clearance
+149:#OR(#AND(uplift at #NEAR/5(yellowstone national park)) #AND(uplift at #NEAR/10(yellowstone #NEAR/2(national park))))
+190:#OR(#AND(#NEAR/2(brooks brothers) clearance) #AND(brooks.url brothers.url))
 10:#AND( #NEAR/1(cheap internet))
 12:#OR(djs)
 26:#AND(lower #NEAR/1(heart.title rate.title))

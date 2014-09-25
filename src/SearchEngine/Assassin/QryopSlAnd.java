@@ -118,7 +118,6 @@ public QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException {
         }
 
         freeDaaTPtrs ();
-       // result.sort();
         return result;
     }
 

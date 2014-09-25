@@ -118,6 +118,9 @@ public class QryEval {
         dataCenter.k1 = Double.parseDouble(params.get("BM25:k_1"));
         dataCenter.b = Double.parseDouble(params.get("BM25:b"));
         dataCenter.k3 = Double.parseDouble(params.get("BM25:k_3"));
+//        if(dataCenter.k1 == 0 || dataCenter.b == 0 || dataCenter.k3 == 0) {
+//             System.out.println("BM25 parameters lost");
+//        }
         System.out.println("BM25 parameters  " + dataCenter.k1 + "  " + dataCenter.b + "  " + dataCenter.k3);
     }
 
@@ -227,7 +230,7 @@ public class QryEval {
 
     Qryop currentOp = null;
     Stack<Qryop> stack = new Stack<Qryop>();
-
+    stack.push(new QryopSlOR());
     // Add a default query operator to an unstructured query. This
     // is a tiny bit easier if unnecessary whitespace is removed.
 
@@ -236,8 +239,14 @@ public class QryEval {
         if (qString.charAt(0) != '#') {
             qString = "#OR(" + qString + ")";
         }
+        if(qString.charAt(qString.length() - 1) != ')'){
+           qString = "#OR(" + qString + ")";
+        }
     } else if(model instanceof RetrievalModelBM25) {
         if (qString.charAt(0) != '#') {
+            qString = "#SUM(" + qString + ")";
+        }
+        if(qString.charAt(qString.length() - 1) != ')'){
             qString = "#SUM(" + qString + ")";
         }
     } else {
@@ -271,7 +280,11 @@ public class QryEval {
       }else if(dealNear[0].equalsIgnoreCase("#SUM")){
         currentOp = new QryopIlSum();
         stack.push(currentOp);
+      }else if(dealNear[0].equalsIgnoreCase("#SYN")) {
+        currentOp = new QryopIlSyn();
+        stack.push(currentOp);
       }else if (dealNear[0].startsWith(")")) { // Finish current query operator.
+
         // If the current query operator is not an argument to
         // another query operator (i.e., the stack is empty when it
         // is removed), we're done (assuming correct syntax - see
@@ -289,19 +302,16 @@ public class QryEval {
         //arg.evaluate(model);
         currentOp.add(arg);
       } else {
-         String[] c = tokenizeQuery(token);
-
-        // NOTE: You should do lexical processing of the token before
-        // creating the query term, and you should check to see whether
-        // the token specifies a particular field (e.g., apple.title).
-         if(c.length != 0){
-             String[] fieldName = token.split("\\.");
-                if(fieldName.length == 1)
-                    currentOp.add(new QryopIlTerm(c[0]));
-                else
-                    currentOp.add(new QryopIlTerm(fieldName[0], fieldName[1]));
+         String[] fieldName = token.split("\\.");
+         if(fieldName.length == 1){
+             String[] c = tokenizeQuery(fieldName[0]);
+             if(c.length != 0)
+                currentOp.add(new QryopIlTerm(c[0]));
+         }else{
+             String[] c = tokenizeQuery(fieldName[0]);
+             if(c.length != 0)
+                currentOp.add(new QryopIlTerm(c[0], fieldName[1]));
          }
-
       }
     }
 
@@ -309,7 +319,14 @@ public class QryEval {
     // stack, so check for that.
 
     if (tokens.hasMoreTokens()) {
-      System.err.println("Error:  Query syntax is incorrect.  " + qString);
+      //System.err.println("Error:  Query syntax is incorrect.  " + qString);
+      if(model instanceof RetrievalModelBM25){
+          qString = "#SUM(" + qString + ")";
+          return parseQuery(qString, model);
+      }else if(model instanceof RetrievalModelRankedBoolean || model instanceof RetrievalModelUnrankedBoolean) {
+          qString = "#OR(" + qString + ")";
+          return parseQuery(qString, model);
+      }
       return null;
     }
 
@@ -356,13 +373,18 @@ public class QryEval {
      *  results that you retrieved above.  This code just allows the
      *  testing infrastructure to work on QryEval.
      */
-      if (qTree instanceof QryopSl) {
+     // if (qTree instanceof QryopSl) {
           try {
               if (result.docScores.scores.size() < 1) {
                   writer.write(queryID + "\tQ0\tdummy\t1\t0\trun-1\n");
               } else {
                   HashMap<String, Double> map = new HashMap<String, Double>();
                   for(int i = 0; i < result.docScores.scores.size(); i++){
+//                      if(result.docScores.getDocidScore(i) > 16){
+//
+//                          System.out.println(QryEval.getExternalDocid(result.docScores.scores.get(i).getDocid()) + "  " + result.docScores.scores.get(i).getDocid()+ "   " +result.docScores.getDocidScore(i));
+//
+//                      }
                       map.put(getExternalDocid(result.docScores.scores.get(i).getDocid()), result.docScores.getDocidScore(i));
                   }
                   List<Map.Entry<String, Double>> folder = new ArrayList<Map.Entry<String, Double>>(map.entrySet());
@@ -370,7 +392,9 @@ public class QryEval {
                       public int compare(Map.Entry<String, Double> e1,
                                          Map.Entry<String, Double> e2) {
                           if(!e1.getValue().equals(e2.getValue())) {
-                              return (int) (e2.getValue() - e1.getValue());
+//                              return (int) (e2.getValue() - e1.getValue());
+                              if(e2.getValue() > e1.getValue()) return 1;
+                              else return -1;
                           }
                           else
                               return (e1.getKey()).toString().compareTo(e2.getKey().toString());
@@ -390,54 +414,54 @@ public class QryEval {
           } catch (Exception e) {
               e.printStackTrace();
           }
-      }else if(qTree instanceof QryopIl){
-           if(qTree instanceof QryopIlSum){
-               try {
-                   if (result.invertedList.postings.size() < 1) {
-                       writer.write(queryID + "\tQ0\tdummy\t1\t0\trun-1\n");
-                   } else {
-                        HashMap<String, Double> map = new HashMap<String, Double>();
-                        for(int i = 0; i < result.invertedList.postings.size(); i++){
-                            map.put(getExternalDocid(result.invertedList.postings.get(i).getDocid()), result.invertedList.postings.get(i).frqBM25);
-                        }
-                       List<Map.Entry<String, Double>> folder = new ArrayList<Map.Entry<String, Double>>(map.entrySet());
-                       Collections.sort(folder, new Comparator<Map.Entry<String, Double>>() {
-                           public int compare(Map.Entry<String, Double> e1,
-                                              Map.Entry<String, Double> e2) {
-                               if(!e1.getValue().equals(e2.getValue())) {
-                                   return (int) (e2.getValue() - e1.getValue());
-                               }
-                               else
-                                   return (e1.getKey()).toString().compareTo(e2.getKey().toString());
-                           }
-                       });
-                       for (int i = 0; i < folder.size() && i < 100; i++){
-                           writer.write(queryID + "\tQ0\t"
-                                   + folder.get(i).getKey()
-                                   + "\t"
-                                   + (i + 1)
-                                   + "\t"
-                                   +  folder.get(i).getValue()
-                                   + "\trun-1\n");
-                       }
-//                       for (int i = 0; i < result.invertedList.postings.size() && i < 100; i++) {
-//                          // SortEntity entity = result.invertedList.targetList.get(i);
-//                            DocPosting entity = result.invertedList.postings.get(i);
+//      }else if(qTree instanceof QryopIl){
+//          // if(qTree instanceof QryopIlSum){
+//               try {
+//                   if (result.invertedList.postings.size() < 1) {
+//                       writer.write(queryID + "\tQ0\tdummy\t1\t0\trun-1\n");
+//                   } else {
+//                        HashMap<String, Double> map = new HashMap<String, Double>();
+//                        for(int i = 0; i < result.invertedList.postings.size(); i++){
+//                            map.put(getExternalDocid(result.invertedList.postings.get(i).getDocid()), result.invertedList.postings.get(i).frqBM25);
+//                        }
+//                       List<Map.Entry<String, Double>> folder = new ArrayList<Map.Entry<String, Double>>(map.entrySet());
+//                       Collections.sort(folder, new Comparator<Map.Entry<String, Double>>() {
+//                           public int compare(Map.Entry<String, Double> e1,
+//                                              Map.Entry<String, Double> e2) {
+//                               if(!e1.getValue().equals(e2.getValue())) {
+//                                   return (int) (e2.getValue() - e1.getValue());
+//                               }
+//                               else
+//                                   return (e1.getKey()).toString().compareTo(e2.getKey().toString());
+//                           }
+//                       });
+//                       for (int i = 0; i < folder.size() && i < 100; i++){
 //                           writer.write(queryID + "\tQ0\t"
-//                                   + entity.getExternalDocid(entity.getDocid())
+//                                   + folder.get(i).getKey()
 //                                   + "\t"
 //                                   + (i + 1)
 //                                   + "\t"
-//                                   + entity.frqBM25
+//                                   +  folder.get(i).getValue()
 //                                   + "\trun-1\n");
 //                       }
-
-                   }
-               } catch (Exception e) {
-                   e.printStackTrace();
-               }
-           }
-      }
+////                       for (int i = 0; i < result.invertedList.postings.size() && i < 100; i++) {
+////                          // SortEntity entity = result.invertedList.targetList.get(i);
+////                            DocPosting entity = result.invertedList.postings.get(i);
+////                           writer.write(queryID + "\tQ0\t"
+////                                   + entity.getExternalDocid(entity.getDocid())
+////                                   + "\t"
+////                                   + (i + 1)
+////                                   + "\t"
+////                                   + entity.frqBM25
+////                                   + "\trun-1\n");
+////                       }
+//
+//                   }
+//               } catch (Exception e) {
+//                   e.printStackTrace();
+//               }
+//           }
+  //    }
   }
 
   /**

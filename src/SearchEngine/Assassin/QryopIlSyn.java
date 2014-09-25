@@ -91,7 +91,6 @@ public class QryopIlSyn extends QryopIl {
     }
 
     freeDaaTPtrs();
-
     return result;
   }
 

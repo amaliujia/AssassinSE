@@ -33,7 +33,7 @@ public class QryopSlScore extends QryopSl {
   /**
    *  Appends an argument to the list of query operator arguments.  This
    *  simplifies the design of some query parsing architectures.
-   *  @param q The query argument to append.
+   *  @param a The query argument to append.
    */
   public void add (Qryop a) {
     this.args.add(a);
@@ -51,9 +51,49 @@ public class QryopSlScore extends QryopSl {
       return (evaluateBoolean (r));
     else if(r instanceof RetrievalModelRankedBoolean){
       return (evaluateRankedBoolean(r));
+    }else if(r instanceof RetrievalModelBM25){
+       return (evaluateBM25(r));
     }
     return null;
   }
+
+    /**
+     * @param r
+     * @return
+     * @throws IOException
+     */
+    public QryResult evaluateBM25(RetrievalModel r) throws IOException{
+       DataCenter dataCenter = DataCenter.sharedDataCenter();
+       QryResult result = args.get(0).evaluate(r);
+        int N = dataCenter.numDocs;
+        int df =  result.invertedList.df;
+        String field = result.invertedList.field;
+        double k1 = dataCenter.k1;
+        double k3 = dataCenter.k3;
+        double b = dataCenter.b;
+        int g = 0;
+        double avgLen = QryEval.READER.getSumTotalTermFreq(field) / QryEval.READER.getDocCount(field);
+       for(int i = 0; i < result.invertedList.df; i++){
+           int docid = result.invertedList.getDocid(i);
+           int tf = result.invertedList.getTf(i);
+           long docLen = dataCenter.docLengthStore.getDocLength(field, docid);
+           double docScore = (double)Math.log(((double)N - df + 0.5)/(df + 0.5)) *
+                   ((tf)/(tf + k1 * ((1.0-b)+b*((double)docLen/avgLen))))*
+                   ((k1 + 1.0) * 1.0)/(k3 + 1.0);
+//                   (double)Math.log(((double)N - df + 0.5)/(df + 0.5)) *
+//                   ((tf)/(tf + k1 * ((1.0-b)+b*((double)docLen/(int)avgLen)))) *
+//                   (((k1 + 1.0) * 1.0)/(k3 + 1.0));
+         //  if(g < 20) {System.out.println(result.invertedList.getDocid(i) + "  " + docScore);g++;}
+           //if(g == 0) {System.out.println(N + "  " + df + "  " + field + "  " + docLen + "  " + avgLen + " " + tf); g++;}
+           result.docScores.add(docid, docScore);
+       }
+
+        if (result.invertedList.df > 0)
+            result.invertedList = new InvList();
+
+        return result;
+    }
+
 
 
     /**

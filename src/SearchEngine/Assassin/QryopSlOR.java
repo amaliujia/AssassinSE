@@ -36,6 +36,8 @@ public class QryopSlOR extends QryopSl {
       return (evaluateBoolean(r));
     }else if(r instanceof RetrievalModelRankedBoolean){
         return (evaluateRankedBoolean(r));
+    }else if(r instanceof RetrievalModelBM25){
+        return (evaluateRankedBoolean(r));
     }
     return null;
   }
@@ -43,7 +45,9 @@ public class QryopSlOR extends QryopSl {
   public QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException {
       allocDaaTPtrs(r);
       QryResult result = new QryResult();
-
+      if(this.daatPtrs.size() == 1){
+          result.docScores = this.daatPtrs.get(0).scoreList;
+      }
       //  Exact-match OR requires that ALL scoreLists contain a
       //  document id.  Use the first (shortest) list to control the
       //  search for matches.

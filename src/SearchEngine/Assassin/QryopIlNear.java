@@ -30,11 +30,14 @@ public class QryopIlNear extends QryopIl {
 
     @Override
     public QryResult evaluate(RetrievalModel r) throws IOException {
-        if (r instanceof RetrievalModelUnrankedBoolean)
-            return (evaluateBoolean (r));
-        else if(r instanceof RetrievalModelRankedBoolean)
-            return (evaluateRankedBoolean(r));
-        return null;
+//        if (r instanceof RetrievalModelUnrankedBoolean)
+//            return (evaluateRankedBoolean(r));
+//        else if(r instanceof RetrievalModelRankedBoolean)
+//            return (evaluateRankedBoolean(r));
+//        else if(r instanceof RetrievalModelBM25){
+//            return evaluateRankedBoolean(r);
+//        }
+        return (evaluateRankedBoolean(r));
     }
 
     public  QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException{
@@ -54,7 +57,7 @@ public class QryopIlNear extends QryopIl {
                 baseIndex = i;
             }
         }
-
+        result.invertedList.field = basePtr.invList.field;
         EVALUATEDOCUMENTS:
         for ( ; basePtr.nextDoc < basePtr.invList.postings.size(); basePtr.nextDoc++) {
 
@@ -196,9 +199,12 @@ public class QryopIlNear extends QryopIl {
                         }
                     }
                 }
+                //TODO: add postion to #NEAR
                 DocPosting returnPosting = new DocPosting(ptr0.invList.getDocid(ptr0.nextDoc));
+                //for(int z = 0; z < )
                 result.invertedList.postings.add(returnPosting);
-                result.docScores.add(ptr0.invList.getDocid(ptr0.nextDoc), score);
+                result.invertedList.df++;
+                //result.docScores.add(ptr0.invList.getDocid(ptr0.nextDoc), score);
                 break ;
             }
         }

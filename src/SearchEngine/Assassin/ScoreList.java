@@ -25,6 +25,11 @@ public class ScoreList {
       scores.add(new ScoreListEntry(docid, score));
   }
 
+  public void add(int docid, double score, int tf, int df, int docLen, String field, String term){
+      scores.add(new ScoreListEntry(docid, score, tf, df, docLen, field, term));
+  }
+
+
   /**
    *  Get the n'th document id.
    *  @param n The index of the requested document.
@@ -48,4 +53,10 @@ public class ScoreList {
         Collections.sort(scores);
    }
 
+
+    public int getDf(int n)  {return  this.scores.get(n).getDf();}
+    public int getDocLen(int n) { return this.scores.get(n).getDocLen();}
+    public String getField(int n) {return this.scores.get(n).getField();}
+    public String getTerm(int n) {return this.scores.get(n).getTerm();}
+    public int getTf(int n) {return this.scores.get(n).getTf();}
 }
