@@ -27,7 +27,6 @@ public class QryopIlSum extends QryopSl {
         }
     }
 
-    @Override
     public QryResult evaluate(RetrievalModel r) throws IOException {
        allocDaaTPtrs(r);
        QryResult result = new QryResult();
@@ -38,20 +37,16 @@ public class QryopIlSum extends QryopSl {
             DaaTPtr ptrj = this.daatPtrs.get(j);
             while(ptrj.nextDoc < ptrj.scoreList.scores.size()){
                 double score = ptrj.scoreList.getDocidScore(ptrj.nextDoc);
-                int docid = ptrj.scoreList.getDocid(ptrj.nextDoc);
-                if(map.containsKey(docid)){
-                    double updateSocre = score + map.get(docid);
-                    map.put(docid, updateSocre);
+                if(map.containsKey(ptrj.scoreList.getDocid(ptrj.nextDoc))){
+                    double updateSocre = score + map.get(ptrj.scoreList.getDocid(ptrj.nextDoc));
+                    map.put(ptrj.scoreList.getDocid(ptrj.nextDoc), updateSocre);
                 }else{
-                    map.put(docid, score);
+                    map.put(ptrj.scoreList.getDocid(ptrj.nextDoc), score);
                 }
                 ptrj.nextDoc++;
             }
         }
         for (Integer docid : map.keySet()){
-//            if(map.get(docid) > 16) {
-//                System.out.println(QryEval.getExternalDocid(docid) + "  " + docid + "   " + map.get(docid));
-//            }
             result.docScores.add(docid, map.get(docid));
         }
         freeDaaTPtrs();

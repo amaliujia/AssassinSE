@@ -3,6 +3,9 @@ package SearchEngine.Assassin;
  * Created by amaliujia on 14-9-25.
  */
 public class RetrievalModelIndri extends RetrievalModel {
+    public double mu;
+    public double lambda;
+    public String smoothing;
     /**
      *
      * @param parameterName The name of the parameter to set.

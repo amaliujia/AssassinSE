@@ -169,7 +169,8 @@ public class QryopSlOR extends QryopSl {
       freeDaaTPtrs ();
       return result;
   }
-  
+
+
 
   public String toString() {
     String result = new String();

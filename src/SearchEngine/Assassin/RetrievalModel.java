@@ -10,7 +10,8 @@ package SearchEngine.Assassin;
 
 public abstract class RetrievalModel {
 
-  /**
+
+    /**
    *  Set a retrieval model parameter.
    *  @param parameterName The name of the parameter to set.
    *  @param parametervalue The parameter's value.

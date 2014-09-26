@@ -27,7 +27,7 @@ public class DocLengthStore  {
     }
   }
 
-  /**
+  /**                                                                                                                                   System.out.println
    * Returns the length of the specified field in the specified document.
    *
    * @param fieldname Name of field to access lengths. "body" is the default

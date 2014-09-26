@@ -90,17 +90,6 @@ public class QryEval {
     dataCenter.docLengthStore = docLengthStore;
     dataCenter.numDocs = READER.numDocs();
 
-//      System.out.println (docLengthStore.getDocLength("body", 21));
-//
-//      System.out.println ("url:\t" +
-//              "numdocs=" +
-//              QryEval.READER.getDocCount ("url") + "\t" +
-//              "sumTotalTF=" +
-//              QryEval.READER.getSumTotalTermFreq("url") + "\t" +
-//              "avglen="+
-//              QryEval.READER.getSumTotalTermFreq("url") /
-//                      (float) QryEval.READER.getDocCount ("url"));
-
     //RetrievalModel model = null;
     String modelType = params.get("retrievalAlgorithm");
     if(modelType.equals("UnrankedBoolean"))
@@ -119,10 +108,11 @@ public class QryEval {
         dataCenter.k1 = Double.parseDouble(params.get("BM25:k_1"));
         dataCenter.b = Double.parseDouble(params.get("BM25:b"));
         dataCenter.k3 = Double.parseDouble(params.get("BM25:k_3"));
-//        if(dataCenter.k1 == 0 || dataCenter.b == 0 || dataCenter.k3 == 0) {
-//             System.out.println("BM25 parameters lost");
-//        }
         System.out.println("BM25 parameters  " + dataCenter.k1 + "  " + dataCenter.b + "  " + dataCenter.k3);
+    }else if(model instanceof RetrievalModelIndri){
+        ((RetrievalModelIndri)model).mu = Double.parseDouble(params.get("Indri:mu"));
+        ((RetrievalModelIndri) model).lambda = Double.parseDouble(params.get("Indri:lambda"));
+        ((RetrievalModelIndri) model).smoothing = params.get("Indri:smoothing");
     }
 
     if(model == null){
@@ -169,6 +159,7 @@ public class QryEval {
       }catch (Exception e){
         System.out.println("error: close files");
       }
+      printMemoryUsage(true);
   }
 
   /**
@@ -250,8 +241,13 @@ public class QryEval {
         if(qString.charAt(qString.length() - 1) != ')'){
             qString = "#SUM(" + qString + ")";
         }
-    } else {
-
+    } else if (model instanceof  RetrievalModelIndri){
+        if (qString.charAt(0) != '#'){
+            qString = "#AND(" + qString + ")";
+        }
+        if(qString.charAt(qString.length() - 1) != ')'){
+            qString = "#AND(" + qString + ")";
+        }
     }
     // Tokenize the query.
 
@@ -381,12 +377,6 @@ public class QryEval {
               } else {
                   HashMap<String, Double> map = new HashMap<String, Double>();
                   for(int i = 0; i < result.docScores.scores.size(); i++){
-//                      if(result.docScores.getDocidScore(i) > 16){
-//
-//                          System.out.println(QryEval.getExternalDocid(result.docScores.scores.get(i).getDocid()) + "  " + result.docScores.scores.get(i).getDocid()+ "   " +result.docScores.getDocidScore(i));
-//
-//                      }
-                      System.out.println(result.docScores.scores.get(i).getDocid());
                       map.put(getExternalDocid(result.docScores.scores.get(i).getDocid()), result.docScores.getDocidScore(i));
                   }
                   List<Map.Entry<String, Double>> folder = new ArrayList<Map.Entry<String, Double>>(map.entrySet());
@@ -416,6 +406,7 @@ public class QryEval {
           } catch (Exception e) {
               e.printStackTrace();
           }
+
   }
 
   /**

@@ -12,6 +12,9 @@ import java.util.*;
 
 public class QryopSlScore extends QryopSl {
 
+   public int ctf;
+   String filed;
+
   /**
    *  Construct a new SCORE operator.  The SCORE operator accepts just
    *  one argument.
@@ -54,9 +57,34 @@ public class QryopSlScore extends QryopSl {
       return (evaluateRankedBoolean(r));
     }else if(r instanceof RetrievalModelBM25){
        return (evaluateBM25(r));
+    }else if(r instanceof RetrievalModelIndri){
+        return (evaluateIndri(r));
     }
     return null;
   }
+
+    /**
+     *
+     * @param r
+     * @return
+     * @throws IOException
+     */
+    public QryResult evaluateIndri(RetrievalModel r) throws IOException{
+        QryResult result = args.get(0).evaluate(r);
+        this.filed = result.invertedList.field;
+
+        for(int i = 0; i < result.invertedList.postings.size(); i++){
+            int docid = result.invertedList.getDocid(i);
+            int tf = result.invertedList.getTf(i);
+            ctf += i;
+            result.docScores.add(docid, tf);
+        }
+
+        if(result.invertedList.df > 0){
+            result.invertedList = new InvList();
+        }
+        return result;
+    }
 
     /**
      * @param r
@@ -66,21 +94,21 @@ public class QryopSlScore extends QryopSl {
     public QryResult evaluateBM25(RetrievalModel r) throws IOException{
        DataCenter dataCenter = DataCenter.sharedDataCenter();
        QryResult result = args.get(0).evaluate(r);
-        int N = dataCenter.numDocs;
-        int df =  result.invertedList.df;
-        String field = result.invertedList.field;
-        double k1 = dataCenter.k1;
-        double k3 = dataCenter.k3;
-        double b = dataCenter.b;
-        int g = 0;
-        double avgLen = QryEval.READER.getSumTotalTermFreq(field) / QryEval.READER.getDocCount(field);
+       int N = dataCenter.numDocs;
+       int df =  result.invertedList.df;
+       String field = result.invertedList.field;
+       double k1 = dataCenter.k1;
+       double k3 = dataCenter.k3;
+       double b = dataCenter.b;
+       double avgLen = QryEval.READER.getSumTotalTermFreq(field) / QryEval.READER.getDocCount(field);
+
        for(int i = 0; i < result.invertedList.df; i++){
            int docid = result.invertedList.getDocid(i);
            int tf = result.invertedList.getTf(i);
            long docLen = dataCenter.docLengthStore.getDocLength(field, docid);
-           double docScore = (double)Math.log(((double)N - df + 0.5)/(df + 0.5)) *
-                   ((tf)/(tf + k1 * ((1.0-b)+b*((double)docLen/avgLen))))*
-                   ((k1 + 1.0) * 1.0)/(k3 + 1.0);
+           double docScore = Math.log((N - df + 0.5)/(df + 0.5)) *
+                   (tf / (tf + k1 * ((1.0 - b) + b * (docLen / avgLen)))) *
+                   ((k1 + 1.0) * 1.0) / (k3 + 1.0);
            result.docScores.add(docid, docScore);
        }
 
@@ -104,17 +132,10 @@ public class QryopSlScore extends QryopSl {
 
         QryResult result = args.get(0).evaluate(r);
 
-        // Each pass of the loop computes a score for one document. Note:
-        // If the evaluate operation above returned a score list (which is
-        // very possible), this loop gets skipped.
-
         for (int i = 0; i < result.invertedList.df; i++) {
             result.docScores.add(result.invertedList.postings.get(i).docid,
                     result.invertedList.postings.get(i).tf);
         }
-
-        // The SCORE operator should not return a populated inverted list.
-        // If there is one, replace it with an empty inverted list.
 
         if (result.invertedList.df > 0)
             result.invertedList = new InvList();
@@ -134,21 +155,10 @@ public class QryopSlScore extends QryopSl {
 
     QryResult result = args.get(0).evaluate(r);
 
-    // Each pass of the loop computes a score for one document. Note:
-    // If the evaluate operation above returned a score list (which is
-    // very possible), this loop gets skipped.
-
     for (int i = 0; i < result.invertedList.df; i++) {
-
-      // DIFFERENT RETRIEVAL MODELS IMPLEMENT THIS DIFFERENTLY. 
-      // Unranked Boolean. All matching documents get a score of 1.0.
-
       result.docScores.add(result.invertedList.postings.get(i).docid,
 			   (float) 1.0);
     }
-
-    // The SCORE operator should not return a populated inverted list.
-    // If there is one, replace it with an empty inverted list.
 
     if (result.invertedList.df > 0)
 	result.invertedList = new InvList();
@@ -156,6 +166,11 @@ public class QryopSlScore extends QryopSl {
     return result;
   }
 
+
+//   public QryResult evaluateIndri(RetrievalModel r){
+//       QryResult result
+//
+//   }
   /*
    *  Calculate the default score for a document that does not match
    *  the query argument.  This score is 0 for many retrieval models,

@@ -48,19 +48,7 @@ public class DocPosting implements Comparable<DocPosting>{
 
     public int compareTo(DocPosting b) {
         return 0;
-//        if(this.frqBM25 == b.frqBM25){
-//            String externalIdA = null;
-//            String externalIdB = null;
-//            try{
-//                externalIdA = getExternalDocid(this.getDocid());
-//                externalIdB = getExternalDocid(b.getDocid());
-//            }catch (Exception e){
-//                System.out.println("Failed to get extern id");
-//            }
-//            return externalIdA.compareTo(externalIdB);
-//        }
-//        else if(this.frqBM25 < b.frqBM25)   return 1;
-//        else return -1;
+
     }
     public String getExternalDocid (int iid) throws IOException {
         Document d = QryEval.READER.document (iid);
