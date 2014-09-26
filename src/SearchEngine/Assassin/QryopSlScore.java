@@ -109,9 +109,6 @@ public class QryopSlScore extends QryopSl {
         // very possible), this loop gets skipped.
 
         for (int i = 0; i < result.invertedList.df; i++) {
-
-            // DIFFERENT RETRIEVAL MODELS IMPLEMENT THIS DIFFERENTLY.
-
             result.docScores.add(result.invertedList.postings.get(i).docid,
                     result.invertedList.postings.get(i).tf);
         }

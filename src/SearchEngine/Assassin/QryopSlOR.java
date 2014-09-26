@@ -46,6 +46,7 @@ public class QryopSlOR extends QryopSl {
       QryResult result = new QryResult();
       if(this.daatPtrs.size() == 1){
           result.docScores = this.daatPtrs.get(0).scoreList;
+          return result;
       }
       //  Exact-match OR requires that ALL scoreLists contain a
       //  document id.  Use the first (shortest) list to control the
@@ -105,9 +106,7 @@ public class QryopSlOR extends QryopSl {
               break;
           }
       }
-
       freeDaaTPtrs ();
-     // result.sort();
       return result;
   }
 
@@ -168,7 +167,6 @@ public class QryopSlOR extends QryopSl {
          }
 
       freeDaaTPtrs ();
-      //result.sort();
       return result;
   }
   

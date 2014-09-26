@@ -95,16 +95,15 @@ public class QryopIlNear extends QryopIl {
                     DaaTPtr ptrj = this.daatPtrs.get(j);
                     DocPosting postj = ptrj.invList.postings.get(ptrj.nextDoc);
                     while (true){
-                        if(postj.nextPostion >= postj.positions.size()){
-                           // post.nextPostion = post.positions.size();
+                        if(postj.nextPostion >= postj.positions.size()){  // cannot match
                             break OK ;
-                        }else if(postj.positions.get(postj.nextPostion) <= first){
+                        }else if(postj.positions.get(postj.nextPostion) <= first){ // too small
                             postj.nextPostion++;
                             continue;
-                        }else if(postj.positions.get(postj.nextPostion) <= (first + this.distance)){
+                        }else if(postj.positions.get(postj.nextPostion) <= (first + this.distance)){ // match
                             first = postj.positions.get(postj.nextPostion);
                             break;
-                        }else{
+                        }else{ // try next combination
                             continue OK;
                         }
                     }
@@ -115,7 +114,10 @@ public class QryopIlNear extends QryopIl {
                 }
                 returnPosting.tf++;
                 returnPosting.positions.add(this.daatPtrs.get(this.daatPtrs.size() - 1).invList.postings.get(this.daatPtrs.get(this.daatPtrs.size() - 1).nextDoc).positions.get(this.daatPtrs.get(this.daatPtrs.size() - 1).invList.postings.get(this.daatPtrs.get(this.daatPtrs.size() - 1).nextDoc).nextPostion));
-
+                 for(int z = 1; z < this.daatPtrs.size(); z++){
+                     DaaTPtr ptrz = this.daatPtrs.get(z);
+                     ptrz.invList.postings.get(ptrz.nextDoc).nextPostion++;
+                 }
               }
 
                if(isFirst == 1) {
@@ -130,7 +132,6 @@ public class QryopIlNear extends QryopIl {
     public QryResult evaluateBoolean(RetrievalModel r) throws IOException{
         allocDaaTPtrs(r);
         syntaxCheckArgResults(this.daatPtrs);
-
         QryResult result = new QryResult();
 
         // Sort list first, use the shortest one as base

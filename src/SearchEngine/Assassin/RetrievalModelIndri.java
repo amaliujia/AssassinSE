@@ -1,5 +1,4 @@
 package SearchEngine.Assassin;
-
 /**
  * Created by amaliujia on 14-9-25.
  */

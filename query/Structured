@@ -11,3 +11,15 @@
 102:#AND(#NEAR/1(fickle creek farm))
 149:#AND(uplift at yellowstone.keywords #NEAR/1(national park))
 190:#AND( #NEAR/1(brooks brothers) clearance)
+
+102:#NEAR/10(fickle creek farm)
+12:djs
+10:#NEAR/3(cheap internet)
+26:#AND(lower #NEAR/5(heart rate))
+29:#NEAR/2(ps 2) games
+33:#NEAR/5(elliptical trainer)
+52:avp
+71:#AND(living in india)
+149:#OR(uplift at #NEAR/5(yellowstone national park))
+190:#NEAR/2(brooks brothers) clearance
+149:#OR(#AND(uplift at #NEAR/5(yellowstone national park)) #AND(uplift at #NEAR/10(yellowstone #NEAR/2(national park))))

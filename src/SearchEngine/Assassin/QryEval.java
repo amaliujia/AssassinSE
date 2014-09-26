@@ -109,7 +109,9 @@ public class QryEval {
             model = new RetrievalModelRankedBoolean();
     else if(modelType.equals("BM25")) {
             model = new RetrievalModelBM25();
-    }else {
+    }else if(modelType.equals("Indri")){
+            model = new RetrievalModelIndri();
+    }else{
         return;
     }
 
@@ -384,6 +386,7 @@ public class QryEval {
 //                          System.out.println(QryEval.getExternalDocid(result.docScores.scores.get(i).getDocid()) + "  " + result.docScores.scores.get(i).getDocid()+ "   " +result.docScores.getDocidScore(i));
 //
 //                      }
+                      System.out.println(result.docScores.scores.get(i).getDocid());
                       map.put(getExternalDocid(result.docScores.scores.get(i).getDocid()), result.docScores.getDocidScore(i));
                   }
                   List<Map.Entry<String, Double>> folder = new ArrayList<Map.Entry<String, Double>>(map.entrySet());
@@ -413,54 +416,6 @@ public class QryEval {
           } catch (Exception e) {
               e.printStackTrace();
           }
-//      }else if(qTree instanceof QryopIl){
-//          // if(qTree instanceof QryopIlSum){
-//               try {
-//                   if (result.invertedList.postings.size() < 1) {
-//                       writer.write(queryID + "\tQ0\tdummy\t1\t0\trun-1\n");
-//                   } else {
-//                        HashMap<String, Double> map = new HashMap<String, Double>();
-//                        for(int i = 0; i < result.invertedList.postings.size(); i++){
-//                            map.put(getExternalDocid(result.invertedList.postings.get(i).getDocid()), result.invertedList.postings.get(i).frqBM25);
-//                        }
-//                       List<Map.Entry<String, Double>> folder = new ArrayList<Map.Entry<String, Double>>(map.entrySet());
-//                       Collections.sort(folder, new Comparator<Map.Entry<String, Double>>() {
-//                           public int compare(Map.Entry<String, Double> e1,
-//                                              Map.Entry<String, Double> e2) {
-//                               if(!e1.getValue().equals(e2.getValue())) {
-//                                   return (int) (e2.getValue() - e1.getValue());
-//                               }
-//                               else
-//                                   return (e1.getKey()).toString().compareTo(e2.getKey().toString());
-//                           }
-//                       });
-//                       for (int i = 0; i < folder.size() && i < 100; i++){
-//                           writer.write(queryID + "\tQ0\t"
-//                                   + folder.get(i).getKey()
-//                                   + "\t"
-//                                   + (i + 1)
-//                                   + "\t"
-//                                   +  folder.get(i).getValue()
-//                                   + "\trun-1\n");
-//                       }
-////                       for (int i = 0; i < result.invertedList.postings.size() && i < 100; i++) {
-////                          // SortEntity entity = result.invertedList.targetList.get(i);
-////                            DocPosting entity = result.invertedList.postings.get(i);
-////                           writer.write(queryID + "\tQ0\t"
-////                                   + entity.getExternalDocid(entity.getDocid())
-////                                   + "\t"
-////                                   + (i + 1)
-////                                   + "\t"
-////                                   + entity.frqBM25
-////                                   + "\trun-1\n");
-////                       }
-//
-//                   }
-//               } catch (Exception e) {
-//                   e.printStackTrace();
-//               }
-//           }
-  //    }
   }
 
   /**
