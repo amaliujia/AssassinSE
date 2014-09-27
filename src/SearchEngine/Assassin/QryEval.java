@@ -134,7 +134,7 @@ public class QryEval {
        fileReader = new InputStreamReader(f);
        bufferReader = new BufferedReader(fileReader);
        while((str = bufferReader.readLine()) != null){
-         if(str.length() <= 5)  continue;
+         if(str.length() <= 2)  continue;
          String[] queryPair=  str.split(":");
          keys.add(queryPair[0]);
          queries.add(queryPair[1]);
@@ -216,7 +216,7 @@ public class QryEval {
    * 
    * @param qString
    *          A string containing a query.
-   * @throws IOException
+   * @throws IOException                                                            `
    */
   static Qryop parseQuery(String qString, RetrievalModel model) throws IOException {
 

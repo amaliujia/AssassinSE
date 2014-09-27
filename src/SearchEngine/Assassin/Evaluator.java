@@ -33,7 +33,7 @@ public class Evaluator {
             String s1 = scanner.nextLine();
             String s2 = scanner1.nextLine();
             String[] t1 = s1.split("\t");
-            String[] t2 = s2.split("\t");
+            String[] t2 = s2.split(" ");
             if(t1[2].equals(t2[2])){
                 hit++;
             }

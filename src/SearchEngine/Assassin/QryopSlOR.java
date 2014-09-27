@@ -172,7 +172,6 @@ public class QryopSlOR extends QryopSl {
                  break;
              }
          }
-
       freeDaaTPtrs ();
       return result;
   }

@@ -4,6 +4,7 @@
 package SearchEngine.Assassin;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.Map;
 
 public class QryopSlAnd extends QryopSl{
@@ -51,16 +52,16 @@ public class QryopSlAnd extends QryopSl{
     public QryResult evaluateIndri(RetrievalModel r) throws  IOException{
         allocDaaTPtrs(r);
         QryResult result = new QryResult();
-
+        HashMap<Double, Integer> map = new HashMap<Double, Integer>();
         DaaTPtr currentPtr = null;
         int currentID = -1;
         int []a = new int[this.daatPtrs.size()];
+        int c = 0;
         for(int i = 0; i < this.daatPtrs.size(); i++)  a[i] = -1;
 
         while(true) {
             int smallestForThisIteration = Integer.MAX_VALUE;
-            currentPtr = null;
-            double docScore = 1;
+
             for (int j = 0; j < this.daatPtrs.size(); j++) {
                 if (a[j] == -1) {
                     DaaTPtr ptrj = this.daatPtrs.get(j);
@@ -81,29 +82,33 @@ public class QryopSlAnd extends QryopSl{
                     }
                 }
             }
+            double docScore = 1.0;
+
             if(smallestForThisIteration != Integer.MAX_VALUE){
+//                if(QryEval.getExternalDocid(smallestForThisIteration).equals("clueweb09-enwp00-44-01825")){
+//                    System.out.println("Get you");
+//                }
                 for(int z = 0; z < this.daatPtrs.size(); z++){
-                   DaaTPtr ptrz = this.daatPtrs.get(z);
-                   int docid = ptrz.scoreList.getDocid(z);
-                   if(docid == smallestForThisIteration){
-                        double temp =  (Math.pow(ptrz.scoreList.getDocidScore(ptrz.nextDoc), (1.0 / this.args.size())));
-                        docScore =  docScore * temp;
-                        ptrz.nextDoc++;
+                   if(a[z] == -1) {
+                       DaaTPtr ptrz = this.daatPtrs.get(z);
+                       int docid = ptrz.scoreList.getDocid(ptrz.nextDoc);
+                       if (docid == smallestForThisIteration) {
+                           double t = ptrz.scoreList.getDocidScore(ptrz.nextDoc);
+                           double temp = (Math.pow(t, (1.0 / this.args.size())));
+                           docScore *= temp;
+                           ptrz.nextDoc++;
+                       } else {
+                           double temp = (Math.pow(((QryopSl) this.args.get(z)).getDefaultScore(r, smallestForThisIteration), (1.0 / this.args.size())));
+                           docScore *= temp;
+                       }
                    }else{
-                       double temp = (Math.pow(((QryopSl)this.args.get(z)).getDefaultScore(r, docid), (1.0 / this.args.size())));
-                       docScore =  docScore * temp;
+                       double temp = (Math.pow(((QryopSl) this.args.get(z)).getDefaultScore(r, smallestForThisIteration), (1.0 / this.args.size())));
+                       docScore *= temp;
                    }
                 }
                 currentID = smallestForThisIteration;
                 result.docScores.add(smallestForThisIteration, docScore);
             }
-
-
-//            if (currentPtr != null) {
-//                result.docScores.add(currentPtr.scoreList.getDocid(currentPtr.nextDoc), docScore);
-//                currentID = smallestForThisIteration;
-//                currentPtr.nextDoc++;
-//            }
             int count = 0;
             for (; count < this.daatPtrs.size(); count++) {
                 if (a[count] == -1) {
