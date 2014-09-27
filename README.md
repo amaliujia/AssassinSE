@@ -19,3 +19,6 @@ Milestones
 6. Support BM25 Best-Match Retrieval Model.
 
 7. Support nested #NEAR operations
+
+8. Indri 
+
