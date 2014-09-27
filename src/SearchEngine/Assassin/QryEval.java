@@ -222,7 +222,8 @@ public class QryEval {
 
     Qryop currentOp = null;
     Stack<Qryop> stack = new Stack<Qryop>();
-    stack.push(new QryopSlOR());
+    if(!(model instanceof RetrievalModelIndri))
+       stack.push(new QryopSlOR());
     // Add a default query operator to an unstructured query. This
     // is a tiny bit easier if unnecessary whitespace is removed.
 
@@ -302,12 +303,14 @@ public class QryEval {
          String[] fieldName = token.split("\\.");
          if(fieldName.length == 1){
              String[] c = tokenizeQuery(fieldName[0]);
-             if(c.length != 0)
-                currentOp.add(new QryopIlTerm(c[0]));
+             if(c.length != 0) {
+                 currentOp.add(new QryopIlTerm(c[0]));
+             }
          }else{
              String[] c = tokenizeQuery(fieldName[0]);
-             if(c.length != 0)
-                currentOp.add(new QryopIlTerm(c[0], fieldName[1]));
+             if(c.length != 0) {
+                 currentOp.add(new QryopIlTerm(c[0], fieldName[1]));
+             }
          }
       }
     }
@@ -323,10 +326,12 @@ public class QryEval {
       }else if(model instanceof RetrievalModelRankedBoolean || model instanceof RetrievalModelUnrankedBoolean) {
           qString = "#OR(" + qString + ")";
           return parseQuery(qString, model);
+      }else if(model instanceof RetrievalModelIndri){
+          qString  = "#AND(" + qString + ")";
+          return parseQuery(qString, model);
       }
       return null;
     }
-
     return currentOp;
   }
 

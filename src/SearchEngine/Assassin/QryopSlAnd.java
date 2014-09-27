@@ -4,6 +4,7 @@
 package SearchEngine.Assassin;
 
 import java.io.*;
+import java.util.Map;
 
 public class QryopSlAnd extends QryopSl{
 
@@ -41,9 +42,81 @@ public class QryopSlAnd extends QryopSl{
       return (evaluateBoolean (r));
     else if(r instanceof RetrievalModelRankedBoolean)
       return (evaluateRankedBoolean(r));
+    else if(r instanceof RetrievalModelIndri){
+        return evaluateIndri(r);
+    }
     return null;
   }
 
+    public QryResult evaluateIndri(RetrievalModel r) throws  IOException{
+        allocDaaTPtrs(r);
+        QryResult result = new QryResult();
+
+        DaaTPtr currentPtr = null;
+        int currentID = -1;
+        int []a = new int[this.daatPtrs.size()];
+        for(int i = 0; i < this.daatPtrs.size(); i++)  a[i] = -1;
+
+        while(true) {
+            int smallestForThisIteration = Integer.MAX_VALUE;
+            currentPtr = null;
+            double docScore = 1;
+            for (int j = 0; j < this.daatPtrs.size(); j++) {
+                if (a[j] == -1) {
+                    DaaTPtr ptrj = this.daatPtrs.get(j);
+                    while (true) {
+                        if (ptrj.nextDoc >= ptrj.scoreList.scores.size()) {
+                            a[j] = 1;
+                            break;
+                        } else if (ptrj.scoreList.getDocid(ptrj.nextDoc) <= currentID) {
+                            ptrj.nextDoc++;
+                            continue;
+                        } else if (ptrj.scoreList.getDocid(ptrj.nextDoc) > currentID) {
+                            int doc = ptrj.nextDoc;
+                            if (ptrj.scoreList.getDocid(doc) < smallestForThisIteration) {
+                                smallestForThisIteration = ptrj.scoreList.getDocid(doc);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            if(smallestForThisIteration != Integer.MAX_VALUE){
+                for(int z = 0; z < this.daatPtrs.size(); z++){
+                   DaaTPtr ptrz = this.daatPtrs.get(z);
+                   int docid = ptrz.scoreList.getDocid(z);
+                   if(docid == smallestForThisIteration){
+                        double temp =  (Math.pow(ptrz.scoreList.getDocidScore(ptrz.nextDoc), (1.0 / this.args.size())));
+                        docScore =  docScore * temp;
+                        ptrz.nextDoc++;
+                   }else{
+                       double temp = (Math.pow(((QryopSl)this.args.get(z)).getDefaultScore(r, docid), (1.0 / this.args.size())));
+                       docScore =  docScore * temp;
+                   }
+                }
+                currentID = smallestForThisIteration;
+                result.docScores.add(smallestForThisIteration, docScore);
+            }
+
+
+//            if (currentPtr != null) {
+//                result.docScores.add(currentPtr.scoreList.getDocid(currentPtr.nextDoc), docScore);
+//                currentID = smallestForThisIteration;
+//                currentPtr.nextDoc++;
+//            }
+            int count = 0;
+            for (; count < this.daatPtrs.size(); count++) {
+                if (a[count] == -1) {
+                    break;
+                }
+            }
+            if (count == this.daatPtrs.size()) {
+                break;
+            }
+        }
+        freeDaaTPtrs();
+        return result;
+    }
     /*
         Evaluate the query by ranked boolean retrieval model
         @param r a RetrievalModel, for this one, a RankedRetrievalModel
@@ -201,8 +274,15 @@ public QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException {
    */
   public double getDefaultScore (RetrievalModel r, long docid) throws IOException {
 
-    if (r instanceof RetrievalModelUnrankedBoolean)
-      return (0.0);
+      if (r instanceof RetrievalModelUnrankedBoolean || r instanceof  RetrievalModelRankedBoolean || r instanceof RetrievalModelBM25)
+        return (0.0);
+      else if(r instanceof RetrievalModelIndri){
+        double defaultScore = 1;
+        for (int i = 0; i < this.args.size(); i++){
+                defaultScore *= (Math.pow(((QryopSl)this.args.get(i)).getDefaultScore(r, docid), (1.0 / this.args.size())));
+        }
+        return defaultScore;
+      }
 
     return 0.0;
   }

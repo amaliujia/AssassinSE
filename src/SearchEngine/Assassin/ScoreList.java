@@ -26,7 +26,7 @@ public class ScoreList {
   }
 
   public void add(int docid, double score, int tf, int df, int docLen, String field, String term){
-      scores.add(new ScoreListEntry(docid, score, tf, df, docLen, field, term));
+   //   scores.add(new ScoreListEntry(docid, score, tf, df, docLen, field, term));
   }
 
 
@@ -54,9 +54,4 @@ public class ScoreList {
    }
 
 
-    public int getDf(int n)  {return  this.scores.get(n).getDf();}
-    public int getDocLen(int n) { return this.scores.get(n).getDocLen();}
-    public String getField(int n) {return this.scores.get(n).getField();}
-    public String getTerm(int n) {return this.scores.get(n).getTerm();}
-    public int getTf(int n) {return this.scores.get(n).getTf();}
 }

@@ -50,9 +50,5 @@ public class DocPosting implements Comparable<DocPosting>{
         return 0;
 
     }
-    public String getExternalDocid (int iid) throws IOException {
-        Document d = QryEval.READER.document (iid);
-        String eid = d.get ("externalId");
-        return eid;
-    }
+
 }

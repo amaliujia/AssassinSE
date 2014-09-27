@@ -41,6 +41,13 @@ public class QryopSlOR extends QryopSl {
     return null;
   }
 
+
+    /**
+     *
+     * @param r
+     * @return
+     * @throws IOException
+     */
   public QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException {
       allocDaaTPtrs(r);
       QryResult result = new QryResult();
