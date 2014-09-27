@@ -184,11 +184,6 @@ public class QryopSlScore extends QryopSl {
     return result;
   }
 
-
-//   public QryResult evaluateIndri(RetrievalModel r){
-//       QryResult result
-//
-//   }
   /*
    *  Calculate the default score for a document that does not match
    *  the query argument.  This score is 0 for many retrieval models,
