@@ -1,6 +1,6 @@
 indexPath=index1
-retrievalAlgorithm=RankedBoolean
-queryFilePath=query/Structured
+retrievalAlgorithm=Indri
+queryFilePath=query/IndriUnstructured
 trecEvalOutputPath=output/HW1-queries-UB.teIn
 BM25:k_1=1.2
 BM25:b=0.75

@@ -87,13 +87,13 @@ public class QryopSlScore extends QryopSl {
 //            if(docid == 484619){
 //                System.out.println("tf " + tf + " pmle " + pmle + " lenDoc " + lenDoc);
 //            }
-            if(indri.smoothing.equals("ctf")){
+//            if(indri.smoothing.equals("ctf")){
                 p = (((indri.lambda * (tf + (indri.mu * pmle))) / (lenDoc + indri.mu))) +
                         ((1 - indri.lambda) * pmle);
-            }else{
-                p = (((indri.lambda * (tf + (indri.mu * pmle))) / (lenDoc + indri.mu))) +
-                        ((1 - indri.lambda) * pmle);
-            }
+//            }else{
+//                p = (((indri.lambda * (tf + (indri.mu * pmle))) / (lenDoc + indri.mu))) +
+//                        ((1 - indri.lambda) * pmle);
+//            }
             //ids.put(docid, p);
             result.docScores.add(docid, p);
         }
@@ -206,13 +206,13 @@ public class QryopSlScore extends QryopSl {
         double collectionLen = QryEval.READER.getSumTotalTermFreq(filed);
         double lenDoc = DataCenter.sharedDataCenter().docLengthStore.getDocLength(this.filed, (int)docid);
         double pmle = (double)this.ctf / (double)collectionLen;
-        if(indri.smoothing.equals("ctf")){
+//        if(indri.smoothing.equals("ctf")){
             p = (indri.lambda * ((tf + (indri.mu * pmle)) / (lenDoc + indri.mu))) +
                     ((1 - indri.lambda) * pmle);
-        }else{
-            p = (indri.lambda * ((tf + (indri.mu * pmle)) / (lenDoc + indri.mu))) +
-                        ((1 - indri.lambda) * pmle);
-        }
+//        }else{
+//            p = (indri.lambda * ((tf + (indri.mu * pmle)) / (lenDoc + indri.mu))) +
+//                        ((1 - indri.lambda) * pmle);
+//        }
         return p;
     }
 

@@ -134,7 +134,7 @@ public class QryEval {
        fileReader = new InputStreamReader(f);
        bufferReader = new BufferedReader(fileReader);
        while((str = bufferReader.readLine()) != null){
-//         if(str.length() <= 2)  continue;
+  //       if(str.length() <= 2)  continue;
          String[] queryPair=  str.split(":");
          keys.add(queryPair[0]);
          queries.add(queryPair[1]);
