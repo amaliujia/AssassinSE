@@ -375,7 +375,6 @@ public class QryEval {
      *  results that you retrieved above.  This code just allows the
      *  testing infrastructure to work on QryEval.
      */
-     // if (qTree instanceof QryopSl) {
           try {
               if (result.docScores.scores.size() < 1) {
                   writer.write(queryID + "\tQ0\tdummy\t1\t0\trun-1\n");

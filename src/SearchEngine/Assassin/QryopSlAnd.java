@@ -85,9 +85,6 @@ public class QryopSlAnd extends QryopSl{
             double docScore = 1.0;
 
             if(smallestForThisIteration != Integer.MAX_VALUE){
-//                if(QryEval.getExternalDocid(smallestForThisIteration).equals("clueweb09-enwp00-44-01825")){
-//                    System.out.println("Get you");
-//                }
                 for(int z = 0; z < this.daatPtrs.size(); z++){
                    if(a[z] == -1) {
                        DaaTPtr ptrz = this.daatPtrs.get(z);
