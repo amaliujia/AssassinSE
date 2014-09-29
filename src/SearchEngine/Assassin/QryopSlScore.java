@@ -116,15 +116,16 @@ public class QryopSlScore extends QryopSl {
        double k1 = dataCenter.k1;
        double k3 = dataCenter.k3;
        double b = dataCenter.b;
-       double avgLen = QryEval.READER.getSumTotalTermFreq(field) / QryEval.READER.getDocCount(field);
+       double avgLen = (double)QryEval.READER.getSumTotalTermFreq(field) / (double)QryEval.READER.getDocCount(field);
 
        for(int i = 0; i < result.invertedList.df; i++){
            int docid = result.invertedList.getDocid(i);
-           int tf = result.invertedList.getTf(i);
-           long docLen = dataCenter.docLengthStore.getDocLength(field, docid);
-           double docScore = Math.log((N - df + 0.5)/(df + 0.5)) *
-                   (tf / (tf + k1 * ((1.0 - b) + b * (docLen / avgLen)))) *
-                   ((k1 + 1.0) * 1.0) / (k3 + 1.0);
+           double tf = result.invertedList.getTf(i);
+           double docLen = dataCenter.docLengthStore.getDocLength(field, docid);
+           double a = Math.log((N - df + 0.5)/(df + 0.5));
+           double c =  (tf / (tf + k1 * ((1.0 - b) + b * (docLen / avgLen))));
+           double d =  ((k3 + 1.0) * 1.0) / (k3 + 1.0);
+           double docScore =  a * c  * d ;
            result.docScores.add(docid, docScore);
        }
 

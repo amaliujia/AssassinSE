@@ -1,6 +1,3 @@
-1:#AND(brooks.title brothers.title) clearance
-149:#OR(#AND(uplift at #NEAR/5(yellowstone national park)) #AND(uplift at #NEAR/10(yellowstone #NEAR/2(national park))))
-190:#OR(#AND(#NEAR/2(brooks brothers) clearance) #AND(brooks.url brothers.url))
 10:#AND( #NEAR/1(cheap internet))
 12:#OR(djs)
 26:#AND(lower #NEAR/1(heart.title rate.title))
@@ -11,3 +8,14 @@
 102:#AND(#NEAR/1(fickle creek farm))
 149:#AND(uplift at yellowstone.keywords #NEAR/1(national park))
 190:#AND( #NEAR/1(brooks brothers) clearance)
+
+10:#NEAR/3(cheap internet)  10:#NEAR/3(#SYN(cheap inexpensive) internet)
+12:#SYN(djs dj)
+26:#NEAR/2(lower  #NEAR/1(heart rate))
+29:#NEAR/1(#SYN(ps PlayStation) #SYN(2 two) games)
+33:#NEAR/2(elliptical trainer) #NEAR/2(elliptical.inlink trainer.inlink)  #NEAR/2(elliptical.url trainer.url)
+52:avp avp.inlink avp.url avp.keywords avp.title
+71:living in india
+102:fickle creek farm
+149:uplift at #NEAR/10(yellowstone #NEAR/2(national park))
+190:#NEAR/1(brooks brothers)  #NEAR/1(brooks.keywords brothers.keywords)

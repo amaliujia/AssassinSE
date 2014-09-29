@@ -222,7 +222,7 @@ public class QryEval {
 
     Qryop currentOp = null;
     Stack<Qryop> stack = new Stack<Qryop>();
-    if(!(model instanceof RetrievalModelIndri))
+    if(!(model instanceof RetrievalModelIndri)) // {}
        stack.push(new QryopSlOR());
     // Add a default query operator to an unstructured query. This
     // is a tiny bit easier if unnecessary whitespace is removed.
@@ -388,7 +388,6 @@ public class QryEval {
                       public int compare(Map.Entry<String, Double> e1,
                                          Map.Entry<String, Double> e2) {
                           if(!e1.getValue().equals(e2.getValue())) {
-//                              return (int) (e2.getValue() - e1.getValue());
                               if(e2.getValue() > e1.getValue()) return 1;
                               else return -1;
                           }

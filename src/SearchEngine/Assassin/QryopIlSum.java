@@ -36,6 +36,7 @@ public class QryopIlSum extends QryopSl {
         for(int j = 0; j < this.daatPtrs.size(); j++){
             DaaTPtr ptrj = this.daatPtrs.get(j);
             while(ptrj.nextDoc < ptrj.scoreList.scores.size()){
+                int docid = ptrj.scoreList.getDocid(ptrj.nextDoc);
                 double score = ptrj.scoreList.getDocidScore(ptrj.nextDoc);
                 if(map.containsKey(ptrj.scoreList.getDocid(ptrj.nextDoc))){
                     double updateSocre = score + map.get(ptrj.scoreList.getDocid(ptrj.nextDoc));
@@ -48,6 +49,9 @@ public class QryopIlSum extends QryopSl {
         }
         for (Integer docid : map.keySet()){
             result.docScores.add(docid, map.get(docid));
+        }
+        if(map.containsKey(104534)){
+            System.out.println(map.get(104534));
         }
         freeDaaTPtrs();
         return result;
