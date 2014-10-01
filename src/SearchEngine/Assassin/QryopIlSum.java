@@ -32,6 +32,7 @@ public class QryopIlSum extends QryopSl {
        QryResult result = new QryResult();
        DataCenter dataCenter = DataCenter.sharedDataCenter();
 
+        // use hashtable to compute and save intermediate scroes.
         HashMap<Integer, Double> map = new HashMap<Integer, Double>();
         for(int j = 0; j < this.daatPtrs.size(); j++){
             DaaTPtr ptrj = this.daatPtrs.get(j);
@@ -47,11 +48,9 @@ public class QryopIlSum extends QryopSl {
                 ptrj.nextDoc++;
             }
         }
+        // computation finished, fetch results from hashtable and put it into scorelist
         for (Integer docid : map.keySet()){
             result.docScores.add(docid, map.get(docid));
-        }
-        if(map.containsKey(104534)){
-            System.out.println(map.get(104534));
         }
         freeDaaTPtrs();
         return result;

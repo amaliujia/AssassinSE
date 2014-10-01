@@ -49,6 +49,12 @@ public class QryopSlAnd extends QryopSl{
     return null;
   }
 
+    /**
+     *
+     * @param r
+     * @return
+     * @throws IOException
+     */
     public QryResult evaluateIndri(RetrievalModel r) throws  IOException{
         allocDaaTPtrs(r);
         QryResult result = new QryResult();
@@ -61,7 +67,7 @@ public class QryopSlAnd extends QryopSl{
 
         while(true) {
             int smallestForThisIteration = Integer.MAX_VALUE;
-
+            // find the smallest unvisited docid
             for (int j = 0; j < this.daatPtrs.size(); j++) {
                 if (a[j] == -1) {
                     DaaTPtr ptrj = this.daatPtrs.get(j);
@@ -83,7 +89,7 @@ public class QryopSlAnd extends QryopSl{
                 }
             }
             double docScore = 1.0;
-
+             // compute scores and default scores.
             if(smallestForThisIteration != Integer.MAX_VALUE){
                 for(int z = 0; z < this.daatPtrs.size(); z++){
                    if(a[z] == -1) {
@@ -279,6 +285,7 @@ public QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException {
       if (r instanceof RetrievalModelUnrankedBoolean || r instanceof  RetrievalModelRankedBoolean || r instanceof RetrievalModelBM25)
         return (0.0);
       else if(r instanceof RetrievalModelIndri){
+        // the task of #AND is call its args' getDefaultScore function and merge them.
         double defaultScore = 1;
         for (int i = 0; i < this.args.size(); i++){
                 defaultScore *= (Math.pow(((QryopSl)this.args.get(i)).getDefaultScore(r, docid), (1.0 / this.args.size())));

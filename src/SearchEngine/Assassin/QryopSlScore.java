@@ -66,8 +66,8 @@ public class QryopSlScore extends QryopSl {
 
     /**
      *
-     * @param r
-     * @return
+     * @param r this model is Indri retrieval model
+     * @return  QryResult, save Indri scores
      * @throws IOException
      */
     public QryResult evaluateIndri(RetrievalModel r) throws IOException{
@@ -117,7 +117,7 @@ public class QryopSlScore extends QryopSl {
        double k3 = dataCenter.k3;
        double b = dataCenter.b;
        double avgLen = (double)QryEval.READER.getSumTotalTermFreq(field) / (double)QryEval.READER.getDocCount(field);
-
+       // core part of algorithm. logic is similar with #OR, iterate all docid
        for(int i = 0; i < result.invertedList.df; i++){
            int docid = result.invertedList.getDocid(i);
            double tf = result.invertedList.getTf(i);
@@ -196,6 +196,7 @@ public class QryopSlScore extends QryopSl {
     if (r instanceof RetrievalModelUnrankedBoolean || r instanceof  RetrievalModelRankedBoolean || r instanceof RetrievalModelBM25)
       return (0.0);
     else if(r instanceof RetrievalModelIndri){
+        // apply Indri default score formula
         RetrievalModelIndri indri = (RetrievalModelIndri)r;
         double tf = 0;
         double p = 0;

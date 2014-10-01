@@ -222,8 +222,13 @@ public class QryEval {
 
     Qryop currentOp = null;
     Stack<Qryop> stack = new Stack<Qryop>();
-    if(!(model instanceof RetrievalModelIndri)) // {}
+    if((model instanceof RetrievalModelUnrankedBoolean) || model instanceof  RetrievalModelRankedBoolean) // {}
        stack.push(new QryopSlOR());
+    else if(model instanceof RetrievalModelBM25)
+        stack.push(new QryopIlSum());
+    else if(model instanceof RetrievalModelIndri){
+        stack.push(new QryopSlAnd());
+    }
     // Add a default query operator to an unstructured query. This
     // is a tiny bit easier if unnecessary whitespace is removed.
 
