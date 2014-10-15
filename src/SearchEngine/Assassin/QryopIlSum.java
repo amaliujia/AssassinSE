@@ -1,11 +1,10 @@
 package SearchEngine.Assassin;
 
-import javax.xml.crypto.Data;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+
 
 /**
  * Created by amaliujia on 14-9-21.

@@ -23,12 +23,10 @@ public class QryopIlNear extends QryopIl {
         }
     }
 
-    @Override
     public void add(Qryop q) throws IOException {
         this.args.add(q);
     }
 
-    @Override
     public QryResult evaluate(RetrievalModel r) throws IOException {
 //        if (r instanceof RetrievalModelUnrankedBoolean)
 //            return (evaluateRankedBoolean(r));
