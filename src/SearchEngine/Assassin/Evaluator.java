@@ -19,9 +19,6 @@ public class Evaluator {
         while(scanner1.hasNext()){
             String s = scanner1.nextLine();
             String [] t = s.split(" ");
-            if(t[2].equals("clueweb09-en0009-36-34038")){
-                System.out.println("hahaha");
-            }
             map.put(t[2], 1);
         }
         File standard = new File("output/HW1-queries-UB.teIn");
@@ -41,7 +38,7 @@ public class Evaluator {
        Set keyset =  map.keySet();
         for (String key : map.keySet()) {
             if(map.get(key) == 1){
-               System.out.println(key);
+              // System.out.println(key);
             }
 
         }

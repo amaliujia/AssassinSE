@@ -292,7 +292,10 @@ public class QryEval {
       } else if(dealNear[0].equalsIgnoreCase("#WAND")){
         currentOp = new QryopSlWAND();
         stack.push(currentOp);
-      }else if (dealNear[0].startsWith(")")) { // Finish current query operator.
+      }else if(dealNear[0].equalsIgnoreCase("#WSUM")){
+        currentOp = new QryopSlWSUM();
+        stack.push(currentOp);
+       }else if (dealNear[0].startsWith(")")) { // Finish current query operator.
 
         stack.pop();
 

@@ -24,5 +24,7 @@ Milestones
 
 9. Support #WINDOW
 
-10.Support #WAND 
+10. Support #WAND
+
+11. Support #WSUM 
 
