@@ -20,5 +20,7 @@ Milestones
 
 7. Support nested #NEAR operations
 
-8. Indri 
+8. Support Indri 
+
+9. Support #WINDOW
 
