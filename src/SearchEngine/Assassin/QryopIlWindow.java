@@ -1,6 +1,8 @@
 package SearchEngine.Assassin;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -8,6 +10,11 @@ import java.util.Iterator;
  */
 public class QryopIlWindow extends QryopIl {
 
+    private int distance;
+
+    public QryopIlWindow(int distance) {
+        this.distance = distance;
+    }
     /**
      *
      * @param q
@@ -38,6 +45,96 @@ public class QryopIlWindow extends QryopIl {
         allocDaaTPtrs(r);
         QryResult result = new QryResult();
 
+        // Sort list first, use the shortest one as base
+        // This sort can improve code performance
+        int minInvList = Integer.MAX_VALUE;
+        DaaTPtr basePtr = null;
+        int baseIndex = -1;
+        for (int i=0; i<(this.daatPtrs.size()-1); i++) {
+            if(this.daatPtrs.get(i).invList.postings.size() < minInvList){
+                basePtr = this.daatPtrs.get(i);
+                minInvList = basePtr.invList.postings.size();
+                baseIndex = i;
+            }
+        }
+
+        result.invertedList.field = basePtr.invList.field;
+        EVALUATEDOCUMENTS:
+        for ( ; basePtr.nextDoc < basePtr.invList.postings.size(); basePtr.nextDoc++) {
+
+            int baseDocid = basePtr.invList.getDocid(basePtr.nextDoc);
+
+            //  Do the other query arguments have the baseDocid?
+            // If so, at least this doc have all terms we try to find
+
+            for (int j = 0; j<this.daatPtrs.size(); j++) {
+                if(j != baseIndex){
+                    DaaTPtr ptrj = this.daatPtrs.get(j);
+
+                    while (true) {
+                        if (ptrj.nextDoc >= ptrj.invList.postings.size())
+                            break EVALUATEDOCUMENTS;        // No more docs can match
+                        else if (ptrj.invList.getDocid(ptrj.nextDoc) > baseDocid)
+                            continue EVALUATEDOCUMENTS;    // The ptr0docid can't match.
+                        else if (ptrj.invList.getDocid(ptrj.nextDoc) < baseDocid)
+                            ptrj.nextDoc++;            // Not yet at the right doc.
+                        else
+                            break;                // ptrj matches ptr0Docid
+                    }
+                }
+            }
+
+//            DaaTPtr base = this.daatPtrs.get(0);
+//            DocPosting post = base.invList.postings.get(base.nextDoc);
+            ArrayList<Integer> pos = new ArrayList<Integer>();
+            DocPosting returnPost = null;
+            int isFirst = 0;
+
+            OK:
+            //for(; post.nextPostion < post.positions.size();){
+            while(true){
+                //pos.add(post.positions.get(post.nextPostion));
+                for(int j = 0; j < daatPtrs.size(); j++){
+                  DaaTPtr ptrj = this.daatPtrs.get(j);
+                  DocPosting postj = ptrj.invList.postings.get(ptrj.nextDoc);
+                  if(postj.nextPostion >= postj.positions.size()){
+                      break OK;
+                  }
+                  pos.add(postj.positions.get(postj.nextPostion));
+                }
+                Collections.sort(pos);
+                int min = pos.get(0);
+                int max = pos.get(pos.size() - 1);
+                if(this.distance >= (max - min + 1)){
+                    if(isFirst == 0){
+                        returnPost = new DocPosting(this.daatPtrs.get(0).invList.getDocid(this.daatPtrs.get(0).nextDoc));
+                        isFirst = 1;
+                    }
+                    returnPost.tf++;
+                    returnPost.positions.add(max);
+                    for(int z = 0; z < daatPtrs.size(); z++){
+                        DaaTPtr ptrz = this.daatPtrs.get(z);
+                        DocPosting posting = ptrz.invList.postings.get(ptrz.nextDoc);
+                        posting.nextPostion++;
+                    }
+                }else{
+                    for(int z = 0; z < daatPtrs.size(); z++){
+                        DaaTPtr ptrz = this.daatPtrs.get(z);
+                        DocPosting posting = ptrz.invList.postings.get(ptrz.nextDoc);
+                        if(min == posting.positions.get(posting.nextPostion)){
+                            posting.nextPostion++;
+                            break;
+                        }
+                    }
+                }
+                pos.clear();
+            }
+            if(isFirst == 1){
+                result.invertedList.postings.add(returnPost);
+                result.invertedList.df++;
+            }
+        }
+        freeDaaTPtrs();
         return result;
     }
 
@@ -48,5 +145,5 @@ public class QryopIlWindow extends QryopIl {
         }
         return "#WINDOW( " + result + ")";
     }
-    }
+
 }

@@ -286,8 +286,10 @@ public class QryEval {
       }else if(dealNear[0].equalsIgnoreCase("#SYN")) {
         currentOp = new QryopIlSyn();
         stack.push(currentOp);
-      }else if (dealNear[0].startsWith(")")) { // Finish current query operator.
-
+      }else if(dealNear[0].equalsIgnoreCase("#WINDOW")) {
+        currentOp = new QryopIlWindow(Integer.parseInt(dealNear[1]));
+        stack.push(currentOp);
+      } else if (dealNear[0].startsWith(")")) { // Finish current query operator.
         // If the current query operator is not an argument to
         // another query operator (i.e., the stack is empty when it
         // is removed), we're done (assuming correct syntax - see

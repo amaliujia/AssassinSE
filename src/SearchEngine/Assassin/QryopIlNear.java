@@ -82,7 +82,6 @@ public class QryopIlNear extends QryopIl {
             }
             DaaTPtr ptr0 = this.daatPtrs.get(0);
             DocPosting post = ptr0.invList.postings.get(ptr0.nextDoc);
-            double tf = 0;
             int isFirst = 0;
             DocPosting returnPosting = null;
 
