@@ -1,6 +1,6 @@
 indexPath=index1
-retrievalAlgorithm=BM25
-queryFilePath=query/Window
+retrievalAlgorithm=Indri
+queryFilePath=query/WAND
 trecEvalOutputPath=output/HW1-queries-UB.teIn
 BM25:k_1=1.2
 BM25:b=0.75

@@ -8,6 +8,7 @@
 package SearchEngine.Assassin;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.SynchronousQueue;
 
 
 public class QryopSlScore extends QryopSl {
@@ -84,15 +85,9 @@ public class QryopSlScore extends QryopSl {
             double collectionLen = QryEval.READER.getSumTotalTermFreq(filed);
             double lenDoc = DataCenter.sharedDataCenter().docLengthStore.getDocLength(this.filed, docid);
             double pmle = ((double)this.ctf / (double)collectionLen);
-
-//            if(indri.smoothing.equals("ctf")){
-                p = (((indri.lambda * (tf + (indri.mu * pmle))) / (lenDoc + indri.mu))) +
+            p = (((indri.lambda * (tf + (indri.mu * pmle))) / (lenDoc + indri.mu))) +
                         ((1 - indri.lambda) * pmle);
-//            }else{
-//                p = (((indri.lambda * (tf + (indri.mu * pmle))) / (lenDoc + indri.mu))) +
-//                        ((1 - indri.lambda) * pmle);
-//            }
-            //ids.put(docid, p);
+
             result.docScores.add(docid, p);
         }
 
