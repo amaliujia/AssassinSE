@@ -14,7 +14,22 @@ public class QryopSlWSUM extends QryopSl {
     public ArrayList<Qryop> newargs = new ArrayList<Qryop>();
 
     public double getDefaultScore(RetrievalModel r, long docid) throws IOException {
-        return 0;
+        if (r instanceof RetrievalModelUnrankedBoolean || r instanceof  RetrievalModelRankedBoolean || r instanceof RetrievalModelBM25)
+            return 0.0;
+        else if(r instanceof RetrievalModelIndri){
+            double c = 0;
+            for(int z = 0; z < this.weights.size(); z++){
+                c += this.weights.get(z);
+            }
+
+            // the task of #WAND is call its args' getDefaultScore function and merge them.
+            double defaultScore = 1.0;
+            for (int i = 0; i < this.newargs.size(); i++){
+                defaultScore += ((QryopSl)this.newargs.get(i)).getDefaultScore(r, docid) * (this.weights.get(i) / c);
+            }
+            return defaultScore;
+        }
+        return 0.0;
     }
 
 
