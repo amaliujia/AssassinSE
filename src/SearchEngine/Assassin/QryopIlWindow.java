@@ -45,6 +45,17 @@ public class QryopIlWindow extends QryopIl {
         allocDaaTPtrs(r);
         QryResult result = new QryResult();
 
+        if(this.daatPtrs.size() == 0){
+            return null;
+        }else if(this.daatPtrs.size() == 1){
+            result.invertedList.field = this.daatPtrs.get(0).invList.field;
+            result.invertedList.postings = this.daatPtrs.get(0).invList.postings;
+            result.invertedList.df = this.daatPtrs.get(0).invList.df;
+            result.invertedList.ctf = this.daatPtrs.get(0).invList.ctf;
+            freeDaaTPtrs();
+            return result;
+        }
+
         // Sort list first, use the shortest one as base
         // This sort can improve code performance
         int minInvList = Integer.MAX_VALUE;
@@ -59,6 +70,7 @@ public class QryopIlWindow extends QryopIl {
         }
 
         result.invertedList.field = basePtr.invList.field;
+
         EVALUATEDOCUMENTS:
         for ( ; basePtr.nextDoc < basePtr.invList.postings.size(); basePtr.nextDoc++) {
 
@@ -84,8 +96,6 @@ public class QryopIlWindow extends QryopIl {
                 }
             }
 
-//            DaaTPtr base = this.daatPtrs.get(0);
-//            DocPosting post = base.invList.postings.get(base.nextDoc);
             ArrayList<Integer> pos = new ArrayList<Integer>();
             DocPosting returnPost = null;
             int isFirst = 0;

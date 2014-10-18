@@ -43,6 +43,17 @@ public class QryopIlNear extends QryopIl {
         syntaxCheckArgResults(this.daatPtrs);
         QryResult result = new QryResult();
 
+        if(this.daatPtrs.size() == 0){
+            return null;
+        }else if(this.daatPtrs.size() == 1){
+            result.invertedList.field = this.daatPtrs.get(0).invList.field;
+            result.invertedList.postings = this.daatPtrs.get(0).invList.postings;
+            result.invertedList.df = this.daatPtrs.get(0).invList.df;
+            result.invertedList.ctf = this.daatPtrs.get(0).invList.ctf;
+            freeDaaTPtrs();
+            return result;
+        }
+
         // Sort list first, use the shortest one as base
         // This sort can improve code performance
         int minInvList = Integer.MAX_VALUE;
@@ -55,6 +66,7 @@ public class QryopIlNear extends QryopIl {
                 baseIndex = i;
             }
         }
+
         result.invertedList.field = basePtr.invList.field;
         EVALUATEDOCUMENTS:
         for ( ; basePtr.nextDoc < basePtr.invList.postings.size(); basePtr.nextDoc++) {
