@@ -140,8 +140,9 @@ public class QryopIlWindow extends QryopIl {
                 pos.clear();
             }
             if(isFirst == 1){
-                result.invertedList.postings.add(returnPost);
-                result.invertedList.df++;
+                result.invertedList.appendPosting(returnPost.docid, returnPost.positions);
+//                result.invertedList.postings.add(returnPost);
+//                result.invertedList.df++;
             }
         }
         freeDaaTPtrs();

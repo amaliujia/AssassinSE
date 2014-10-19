@@ -28,13 +28,6 @@ public class QryopIlNear extends QryopIl {
     }
 
     public QryResult evaluate(RetrievalModel r) throws IOException {
-//        if (r instanceof RetrievalModelUnrankedBoolean)
-//            return (evaluateRankedBoolean(r));
-//        else if(r instanceof RetrievalModelRankedBoolean)
-//            return (evaluateRankedBoolean(r));
-//        else if(r instanceof RetrievalModelBM25){
-//            return evaluateRankedBoolean(r);
-//        }
         return (evaluateRankedBoolean(r));
     }
 
@@ -130,10 +123,12 @@ public class QryopIlNear extends QryopIl {
               }
 
                if(isFirst == 1) {
-                result.invertedList.postings.add(returnPosting);
-                result.invertedList.df++;
-                }
+                 result.invertedList.appendPosting(ptr0.invList.getDocid(ptr0.nextDoc), returnPosting.positions);
+                 //result.invertedList.df++;
+                // result.invertedList.postings.add(returnPosting);
+               }
         }
+
         freeDaaTPtrs();
         return result;
     }

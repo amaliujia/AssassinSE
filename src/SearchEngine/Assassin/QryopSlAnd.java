@@ -4,8 +4,7 @@
 package SearchEngine.Assassin;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+
 
 public class QryopSlAnd extends QryopSl{
 
@@ -58,7 +57,7 @@ public class QryopSlAnd extends QryopSl{
     public QryResult evaluateIndri(RetrievalModel r) throws  IOException{
         allocDaaTPtrs(r);
         QryResult result = new QryResult();
-        HashMap<Double, Integer> map = new HashMap<Double, Integer>();
+
         DaaTPtr currentPtr = null;
         int currentID = -1;
         int []a = new int[this.daatPtrs.size()];

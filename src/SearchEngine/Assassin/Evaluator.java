@@ -35,13 +35,13 @@ public class Evaluator {
                // System.out.println(t[2]);
             }
         }
-       Set keyset =  map.keySet();
-        for (String key : map.keySet()) {
-            if(map.get(key) == 1){
-              // System.out.println(key);
-            }
-
-        }
+//       Set keyset =  map.keySet();
+//        for (String key : map.keySet()) {
+//            if(map.get(key) == 1){
+//              // System.out.println(key);
+//            }
+//
+//        }
 //        while (scanner.hasNext()){
 //            String s1 = scanner.nextLine();
 //            String s2 = scanner1.nextLine();

@@ -73,7 +73,6 @@ public class QryopSlScore extends QryopSl {
      */
     public QryResult evaluateIndri(RetrievalModel r) throws IOException{
         HashMap<Double, Integer> map = new HashMap<Double, Integer>();
-        //ids = new HashMap<Integer, Double>();
         QryResult result = args.get(0).evaluate(r);
         this.filed = result.invertedList.field;
         this.ctf = result.invertedList.ctf;
