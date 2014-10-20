@@ -11,13 +11,13 @@ public class QueryWriter {
 
     public static void main(String [] args) {
         FileWriter fileWriter = null;
-        double url = 0.2;
-        double keywords = 0.2;
-        double body = 0.2;
-        double title =0.2;
-        double inlink = 0.2;
+        double url = 0.3;
+        double keywords = 0.4;
+        double body = 0.0;
+        double title =0.0;
+        double inlink = 0.3;
         try {
-            fileWriter = new FileWriter(new File("./query/Test"));
+            fileWriter = new FileWriter(new File("./query/experiement2"));
             fileWriter.append("10:#AND(" + " #WSUM( " + url +  " cheap.url " + keywords
                                 + " cheap.keywords " + title + " cheap.title " + inlink +
                                 " cheap.inlink "  + body + " cheap.body )" + " #WSUM( " +

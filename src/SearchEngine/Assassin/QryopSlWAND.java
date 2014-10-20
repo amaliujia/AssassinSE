@@ -13,6 +13,14 @@ public class QryopSlWAND extends QryopSl {
     public ArrayList<Double> weights;
     public ArrayList<Qryop> newargs = new ArrayList<Qryop>();
 
+
+    /**
+     *  Used for Indri as a kind of smoothing
+     * @param r
+     * @param docid
+     * @return
+     * @throws IOException
+     */
     public double getDefaultScore(RetrievalModel r, long docid) throws IOException {
 
         if (r instanceof RetrievalModelUnrankedBoolean || r instanceof  RetrievalModelRankedBoolean || r instanceof RetrievalModelBM25)
@@ -50,6 +58,12 @@ public class QryopSlWAND extends QryopSl {
         return null;
     }
 
+    /**
+     * Indri WSUN
+     * @param r
+     * @return
+     * @throws IOException
+     */
     public QryResult evalateIndri(RetrievalModel r) throws IOException{
         WANDAllocDaaTPtrs(r);
         QryResult result = new QryResult();
@@ -134,6 +148,13 @@ public class QryopSlWAND extends QryopSl {
         return "#WAND( " + result + ")";
     }
 
+    /**
+     *
+     * Split weight and term and fetch inverted list.
+     * @param r
+     *         Indicate what model it is using
+     * @throws IOException
+     */
     public void WANDAllocDaaTPtrs(RetrievalModel r) throws IOException{
         filter();
         this.weights = new ArrayList<Double>();
@@ -141,6 +162,10 @@ public class QryopSlWAND extends QryopSl {
             //  If this argument doesn't return ScoreLists, wrap it
             //  in a #SCORE operator.
             if(i % 2 != 0) {
+                if(this.weights.get(this.weights.size() - 1) == 0.0){
+                    this.weights.remove(this.weights.size() - 1);
+                    continue;
+                }
                 if (!QryopSl.class.isInstance(this.args.get(i)))
                     this.args.set(i, new QryopSlScore(this.args.get(i)));
 
@@ -160,6 +185,9 @@ public class QryopSlWAND extends QryopSl {
         }
     }
 
+    /**
+     * filter those invalid args.
+     */
     public void filter() {
         ArrayList<Qryop> tempArgs = new ArrayList<Qryop>();
 

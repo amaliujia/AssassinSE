@@ -15,13 +15,9 @@ import org.apache.lucene.index.*;
 import org.apache.lucene.util.*;
 import org.apache.lucene.search.*;
 
-import javax.print.Doc;
-import javax.swing.text.html.parser.Entity;
-
 public class InvList {
 
   //  Class variables.
-
   public int ctf = 0;
   public int df = 0;
   public String field;
