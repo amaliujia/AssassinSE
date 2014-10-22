@@ -21,6 +21,7 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
+import static java.lang.System.console;
 import static java.lang.System.exit;
 
 public class QryEval {
@@ -259,7 +260,7 @@ public class QryEval {
 
     StringTokenizer tokens = new StringTokenizer(qString, "\t\n\r ,()", true);
     String token = null;
-
+    boolean isWeight = true;
     // Each pass of the loop processes one token. To improve
     // efficiency and clarity, the query operator on the top of the
     // stack is also stored in currentOp.
@@ -270,6 +271,7 @@ public class QryEval {
       String [] dealNear = token.split("/");
 
       if (dealNear[0].matches("[ ,(\t\n\r]")) {
+          continue;
         // Ignore most delimiters.
       } else if (dealNear[0].equalsIgnoreCase("#AND") || dealNear[0].equalsIgnoreCase("#And") || dealNear[0].equalsIgnoreCase("#and")) {
         currentOp = new QryopSlAnd();
@@ -304,22 +306,56 @@ public class QryEval {
 
         Qryop arg = currentOp;
         currentOp = stack.peek();
-        //arg.evaluate(model);
-        currentOp.add(arg);
+        // if term is not noun, push into stack
+        if(arg.args.size() != 0)
+            currentOp.add(arg);
       } else {
+          if((currentOp instanceof QryopSlWAND ||
+             currentOp instanceof QryopSlWSUM) &&
+             isWeight){
+              Double weight = Double.parseDouble(token.trim());
+              if(currentOp instanceof QryopSlWSUM){
+                  ((QryopSlWSUM)currentOp).weights.add(weight);
+              }else{
+                  ((QryopSlWAND)currentOp).weights.add(weight);
+              }
+              isWeight = false;
+              continue;
+          }
+
          String[] fieldName = token.split("\\.");
          if(fieldName.length == 1){
              String[] c = tokenizeQuery(fieldName[0]);
              if(c.length != 0) {
                  currentOp.add(new QryopIlTerm(c[0]));
+             }else{
+                 if (!isWeight && (currentOp instanceof QryopSlWAND ||
+                         currentOp instanceof QryopSlWSUM)) {
+                     if (currentOp instanceof QryopSlWSUM) {
+                         ((QryopSlWSUM) currentOp).weights.remove(((QryopSlWSUM) currentOp).weights.size() - 1);
+                     } else if (currentOp instanceof QryopSlWAND) {
+                         ((QryopSlWAND) currentOp).weights.remove(((QryopSlWAND) currentOp).weights.size() - 1);
+                     }
+                 }
              }
          }else{
              String[] c = tokenizeQuery(fieldName[0]);
              if(c.length != 0) {
                  currentOp.add(new QryopIlTerm(c[0], fieldName[1]));
+             }else {
+                 if (!isWeight && (currentOp instanceof QryopSlWAND ||
+                         currentOp instanceof QryopSlWSUM)) {
+                     if (currentOp instanceof QryopSlWSUM) {
+                         ((QryopSlWSUM) currentOp).weights.remove(((QryopSlWSUM) currentOp).weights.size() - 1);
+                     } else if (currentOp instanceof QryopSlWAND) {
+                         ((QryopSlWAND) currentOp).weights.remove(((QryopSlWAND) currentOp).weights.size() - 1);
+                     }
+                 }
              }
          }
+         //isWeight = true;
       }
+      isWeight = true;
     }
 
     // A broken structured query can leave unprocessed tokens on the

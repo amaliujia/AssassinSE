@@ -285,7 +285,7 @@ public QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException {
         return (0.0);
       else if(r instanceof RetrievalModelIndri){
         // the task of #AND is call its args' getDefaultScore function and merge them.
-        double defaultScore = 1;
+        double defaultScore = 1.0;
         for (int i = 0; i < this.args.size(); i++){
                 defaultScore *= (Math.pow(((QryopSl)this.args.get(i)).getDefaultScore(r, docid), (1.0 / this.args.size())));
         }
