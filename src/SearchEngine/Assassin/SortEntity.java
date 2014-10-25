@@ -15,6 +15,7 @@ public class SortEntity implements Comparable<SortEntity>{
     }
     public double getScore() {return this.scores;}
     public String getExternalDocid()  {return this.externDocID;}
+    public int getInternalDocID() {return this.internalDocID;}
 
     @Override
     public int compareTo(SortEntity b) {
