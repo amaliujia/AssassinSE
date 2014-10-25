@@ -18,7 +18,7 @@ public class Evaluator {
         HashMap<String, Integer>map = new HashMap<String, Integer>();
         while(scanner1.hasNext()){
             String s = scanner1.nextLine();
-            String [] t = s.split(" ");
+            String [] t = s.split("\t");
             map.put(t[2], 1);
         }
         File standard = new File("output/HW1-queries-UB.teIn");

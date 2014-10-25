@@ -24,7 +24,7 @@ public class ScoreListEntry implements Comparable<ScoreListEntry>{
         return this.score;
     }
 
-    public int getDocid(){return docid;}
+    public int getDocid(){ return docid; }
 
 
     public int compareTo(ScoreListEntry b) {

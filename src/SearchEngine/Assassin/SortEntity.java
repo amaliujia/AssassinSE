@@ -5,23 +5,23 @@ package SearchEngine.Assassin;
  */
 public class SortEntity implements Comparable<SortEntity>{
     private int internalDocID;
-    private String outernalDocID;
+    private String externDocID;
     private double scores;
 
     public SortEntity(int a, String b, double c){
         internalDocID = a;
-        outernalDocID = b;
+        externDocID = b;
         scores = c;
     }
     public double getScore() {return this.scores;}
-    public String getExternalDocid()  {return this.outernalDocID;}
+    public String getExternalDocid()  {return this.externDocID;}
 
     @Override
     public int compareTo(SortEntity b) {
         if(this.getScore() == b.getScore()){
             String externalIdA = this.getExternalDocid();
             String externalIdB = b.getExternalDocid();
-            return externalIdA.compareTo(externalIdB);
+            return externalIdA.toString().compareTo(externalIdB.toString());
         }
         else if(this.getScore() < b.getScore())   return 1;
         else return -1;
