@@ -28,6 +28,8 @@ Milestones
 
 11. Support #WSUM 
 
+12. Implement Pesudo Feedback algorithm for Indri
+
 Copyright
 =======
 
