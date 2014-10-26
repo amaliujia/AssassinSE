@@ -169,11 +169,6 @@ public class QryopSlWSUM extends QryopSl {
             //  If this argument doesn't return ScoreLists, wrap it
             //  in a #SCORE operator.
             if(i % 2 != 0) {
-//                if(this.weights.get(this.weights.size() - 1) == 0.0){
-//                    this.weights.remove(this.weights.size() - 1);
-//                    continue;
-//                }
-
                 if (!QryopSl.class.isInstance(this.args.get(i)))
                     this.args.set(i, new QryopSlScore(this.args.get(i)));
 
@@ -201,8 +196,6 @@ public class QryopSlWSUM extends QryopSl {
 
         for(int i = 0; i < this.args.size() - 1; i++){
             if(this.args.get(i) instanceof QryopIlTerm && this.args.get(i + 1) instanceof QryopIlTerm) {
-//                String term1 = ((QryopIlTerm) this.args.get(i)).getTerm();
-//                String term2 = ((QryopIlTerm) this.args.get(i + 1)).getTerm();
                   String filed1 = ((QryopIlTerm) this.args.get(i)).getField();
                   String filed2 =  ((QryopIlTerm) this.args.get(i + 1)).getField();
                 if (!isValidFiled(filed1) && !isValidFiled(filed2)) {

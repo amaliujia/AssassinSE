@@ -10,22 +10,48 @@ import java.util.Iterator;
  * Created by amaliujia on 14-9-21.
  */
 public class QryopIlSum extends QryopSl {
+
+    /**
+     *
+     * @param r
+     * @param docid
+     * @return
+     * @throws IOException
+     */
     @Override
     public double getDefaultScore(RetrievalModel r, long docid) throws IOException {
         return 0;
     }
 
+
+    /**
+     *
+     * @param q
+     * @throws IOException
+     */
     @Override
     public void add(Qryop q) throws IOException {
         this.args.add(q);
     }
 
+
+    /**
+     *
+     * @param q
+     * @throws IOException
+     */
     public void add(Qryop ...q) throws IOException{
         for(int i = 0; i < q.length; i++){
             this.args.add(q[i]);
         }
     }
 
+    /**
+     *
+     * @param r A retrieval model that controls how the operator behaves.
+     * @return
+     * @throws IOException
+     */
     public QryResult evaluate(RetrievalModel r) throws IOException {
        allocDaaTPtrs(r);
        QryResult result = new QryResult();
@@ -55,6 +81,10 @@ public class QryopIlSum extends QryopSl {
         return result;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String toString() {
         String result = new String();

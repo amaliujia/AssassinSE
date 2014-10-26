@@ -83,7 +83,7 @@ public class QryopSlScore extends QryopSl {
             double p = 0;
             double collectionLen = QryEval.READER.getSumTotalTermFreq(filed);
             double lenDoc = DataCenter.sharedDataCenter().docLengthStore.getDocLength(this.filed, docid);
-            double pmle = ((double)this.ctf / (double)collectionLen);
+            double pmle = ((double)this.ctf / collectionLen);
             p = (((indri.lambda * (tf + (indri.mu * pmle))) / (lenDoc + indri.mu))) +
                         ((1 - indri.lambda) * pmle);
 
@@ -196,14 +196,9 @@ public class QryopSlScore extends QryopSl {
         double p = 0;
         double collectionLen = QryEval.READER.getSumTotalTermFreq(filed);
         double lenDoc = DataCenter.sharedDataCenter().docLengthStore.getDocLength(this.filed, (int)docid);
-        double pmle = (double)this.ctf / (double)collectionLen;
-//        if(indri.smoothing.equals("ctf")){
-            p = (indri.lambda * ((tf + (indri.mu * pmle)) / (lenDoc + indri.mu))) +
+        double pmle = (double)this.ctf / collectionLen;
+        p = (indri.lambda * ((tf + (indri.mu * pmle)) / (lenDoc + indri.mu))) +
                     ((1 - indri.lambda) * pmle);
-//        }else{
-//            p = (indri.lambda * ((tf + (indri.mu * pmle)) / (lenDoc + indri.mu))) +
-//                        ((1 - indri.lambda) * pmle);
-//        }
         return p;
     }
 

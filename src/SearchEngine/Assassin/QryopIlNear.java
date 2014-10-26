@@ -9,28 +9,63 @@ import java.util.List;
  * Created by amaliujia on 14-9-9.
  */
 public class QryopIlNear extends QryopIl {
+
     private int distance;
 
+    /**
+     *
+     * @param d
+     */
     public void setDistance(int d){this.distance = d;}
+
+    /**
+     *
+     * @param d
+     * @return
+     */
     public int getDistance(int d){return this.distance;}
 
+    /**
+     *
+     * @param d
+     */
     public QryopIlNear(int d){this.distance = d;}
 
-
+    /**
+     *
+     * @param q
+     */
     public void QryopIlNear(Qryop... q){
         for(int i = 0; i < q.length; i++){
             this.args.add(q[i]);
         }
     }
 
+    /**
+     *
+     * @param q
+     * @throws IOException
+     */
     public void add(Qryop q) throws IOException {
         this.args.add(q);
     }
 
+    /**
+     *
+     * @param r A retrieval model that controls how the operator behaves.
+     * @return
+     * @throws IOException
+     */
     public QryResult evaluate(RetrievalModel r) throws IOException {
         return (evaluateRankedBoolean(r));
     }
 
+    /**
+     *
+     * @param r
+     * @return
+     * @throws IOException
+     */
     public  QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException{
         allocDaaTPtrs(r);
         syntaxCheckArgResults(this.daatPtrs);
@@ -133,6 +168,12 @@ public class QryopIlNear extends QryopIl {
         return result;
     }
 
+    /**
+     *
+     * @param r
+     * @return
+     * @throws IOException
+     */
     public QryResult evaluateBoolean(RetrievalModel r) throws IOException{
         allocDaaTPtrs(r);
         syntaxCheckArgResults(this.daatPtrs);
@@ -215,6 +256,10 @@ public class QryopIlNear extends QryopIl {
         return result;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String toString() {
        String result = new String();

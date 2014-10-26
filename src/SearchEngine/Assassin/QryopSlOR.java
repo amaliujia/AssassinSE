@@ -59,9 +59,6 @@ public class QryopSlOR extends QryopSl {
       //  document id.  Use the first (shortest) list to control the
       //  search for matches.
 
-      //  Named loops are a little ugly.  However, they make it easy
-      //  to terminate an outer loop from within an inner loop.
-      //  Otherwise it is necessary to use flags, which is also ugly.
       DaaTPtr currentPtr = null;
       int currentID = -1;
       int []a = new int[this.daatPtrs.size()];
@@ -125,9 +122,6 @@ public class QryopSlOR extends QryopSl {
     //  document id.  Use the first (shortest) list to control the
     //  search for matches.
 
-    //  Named loops are a little ugly.  However, they make it easy
-    //  to terminate an outer loop from within an inner loop.
-    //  Otherwise it is necessary to use flags, which is also ugly.
     DaaTPtr currentPtr = null;
     int currentID = -1;
     int []a = new int[this.daatPtrs.size()];

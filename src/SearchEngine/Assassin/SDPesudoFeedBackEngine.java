@@ -82,10 +82,8 @@ public class SDPesudoFeedBackEngine {
                 }
            }
         }
-
         // Term computation done
-        System.out.println("Done");
-
+        System.out.println("Term num: " + expansionTermMap.size());
     }
 
 

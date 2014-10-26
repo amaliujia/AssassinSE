@@ -21,6 +21,8 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
+import javax.swing.text.html.parser.Entity;
+
 import static java.lang.System.console;
 import static java.lang.System.exit;
 
@@ -167,6 +169,44 @@ public class QryEval {
         if(params.containsKey("fbInitialRankingFile")){
            String initialRankingFilePath = params.get("fbInitialRankingFile");
            String outputRankingFilePath = params.get("fbExpansionQueryFile");
+           int docNum = Integer.parseInt(params.get("fbDocs"));
+           int termNum = Integer.parseInt(params.get("fbTerms"));
+
+           // read reference document
+           File referenceFile = new File(initialRankingFilePath);
+            Scanner scanner = null;
+           try{
+               scanner = new Scanner(referenceFile);
+           }catch (FileNotFoundException e){
+               System.out.println("No reference file");
+               e.printStackTrace();
+               return;
+           }
+
+           for(int q = 0; q < keys.size(); q++) {
+               String docRecord = "";
+               int counter = docNum;
+               ArrayList<SortEntity> currentQuery = new ArrayList<SortEntity>();
+               while (scanner.hasNext() && counter != 0) {
+                   docRecord = scanner.nextLine();
+                   String[] infos = docRecord.split(" ");
+                   if(!infos[0].equals(keys.get(q)) &&
+                       Integer.parseInt(infos[0]) < Integer.parseInt(keys.get(q))){
+                       continue;
+                   }else if(!infos[0].equals(keys.get(q)) &&
+                           Integer.parseInt(infos[0]) > Integer.parseInt(keys.get(q))){
+                       System.out.println("Never should be here");
+                       break;
+                   }else{
+                       counter--;
+                       int docid = getInternalDocid(infos[2]);
+                       SortEntity entity = new SortEntity(docid, infos[2], Double.parseDouble(infos[4]));
+                       currentQuery.add(entity);
+                   }
+               }
+               SDPesudoFeedBackEngine feedBackEngine = new SDPesudoFeedBackEngine(termNum, currentQuery, keys.get(q), mu);
+               feedBackEngine.SDFeedback();
+           }
         }else{
             Qryop qTree;
             String outputPath = params.get("trecEvalOutputPath");

@@ -1,5 +1,7 @@
 package SearchEngine.Assassin;
 
+import sun.misc.Sort;
+
 /**
  * Created by amaliujia on 14-9-23.
  */
@@ -13,8 +15,32 @@ public class SortEntity implements Comparable<SortEntity>{
         externDocID = b;
         scores = c;
     }
+
+    public SortEntity(String b, double c){
+        externDocID = b;
+        scores = c;
+    }
+//    public void getInternalDocID(){
+//
+//    }
+
+
+    /**
+     *
+     * @return
+     */
     public double getScore() {return this.scores;}
+
+    /**
+     *
+     * @return
+     */
     public String getExternalDocid()  {return this.externDocID;}
+
+    /**
+     *
+     * @return
+     */
     public int getInternalDocID() {return this.internalDocID;}
 
     @Override

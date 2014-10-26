@@ -167,10 +167,6 @@ public class QryopSlWAND extends QryopSl {
             //  If this argument doesn't return ScoreLists, wrap it
             //  in a #SCORE operator.
             if(i % 2 != 0) {
-//                if(this.weights.get(this.weights.size() - 1) == 0.0){
-//                    this.weights.remove(this.weights.size() - 1);
-//                    continue;
-//                }
                 if (!QryopSl.class.isInstance(this.args.get(i)))
                     this.args.set(i, new QryopSlScore(this.args.get(i)));
 

@@ -151,9 +151,6 @@ public QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException {
         //  document id.  Use the first (shortest) list to control the
         //  search for matches.
 
-        //  Named loops are a little ugly.  However, they make it easy
-        //  to terminate an outer loop from within an inner loop.
-        //  Otherwise it is necessary to use flags, which is also ugly.
 
         DaaTPtr ptr0 = this.daatPtrs.get(0);
 
@@ -231,10 +228,6 @@ public QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException {
     //  Exact-match AND requires that ALL scoreLists contain a
     //  document id.  Use the first (shortest) list to control the
     //  search for matches.
-
-    //  Named loops are a little ugly.  However, they make it easy
-    //  to terminate an outer loop from within an inner loop.
-    //  Otherwise it is necessary to use flags, which is also ugly.
 
     DaaTPtr ptr0 = this.daatPtrs.get(0);
 

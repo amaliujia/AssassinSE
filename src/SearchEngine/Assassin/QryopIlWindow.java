@@ -34,13 +34,24 @@ public class QryopIlWindow extends QryopIl {
         }
     }
 
-
+    /**
+     *
+     * @param r A retrieval model that controls how the operator behaves.
+     * @return
+     * @throws IOException
+     */
     public QryResult evaluate(RetrievalModel r) throws IOException {
         if(r instanceof RetrievalModelIndri || r instanceof RetrievalModelBM25)
             return evaluateBM25AndIndri(r);
         return null;
     }
 
+    /**
+     *
+     * @param r
+     * @return
+     * @throws IOException
+     */
     public QryResult evaluateBM25AndIndri(RetrievalModel r) throws IOException {
         allocDaaTPtrs(r);
         QryResult result = new QryResult();
