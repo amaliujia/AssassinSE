@@ -38,7 +38,7 @@ public class SDPesudoFeedBackEngine {
      *
      */
     public void SDFeedback() throws IOException {
-        ArrayList<TermVector> termVectors = new ArrayList<TermVector>();
+        termVectors = new ArrayList<TermVector>();
         for(int i = 0; i < folder.size(); i++){
            SortEntity entity = folder.get(i);
            try {
@@ -64,7 +64,9 @@ public class SDPesudoFeedBackEngine {
             double docWeight = folder.get(i).getScore();
             for(int j = 0; j < vec.stems.length; j++){
                 String stem = vec.stemString(j);
-                if(stem == null)    continue;
+                if(stem == null) {
+                    continue;
+                }
                 if(expansionTermMap.containsKey(stem)){
                    double o = expansionTermMap.get(stem);
                     double ctf = (double)vec.totalStemFreq(j);
