@@ -147,30 +147,27 @@ public class QryEval {
       System.out.println("Error on dealing with queries file!");
     }
 
+      Qryop qTree;
+      String outputPath = params.get("trecEvalOutputPath");
+      writer = new BufferedWriter(new FileWriter(new File(outputPath)));
     if(!params.containsKey("fb") || params.get("fb").equals("false")) { //do not need to
-        Qryop qTree;
-        String outputPath = params.get("trecEvalOutputPath");
-        writer = new BufferedWriter(new FileWriter(new File(outputPath)));
+
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
             String que = queries.get(i);
             qTree = parseQuery(que, model);
             printResults(key, qTree.evaluate(model), qTree);
         }
-
-        try{
-            writer.close();
-        }catch (Exception e){
-            System.out.println("error: close files");
-        }
     }else{
         double mu = Double.parseDouble(params.get("fbMu"));
+        double w = Double.parseDouble( params.get("fbOrigWeight"));
 
         if(params.containsKey("fbInitialRankingFile")){
            String initialRankingFilePath = params.get("fbInitialRankingFile");
            String outputRankingFilePath = params.get("fbExpansionQueryFile");
            int docNum = Integer.parseInt(params.get("fbDocs"));
            int termNum = Integer.parseInt(params.get("fbTerms"));
+           BufferedWriter queryWriter = new BufferedWriter(new FileWriter(new File(outputRankingFilePath)));
 
            // read reference document
            File referenceFile = new File(initialRankingFilePath);
@@ -205,30 +202,35 @@ public class QryEval {
                    }
                }
                SDPesudoFeedBackEngine feedBackEngine = new SDPesudoFeedBackEngine(termNum, currentQuery, keys.get(q), mu);
-               feedBackEngine.SDFeedback();
+               String queryExpasion = feedBackEngine.SDFeedback();
+               String newQuery = "#WAND ( " + w + "  #AND ( " + queries.get(q) + " )  " +
+                       (1 - w) + " " + queryExpasion +  " )";
+              // System.out.println(newQuery);
+               queryWriter.write(keys.get(q) + ":" + queryExpasion + "\n");
+               qTree = parseQuery(newQuery, model);
+               printResults(keys.get(q), qTree.evaluate(model), qTree);
+           }
+           try{
+               queryWriter.close();
+           }catch (Exception e){
+               e.printStackTrace();
            }
         }else{
-            Qryop qTree;
-            String outputPath = params.get("trecEvalOutputPath");
             int docNum = Integer.parseInt(params.get("fbDocs"));
             int termNum = Integer.parseInt(params.get("fbTerms"));
 
-
-            writer = new BufferedWriter(new FileWriter(new File(outputPath)));
             for (int i = 0; i < keys.size(); i++) {
                 String key = keys.get(i);
                 String que = queries.get(i);
                 qTree = parseQuery(que, model);
                 ResultsAfterFeedback(key, qTree.evaluate(model), qTree, docNum, termNum, mu);
             }
+        }
 
-            try{
-                writer.close();
-            }catch (Exception e){
-                System.out.println("error: close files");
-            }
-
-
+        try{
+            writer.close();
+        }catch (Exception e){
+            System.out.println("error: close files");
         }
     }
       printMemoryUsage(true);

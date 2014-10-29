@@ -1,6 +1,6 @@
 indexPath=index1
 retrievalAlgorithm=Indri
-queryFilePath=query/test
+queryFilePath=query/Test
 trecEvalOutputPath=output/HW1-queries-UB.teIn
 BM25:k_1=1.2
 BM25:b=0.75
@@ -14,4 +14,4 @@ fbTerms=5
 fbMu=0
 fbOrigWeight=0.5
 fbInitialRankingFile=output/Indri-Bow.teIn
-fbExpansionQueryFile=dummy
+fbExpansionQueryFile=output/dummy.txt

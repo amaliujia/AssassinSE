@@ -1,8 +1,7 @@
 package SearchEngine.Assassin;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Created by amaliujia on 14-10-24.
@@ -37,7 +36,7 @@ public class SDPesudoFeedBackEngine {
     /**
      *
      */
-    public void SDFeedback() throws IOException {
+    public String SDFeedback() throws IOException {
         termVectors = new ArrayList<TermVector>();
         for(int i = 0; i < folder.size(); i++){
            SortEntity entity = folder.get(i);
@@ -60,7 +59,8 @@ public class SDPesudoFeedBackEngine {
 
         for(int i = 0; i < folder.size(); i++){
             TermVector vec = termVectors.get(i);
-            double lenDoc = vec.positionsLength();
+           // double lenDoc = vec.positionsLength();
+            double lenDoc = DataCenter.sharedDataCenter().docLengthStore.getDocLength("body", folder.get(i).getInternalDocID());
             double docWeight = folder.get(i).getScore();
             for(int j = 0; j < vec.stems.length; j++){
                 String stem = vec.stemString(j);
@@ -84,9 +84,30 @@ public class SDPesudoFeedBackEngine {
                 }
            }
         }
+
+
+        List<Map.Entry<String, Double>> sortedList = new ArrayList<Map.Entry<String, Double>>(expansionTermMap.entrySet());
+        Collections.sort(sortedList, new Comparator<Map.Entry<String, Double>>() {
+            public int compare(Map.Entry<String, Double> e1,
+                               Map.Entry<String, Double> e2) {
+                if (!e1.getValue().equals(e2.getValue())) {
+                    if (e2.getValue() > e1.getValue()) return 1;
+                    else return -1;
+                } else
+                    return (e1.getKey()).toString().compareTo(e2.getKey().toString());
+            }
+        });
         // Term computation done
-        System.out.println("Term num: " + expansionTermMap.size());
+        //System.out.println("Term num: " + expansionTermMap.size());
+        String result = "#WAND ( ";
+        for(int z = 0; z < termNum; z++){
+            if(sortedList.get(z).getKey().indexOf('.') != -1 ||
+               sortedList.get(z).getKey().indexOf(',') != -1){
+               z--;
+               continue;
+            }
+            result += (sortedList.get(z).getValue() + " " + sortedList.get(z).getKey() + " ");
+        }
+        return result + " )";
     }
-
-
 }
