@@ -1,1 +1,12 @@
 #WAND ( 1.0 #AND( #WSUM( 0.0 fickle.url 0.0 fickle.keywords 0.2 fickle.title 0.0 fickle.inlink 0.8 fickle.body ) #WSUM( 0.0 creek.url 0.0 creek.keywords 0.2 creek.title 0.0 creek.inlink 0.8 creek.body ) #WSUM( 0.0 farm.url 0.0 farm.keywords 0.2 farm.title 0.0 farm.inlink 0.8 farm.body ) ) 0.0 #WAND( 0.1 #AND( fickle creek farm ) 0.45 #AND( #NEAR/1( creek farm )  #NEAR/1( fickle creek ) )  0.45 #AND( #WINDOW/8( creek farm )  #WINDOW/8( fickle creek ) ) ) )
+
+10:cheap internet
+12:djs
+26:lower heart rate
+29:ps 2 games
+33:elliptical trainer
+52:avp
+71:living in india
+102:fickle creek farm
+149:uplift at yellowstone national park
+190:brooks brothers clearance

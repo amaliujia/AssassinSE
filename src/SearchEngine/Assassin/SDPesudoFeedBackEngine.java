@@ -28,7 +28,6 @@ public class SDPesudoFeedBackEngine {
      * @param queryID
      */
     public SDPesudoFeedBackEngine(int termNum, ArrayList<SortEntity> result, String queryID, Double mu){
-       // this.docNum = docNum;
         this.termNum = termNum;
         folder = result;
         this.queryID = queryID;
@@ -58,38 +57,60 @@ public class SDPesudoFeedBackEngine {
             docWeightMap.put(folder.get(i).getInternalDocID(), folder.get(i).getScore());
         }
 
-        double collectionLen = QryEval.READER.getSumTotalTermFreq(field);
 
-        for(int i = 0; i < folder.size(); i++){
-            TermVector vec = termVectors.get(i);
-           // double lenDoc = vec.positionsLength();
-            double lenDoc = DataCenter.sharedDataCenter().docLengthStore.getDocLength("body", folder.get(i).getInternalDocID());
-            double docWeight = folder.get(i).getScore();
-            for(int j = 0; j < vec.stemsLength(); j++){
-                String stem = vec.stemString(j);
-                if(stem == null) {
-                    continue;
-                }
-                if(expansionTermMap.containsKey(stem)){
-                   double o = expansionTermMap.get(stem);
-                   //double ctf = (double)vec.totalStemFreq(j);
-                   double ctf = QryEval.READER.totalTermFreq(new Term("body", new BytesRef(stem)));
-                   double tfidf = Math.log(collectionLen / ctf);
-                   double pmle = ctf / collectionLen;
-                   double p = (((double)vec.stemFreq(j)) + pesudoFeedbackMu * pmle) / (lenDoc + pesudoFeedbackMu);
-                   o += (p * tfidf * docWeight);
-                   expansionTermMap.put(stem, o);
-                }else{
-                   //double ctf = (double)vec.totalStemFreq(j);
-                   double ctf = QryEval.READER.totalTermFreq(new Term("body", new BytesRef(stem)));
-                   double tfidf = Math.log(collectionLen / ctf);
-                   double pmle = ctf / collectionLen;
-                   double p = (((double)vec.stemFreq(j)) + pesudoFeedbackMu * pmle) / (lenDoc + pesudoFeedbackMu);
-                   expansionTermMap.put(stem, p * tfidf * docWeight);
-                }
+        //record all terms in a hashmap
+
+        for(int i = 0 ; i < termVectors.size(); i++){
+           TermVector vec = termVectors.get(i);
+           for(int j = 0; j < vec.stemsLength(); j++){
+               String stem = vec.stemString(j);
+               if(stem != null && !expansionTermMap.containsKey(stem)){
+                   expansionTermMap.put(stem, 0.0);
+               }
            }
         }
 
+        double collectionLen = QryEval.READER.getSumTotalTermFreq(field);
+
+        for(int i = 0; i < folder.size(); i++) {
+            TermVector vec = termVectors.get(i);
+            HashMap<String, Double> termMap = new HashMap<String, Double>();
+            for (int z = 0; z < vec.stemsLength(); z++) {
+                String stem = vec.stemString(z);
+                if (stem != null && !termMap.containsKey(stem)) {
+                    termMap.put(stem, (double) vec.stemFreq(z));
+                }
+            }
+            // double lenDoc = vec.positionsLength();
+            double lenDoc = DataCenter.sharedDataCenter().docLengthStore.getDocLength("body", folder.get(i).getInternalDocID());
+            double docWeight = folder.get(i).getScore();
+
+            //iterate vocabulary
+            Iterator it = expansionTermMap.keySet().iterator();
+            while (it.hasNext()) {
+                String stem = (String) it.next();
+                if (termMap.containsKey(stem)) {
+                    double o = expansionTermMap.get(stem);
+                    //double ctf = (double)vec.totalStemFreq(j);
+                    double ctf = QryEval.READER.totalTermFreq(new Term("body", new BytesRef(stem)));
+                    double tfidf = Math.log(collectionLen / ctf);
+                    double pmle = ctf / collectionLen;
+                    double p = (termMap.get(stem) + pesudoFeedbackMu * pmle) / (lenDoc + pesudoFeedbackMu);
+                    o += (p * tfidf * docWeight);
+                    expansionTermMap.put(stem, o);
+                } else {
+                    double o = expansionTermMap.get(stem);
+                    //double ctf = (double)vec.totalStemFreq(j);
+                    double ctf = QryEval.READER.totalTermFreq(new Term("body", new BytesRef(stem)));
+                    double tfidf = Math.log(collectionLen / ctf);
+                    double pmle = ctf / collectionLen;
+                    double p = (pesudoFeedbackMu * pmle) / (lenDoc + pesudoFeedbackMu);
+                    o += (p * tfidf * docWeight);
+                    expansionTermMap.put(stem, o);
+                }
+
+            }
+        }
 
         List<Map.Entry<String, Double>> sortedList = new ArrayList<Map.Entry<String, Double>>(expansionTermMap.entrySet());
         Collections.sort(sortedList, new Comparator<Map.Entry<String, Double>>() {
@@ -102,9 +123,8 @@ public class SDPesudoFeedBackEngine {
                     return (e1.getKey()).toString().compareTo(e2.getKey().toString());
             }
         });
-        // Term computation done
-      //  System.out.println("Term num: " + sortedList.get(sortedList.size() - 1));
 
+        // Term computation done
         String result = "#WAND ( ";
         for(int z = 0; z < termNum; z++){
             if(sortedList.get(z).getKey().indexOf('.') != -1 ||

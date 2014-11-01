@@ -64,3 +64,6 @@ index1/segments.gen
 index2/segments_1
 
 index2/segments.gen
+
+src1/*
+*.perl
