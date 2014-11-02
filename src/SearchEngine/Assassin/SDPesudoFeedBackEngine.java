@@ -73,6 +73,7 @@ public class SDPesudoFeedBackEngine {
         double collectionLen = QryEval.READER.getSumTotalTermFreq(field);
 
         for(int i = 0; i < folder.size(); i++) {
+           // System.out.println("folder: " + i);
             TermVector vec = termVectors.get(i);
             HashMap<String, Double> termMap = new HashMap<String, Double>();
             for (int z = 0; z < vec.stemsLength(); z++) {
@@ -113,6 +114,7 @@ public class SDPesudoFeedBackEngine {
         }
 
         List<Map.Entry<String, Double>> sortedList = new ArrayList<Map.Entry<String, Double>>(expansionTermMap.entrySet());
+
         Collections.sort(sortedList, new Comparator<Map.Entry<String, Double>>() {
             public int compare(Map.Entry<String, Double> e1,
                                Map.Entry<String, Double> e2) {
@@ -129,7 +131,7 @@ public class SDPesudoFeedBackEngine {
         for(int z = 0; z < termNum; z++){
             if(sortedList.get(z).getKey().indexOf('.') != -1 ||
                sortedList.get(z).getKey().indexOf(',') != -1){
-               z--;
+               termNum++;
                continue;
             }
             result += (sortedList.get(z).getValue() + " " + sortedList.get(z).getKey() + " ");

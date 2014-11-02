@@ -231,6 +231,7 @@ public class QryEval {
 
                 String newQuery = "#WAND ( " + w + "  #AND ( " + queries.get(i) + " )  " +
                         (1 - w) + " " + queryExpasion +  " )";
+                //System.out.println(newQuery);
                 queryWriter.write(keys.get(i) + ":" + queryExpasion + "\n");
                 qTree = parseQuery(newQuery, model);
                 printResults(keys.get(i), qTree.evaluate(model), qTree);
