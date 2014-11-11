@@ -30,6 +30,8 @@ Milestones
 
 12. Implement Pesudo Feedback algorithm for Indri
 
+13. Implement feature-based machine learning algorithm to rank
+
 Copyright
 =======
 
