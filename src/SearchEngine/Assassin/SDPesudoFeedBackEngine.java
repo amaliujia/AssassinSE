@@ -57,7 +57,6 @@ public class SDPesudoFeedBackEngine {
             docWeightMap.put(folder.get(i).getInternalDocID(), folder.get(i).getScore());
         }
 
-
         //record all terms in a hashmap
 
         for(int i = 0 ; i < termVectors.size(); i++){

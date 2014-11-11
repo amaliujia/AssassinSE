@@ -169,6 +169,9 @@ public class QryEval {
            int termNum = Integer.parseInt(params.get("fbTerms"));
            BufferedWriter queryWriter = new BufferedWriter(new FileWriter(new File(outputRankingFilePath)));
 
+           // for exp
+           BufferedWriter queryWriter2 = new BufferedWriter(new FileWriter(new File("output/dummy")));
+
            // read reference document
            File referenceFile = new File(initialRankingFilePath);
             Scanner scanner = null;
@@ -207,13 +210,18 @@ public class QryEval {
                String queryExpasion = feedBackEngine.SDFeedback();
                String newQuery = "#WAND ( " + w + "  #AND ( " + queries.get(q) + " )  " +
                        (1 - w) + " " + queryExpasion +  " )";
-               //System.out.println(newQuery);
+               System.out.println(newQuery);
                queryWriter.write(keys.get(q) + ":" + queryExpasion + "\n");
+
+               //for exp
+               queryWriter2.write(keys.get(q) + ":" + newQuery+ "\n");
+
                qTree = parseQuery(newQuery, model);
                printResults(keys.get(q), qTree.evaluate(model), qTree);
            }
            try{
                queryWriter.close();
+               queryWriter2.close();
            }catch (Exception e){
                e.printStackTrace();
            }
@@ -223,6 +231,9 @@ public class QryEval {
             String outputRankingFilePath = params.get("fbExpansionQueryFile");
             BufferedWriter queryWriter = new BufferedWriter(new FileWriter(new File(outputRankingFilePath)));
 
+            // for exp
+            BufferedWriter queryWriter2 = new BufferedWriter(new FileWriter(new File("output/dummy")));
+
             for (int i = 0; i < keys.size(); i++) {
                 String key = keys.get(i);
                 String que = queries.get(i);
@@ -231,13 +242,19 @@ public class QryEval {
 
                 String newQuery = "#WAND ( " + w + "  #AND ( " + queries.get(i) + " )  " +
                         (1 - w) + " " + queryExpasion +  " )";
-                //System.out.println(newQuery);
+                System.out.println(newQuery);
                 queryWriter.write(keys.get(i) + ":" + queryExpasion + "\n");
+
+                //for exp
+                queryWriter2.write(keys.get(i) + ":" + newQuery+ "\n");
+
+
                 qTree = parseQuery(newQuery, model);
                 printResults(keys.get(i), qTree.evaluate(model), qTree);
             }
             try{
                 queryWriter.close();
+                queryWriter2.close();
             }catch (Exception e){
                 e.printStackTrace();
             }
