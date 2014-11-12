@@ -10,6 +10,7 @@
 package SearchEngine.Assassin;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.*;
 
 import org.apache.lucene.analysis.Analyzer.TokenStreamComponents;
@@ -38,6 +39,7 @@ public class QryEval {
 
   public static IndexReader READER;
   public static BufferedWriter writer;
+  public static BufferedWriter featuresWriter;
 
     //  Create and configure an English analyzer that will be used for
   //  query parsing.
@@ -103,6 +105,8 @@ public class QryEval {
             model = new RetrievalModelBM25();
     }else if(modelType.equals("Indri")){
             model = new RetrievalModelIndri();
+    }else if(modelType.equals("letor")){
+            model = new RetrievalModelLearningToRank();
     }else{
         return;
     }
@@ -116,6 +120,12 @@ public class QryEval {
         ((RetrievalModelIndri)model).mu = Double.parseDouble(params.get("Indri:mu"));
         ((RetrievalModelIndri) model).lambda = Double.parseDouble(params.get("Indri:lambda"));
         //((RetrievalModelIndri) model).smoothing = params.get("Indri:smoothing");
+    }else if(model instanceof RetrievalModelLearningToRank){
+        ((RetrievalModelLearningToRank)model).mu = Double.parseDouble(params.get("Indri:mu"));
+        ((RetrievalModelLearningToRank)model).lambda = Double.parseDouble(params.get("Indri:lambda"));
+        ((RetrievalModelLearningToRank)model).k1 = Double.parseDouble(params.get("BM25:k_1"));
+        ((RetrievalModelLearningToRank)model).k3 = Double.parseDouble(params.get("BM25:k_3"));
+        ((RetrievalModelLearningToRank)model).b = Double.parseDouble(params.get("BM25:b"));
     }
 
     if(model == null){
@@ -137,7 +147,6 @@ public class QryEval {
        fileReader = new InputStreamReader(f);
        bufferReader = new BufferedReader(fileReader);
        while((str = bufferReader.readLine()) != null){
-  //       if(str.length() <= 2)  continue;
          String[] queryPair=  str.split(":");
          keys.add(queryPair[0]);
          queries.add(queryPair[1]);
@@ -150,7 +159,76 @@ public class QryEval {
       Qryop qTree;
       String outputPath = params.get("trecEvalOutputPath");
       writer = new BufferedWriter(new FileWriter(new File(outputPath)));
-    if(!params.containsKey("fb") || params.get("fb").equals("false")) { //do not need to
+
+      //In the part, decide which path will AssassinSE use, normal pattern, pesudo feedback or
+      //learning to rank?
+      if(model instanceof RetrievalModelLearningToRank){
+          //initialization
+          String traningFilePath = params.get("letor:trainingFeatureVectorsFile");
+          featuresWriter = new BufferedWriter(new FileWriter(new File(traningFilePath)));
+
+          //preprocessing relevant documents
+          HashMap<String, ArrayList<String>> revelanceMap = new HashMap<String, ArrayList<String>>();
+          File relevanceFiles = new File(params.get("letor:trainingQrelsFile"));
+          Scanner s = null;
+          try{
+              s= new Scanner(relevanceFiles);
+          }catch (FileNotFoundException e){
+              System.out.println("No relevance judgement file");
+              e.printStackTrace();
+              return;
+          }
+
+          while(s.hasNext()){
+              String currLine = s.nextLine();
+              String currKey = currLine.split(" ")[0];
+              if(revelanceMap.containsKey(currKey)){
+                  ArrayList<String> queryDocs = revelanceMap.get(currKey);
+                  queryDocs.add(currLine);
+                  revelanceMap.put(currKey, queryDocs);
+              }else{
+                  ArrayList<String> queryDocs = new ArrayList<String>();
+                  queryDocs.add(currLine);
+                  revelanceMap.put(currKey, queryDocs);
+              }
+          }
+
+          FileInputStream trainingFile = new FileInputStream(params.get("letor:trainingQueryFile"));
+          InputStreamReader traningFileReader = new InputStreamReader(trainingFile);
+          BufferedReader traningBufferReader = new BufferedReader(traningFileReader);
+          ArrayList<String> traningQueries = new ArrayList<String>();
+          ArrayList<String> traningKeys = new ArrayList<String>();
+
+          // read traning queries
+          String q = "";
+          while((q = traningBufferReader.readLine()) != null){
+              String[] pair = q.split(":");
+              traningQueries.add(pair[0]);
+              traningKeys.add(pair[1]);
+          }
+          trainingFile.close();
+
+          //start to build features vectors for documents of each query
+          SDLearningToRankPool pool = new SDLearningToRankPool();
+          for (int i = 0; i < traningKeys.size(); i++){
+              String key = traningKeys.get(i);
+              String query = traningQueries.get(i);
+
+              if(!revelanceMap.containsKey(key)){
+                  throw new NoSuchElementException("Not relevance judgement files for query " + key + " " + query);
+              }
+
+              ArrayList<String> docs = revelanceMap.get(key);
+              for(int j = 0; j < docs.size(); j++){
+                    String featureVector = pool.produceFeatureVector(model, docs.get(j));
+                   featuresWriter.write(featureVector);
+              }
+
+          }
+
+          featuresWriter.close();
+
+      }else if(!params.containsKey("fb") || params.get("fb").equals("false")) { //do not need to
 
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
@@ -283,9 +361,9 @@ public class QryEval {
   /**
    *  Get the external document id for a document specified by an
    *  internal document id. If the internal id doesn't exists, returns null.
-   *  
+   *
    * @param iid The internal document id of the document.
-   * @throws IOException 
+   * @throws IOException
    */
   static String getExternalDocid (int iid) throws IOException {
     Document d = QryEval.READER.document (iid);
@@ -296,20 +374,20 @@ public class QryEval {
   /**
    *  Finds the internal document id for a document specified by its
    *  external id, e.g. clueweb09-enwp00-88-09710.  If no such
-   *  document exists, it throws an exception. 
-   * 
+   *  document exists, it throws an exception.
+   *
    * @param externalId The external document id of a document.s
    * @return An internal doc id suitable for finding document vectors etc.
    * @throws Exception
    */
   static int getInternalDocid (String externalId) throws Exception {
     Query q = new TermQuery(new Term("externalId", externalId));
-    
+
     IndexSearcher searcher = new IndexSearcher(QryEval.READER);
     TopScoreDocCollector collector = TopScoreDocCollector.create(1,false);
     searcher.search(q, collector);
     ScoreDoc[] hits = collector.topDocs().scoreDocs;
-    
+
     if (hits.length < 1) {
       throw new Exception("External id not found.");
     } else {
@@ -319,7 +397,7 @@ public class QryEval {
 
   /**
    * parseQuery converts a query string into a query tree.
-   * 
+   *
    * @param qString
    *          A string containing a query.
    * @throws IOException                                                            `
@@ -501,18 +579,18 @@ public class QryEval {
 			((runtime.totalMemory() - runtime.freeMemory()) /
 			 (1024L * 1024L)) + " MB");
   }
-  
+
   /**
-   * Print the query results. 
-   * 
+   * Print the query results.
+   *
    * THIS IS NOT THE CORRECT OUTPUT FORMAT.  YOU MUST CHANGE THIS
    * METHOD SO THAT IT OUTPUTS IN THE FORMAT SPECIFIED IN THE HOMEWORK
    * PAGE, WHICH IS:
-   * 
+   *
    * QueryID Q0 DocID Rank Score RunID
    *
    * @param result Result object generated by {@link Qryop#evaluate(RetrievalModel)}.
-   * @throws IOException 
+   * @throws IOException
    */
   static void printResults(String queryID, QryResult result, Qryop qTree) throws IOException {
 
@@ -604,10 +682,10 @@ public class QryEval {
 
   /**
    *  Given a query string, returns the terms one at a time with stopwords
-   *  removed and the terms stemmed using the Krovetz stemmer. 
-   * 
-   *  Use this method to process raw query terms. 
-   * 
+   *  removed and the terms stemmed using the Krovetz stemmer.
+   *
+   *  Use this method to process raw query terms.
+   *
    *  @param query String containing query
    *  @return Array of query tokens
    *  @throws IOException
