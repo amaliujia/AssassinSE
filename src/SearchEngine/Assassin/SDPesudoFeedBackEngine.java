@@ -10,7 +10,7 @@ import java.util.*;
  * Created by amaliujia on 14-10-24.
  */
 public class SDPesudoFeedBackEngine {
- //   private int docNum;
+
     private int termNum;
     private ArrayList<SortEntity> folder;
     private String queryID;
@@ -20,7 +20,7 @@ public class SDPesudoFeedBackEngine {
     private double pesudoFeedbackMu;
 
     /**
-     *
+     * Initialze Pesudo Feedback Engine
      * @param termNum
      *
      * @param result
@@ -36,7 +36,7 @@ public class SDPesudoFeedBackEngine {
     }
 
     /**
-     *
+     *  Feedback algorithm
      */
     public String SDFeedback() throws IOException {
         termVectors = new ArrayList<TermVector>();

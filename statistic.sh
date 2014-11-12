@@ -1,1 +1,1 @@
-find . -name '*.java' | xargs wc -l {}\;
+find . -name '*.java' | xargs wc -l 

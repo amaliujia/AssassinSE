@@ -193,6 +193,19 @@ public class QryEval {
               }
           }
 
+          //get page rank score
+          HashMap<Integer, Double> pageRank = new HashMap<Integer, Double>();
+          String pageRankFile = params.get("letor:pageRankFile");
+          Scanner scanner = new Scanner(new File(pageRankFile));
+
+          while(scanner.hasNext()){
+              String cur = scanner.nextLine();
+              String[] fileScore = cur.split("\t");
+              int id = getInternalDocid(fileScore[0]);
+              pageRank.put(id, Double.parseDouble(fileScore[1]));
+          }
+
+          //read training queies
           FileInputStream trainingFile = new FileInputStream(params.get("letor:trainingQueryFile"));
           InputStreamReader traningFileReader = new InputStreamReader(trainingFile);
           BufferedReader traningBufferReader = new BufferedReader(traningFileReader);
@@ -210,9 +223,13 @@ public class QryEval {
 
           //start to build features vectors for documents of each query
           SDLearningToRankPool pool = new SDLearningToRankPool();
+          pool.setPageRank(pageRank);
+
           for (int i = 0; i < traningKeys.size(); i++){
               String key = traningKeys.get(i);
               String query = traningQueries.get(i);
+
+              pool.addQuery(query);
 
               if(!revelanceMap.containsKey(key)){
                   throw new NoSuchElementException("Not relevance judgement files for query " + key + " " + query);
@@ -220,8 +237,12 @@ public class QryEval {
 
               ArrayList<String> docs = revelanceMap.get(key);
               for(int j = 0; j < docs.size(); j++){
-                    String featureVector = pool.produceFeatureVector(model, docs.get(j));
-                   featuresWriter.write(featureVector);
+                    String[] docinfo = docs.get(j).split(" ");
+                    int docid = getInternalDocid(docinfo[1]);
+                    String featureVector = pool.produceFeatureVector(model, docid);
+
+                    //write feature vector into target file
+                    featuresWriter.write(featureVector);
               }
 
           }

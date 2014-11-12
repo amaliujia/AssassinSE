@@ -18,8 +18,6 @@ public class ScoreListEntry implements Comparable<ScoreListEntry>{
         this.score = score;
     }
 
-
-
     public double getScore(){
         return this.score;
     }
