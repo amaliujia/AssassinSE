@@ -1,10 +1,8 @@
 package SearchEngine.Assassin;
 
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
-
 
 /**
  * Created by amaliujia on 14-9-21.

@@ -6,9 +6,10 @@
  *  scores.
  */
 package SearchEngine.Assassin;
+
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.SynchronousQueue;
+
 
 
 public class QryopSlScore extends QryopSl {
@@ -86,7 +87,6 @@ public class QryopSlScore extends QryopSl {
             double pmle = ((double)this.ctf / collectionLen);
             p = (((indri.lambda * (tf + (indri.mu * pmle))) / (lenDoc + indri.mu))) +
                         ((1 - indri.lambda) * pmle);
-
             result.docScores.add(docid, p);
         }
 
@@ -128,9 +128,6 @@ public class QryopSlScore extends QryopSl {
 
         return result;
     }
-
-
-
     /**
      *  Evaluate the query operator for boolean retrieval models.
      *  @param r A retrieval model that controls how the operator behaves.

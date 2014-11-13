@@ -10,7 +10,7 @@
 package SearchEngine.Assassin;
 
 import java.io.*;
-import java.lang.reflect.Array;
+
 import java.util.*;
 
 import org.apache.lucene.analysis.Analyzer.TokenStreamComponents;
@@ -22,9 +22,6 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
-import javax.swing.text.html.parser.Entity;
-
-import static java.lang.System.console;
 import static java.lang.System.exit;
 
 public class QryEval {
@@ -126,6 +123,8 @@ public class QryEval {
         ((RetrievalModelLearningToRank)model).k1 = Double.parseDouble(params.get("BM25:k_1"));
         ((RetrievalModelLearningToRank)model).k3 = Double.parseDouble(params.get("BM25:k_3"));
         ((RetrievalModelLearningToRank)model).b = Double.parseDouble(params.get("BM25:b"));
+        ((RetrievalModelLearningToRank)model).numDocs = READER.numDocs();
+        ((RetrievalModelLearningToRank)model).docLengthStore = docLengthStore;
     }
 
     if(model == null){

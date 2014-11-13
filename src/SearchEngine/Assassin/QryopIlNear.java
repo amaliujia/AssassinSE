@@ -1,6 +1,5 @@
 package SearchEngine.Assassin;
 
-import javax.print.Doc;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;

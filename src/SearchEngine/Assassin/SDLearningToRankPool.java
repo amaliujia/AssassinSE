@@ -6,7 +6,7 @@ import org.apache.lucene.util.BytesRef;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
+
 
 /**
  * Created by amaliujia on 14-11-12.
@@ -17,6 +17,19 @@ public class SDLearningToRankPool {
     private HashMap<Integer, Double> pageRank;
     private String[] terms;
 
+
+    /**
+     * This fucntion will undertake the task in which a well defined
+     * featrue vector need be constructed.
+     * @param r
+     *          learning to rank model
+     * @param docid
+     *          internal key for current document
+     * @return
+     *          features vector in string format
+     * @throws IOException
+     *          throws when indexreader throws an exception
+     */
     public String produceFeatureVector(RetrievalModel r, int docid) throws IOException {
 
         Document d = QryEval.READER.document(docid);
@@ -29,23 +42,34 @@ public class SDLearningToRankPool {
 
         String field = "body";
         TermVector vector = new TermVector(docid, field);
-        double BM25Body = vectorSpaceBM25(r, vector, field);
+        double BM25Body = vectorSpaceBM25(r, vector, field, docid);
         double IndriBody = vectorSapceIndri(r, vector, field, docid);
+
+        // TODO: overlap
 
         field = "title";
         vector = new TermVector(docid, field);
-        double BM25Title = vectorSpaceBM25(r, vector, field);
+        double BM25Title = vectorSpaceBM25(r, vector, field, docid);
         double IndriTitle = vectorSapceIndri(r, vector, field, docid);
+
+        // TODO: overlap
 
         field = "url";
         vector = new TermVector(docid, field);
-        double BM25Url = vectorSpaceBM25(r, vector, field);
+        double BM25Url = vectorSpaceBM25(r, vector, field, docid);
         double IndriUrl = vectorSapceIndri(r, vector, field, docid);
+
+        // TODO: overlap
 
         field = "inlink";
         vector = new TermVector(docid, field);
-        double BM25Inlink = vectorSpaceBM25(r, vector, field);
+        double BM25Inlink = vectorSpaceBM25(r, vector, field, docid);
         double IndrInlink = vectorSapceIndri(r, vector, field, docid);
+
+        // TODO: overlap
+
+
+        // TODO: two custom features
 
         return "";
     }
@@ -70,7 +94,9 @@ public class SDLearningToRankPool {
     /**
      * Url depth for d(number of '/' in the rawUrl field)
      * @param rawUrl
+     *        rawUrl in string
      * @return
+     *        url depth
      */
     private int getDepth(String rawUrl) {
         int d = 0;
@@ -86,7 +112,9 @@ public class SDLearningToRankPool {
     /**
      * FromWikipedia score for d (1 if the rawUrl contains "wikipedia.org", otherwise 0)
      * @param rawUrl
+     *          rawUrl in string
      * @return
+     *         if it is wikipedia
      */
     private int getWikipediaScore(String rawUrl){
             if(rawUrl.contains(rawUrl)) {
@@ -95,10 +123,10 @@ public class SDLearningToRankPool {
             return 0;
         }
 
-
     /**
      * Set page rank scores
      * @param scores
+     *         page rank scores collection
      */
     public void setPageRank(HashMap<Integer, Double> scores) {
         this.pageRank = scores;
@@ -107,21 +135,67 @@ public class SDLearningToRankPool {
     /**
      * Compute BM25 based on term vector
      * @param r
+     *      learning to rank model
      * @param v
+     *      term vector
      * @param field
+     *      current field
      * @return
+     *      BM25 score for current document in specific field
      */
-    public double vectorSpaceBM25(RetrievalModel r, TermVector v, String field){
+    public double vectorSpaceBM25(RetrievalModel r, TermVector v, String field, int docid) throws IOException {
 
-        return 0.0;
+        RetrievalModelLearningToRank model = (RetrievalModelLearningToRank)r;
+        double result = 0.0;
+
+        //necessary value
+        int N = model.numDocs;
+        double avgLen = (double)QryEval.READER.getSumTotalTermFreq(field) /
+                        (double)QryEval.READER.getDocCount(field);
+
+        // build vocabulary
+        HashMap<String, Double> vocabulary = new HashMap<String, Double>();
+
+        for(int j = 0; j < v.stemsLength(); j++){
+            String stem = v.stemString(j);
+            if(stem != null && !vocabulary.containsKey(stem)){
+                vocabulary.put(stem, (double)(v.stemFreq(j)));
+            }
+        }
+
+        double b = model.b;
+        double k1 = model.k1;
+        double k3 = model.k3;
+        double docLen = model.docLengthStore.getDocLength(field, docid);
+
+        // compute BM25 for document.
+        for(int i = 0; i < terms.length; i++){
+            String curTerm = terms[i];
+            if(vocabulary.containsKey(curTerm)){
+                //TODO: df for a specific field may not exit.
+                double df = QryEval.READER.docFreq(new Term(field, new BytesRef(curTerm)));
+                double tf = vocabulary.get(curTerm);
+                double a = Math.log((N - df + 0.5) / (df + 0.5));
+                double c = (tf / (tf + k1 * ((1.0 - b) + b * (docLen / avgLen))));
+                double d = ((k3 + 1.0) * 1.0) / (k3 + 1.0);
+                double docScore = a * c * d;
+                result += docScore;
+            }
+        }
+
+        return result;
     }
 
     /**
      * Compute Indri score based on term vector
      * @param r
+     *          learning to rank model
      * @param v
+     *          term vector
      * @param field
+     *          current field
      * @return
+     *      Indri score for current document in specific field
      */
     public double vectorSapceIndri(RetrievalModel r, TermVector v, String field, int docid) throws IOException {
         double result = 1.0;
@@ -143,6 +217,7 @@ public class SDLearningToRankPool {
         // compute P(document, query)
         for(int i = 0; i < terms.length; i++){
             String curTerm = terms[i];
+            //TODO: ctf for a specific field may not exit.
             double ctf = QryEval.READER.totalTermFreq(new Term(field, new BytesRef(curTerm)));
             double pmle = ctf / collectionLen;
             if(vocabulary.containsKey(curTerm)){

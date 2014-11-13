@@ -1,10 +1,5 @@
 package SearchEngine.Assassin;
 
-import org.apache.lucene.document.Document;
-
-import java.io.IOException;
-import java.util.Comparator;
-
 /**
  * Created by amaliujia on 14-9-7.
  */

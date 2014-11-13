@@ -6,6 +6,7 @@
  *  structured queries with nested query operators.
  */
 package SearchEngine.Assassin;
+
 import java.io.*;
 
 public class QryopIlTerm extends QryopIl {

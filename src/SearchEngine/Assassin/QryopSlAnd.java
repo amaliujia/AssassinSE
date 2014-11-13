@@ -5,7 +5,6 @@ package SearchEngine.Assassin;
 
 import java.io.*;
 
-
 public class QryopSlAnd extends QryopSl{
 
   /**

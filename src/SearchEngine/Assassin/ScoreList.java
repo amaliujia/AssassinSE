@@ -4,9 +4,6 @@
  */
 package SearchEngine.Assassin;
 
-import sun.rmi.transport.Connection;
-
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Collections;
