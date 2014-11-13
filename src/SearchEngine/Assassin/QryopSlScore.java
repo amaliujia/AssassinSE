@@ -110,7 +110,8 @@ public class QryopSlScore extends QryopSl {
        double k1 = dataCenter.k1;
        double k3 = dataCenter.k3;
        double b = dataCenter.b;
-       double avgLen = (double)QryEval.READER.getSumTotalTermFreq(field) / (double)QryEval.READER.getDocCount(field);
+       double avgLen = (double)QryEval.READER.getSumTotalTermFreq(field)
+                        / (double)QryEval.READER.getDocCount(field);
        // core part of algorithm. logic is similar with #OR, iterate all docid
        for(int i = 0; i < result.invertedList.df; i++){
            int docid = result.invertedList.getDocid(i);
@@ -184,15 +185,18 @@ public class QryopSlScore extends QryopSl {
    */
   public double getDefaultScore (RetrievalModel r, long docid) throws IOException {
 
-    if (r instanceof RetrievalModelUnrankedBoolean || r instanceof  RetrievalModelRankedBoolean || r instanceof RetrievalModelBM25)
-      return (0.0);
+    if (r instanceof RetrievalModelUnrankedBoolean ||
+        r instanceof  RetrievalModelRankedBoolean ||
+        r instanceof RetrievalModelBM25)
+           return (0.0);
     else if(r instanceof RetrievalModelIndri){
         // apply Indri default score formula
         RetrievalModelIndri indri = (RetrievalModelIndri)r;
         double tf = 0;
         double p = 0;
         double collectionLen = QryEval.READER.getSumTotalTermFreq(filed);
-        double lenDoc = DataCenter.sharedDataCenter().docLengthStore.getDocLength(this.filed, (int)docid);
+        double lenDoc = DataCenter.sharedDataCenter().docLengthStore.
+                                    getDocLength(this.filed, (int)docid);
         double pmle = (double)this.ctf / collectionLen;
         p = (indri.lambda * ((tf + (indri.mu * pmle)) / (lenDoc + indri.mu))) +
                     ((1 - indri.lambda) * pmle);

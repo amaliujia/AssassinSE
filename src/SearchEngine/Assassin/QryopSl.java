@@ -46,6 +46,7 @@ public abstract class QryopSl extends Qryop {
    *  @param docid The internal id of the document that needs a default score.
    *  @return The default score.
    */
-  public abstract double getDefaultScore (RetrievalModel r, long docid) throws IOException;
+  public abstract double getDefaultScore (RetrievalModel r, long docid)
+                                                    throws IOException;
 
 }

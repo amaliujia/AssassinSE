@@ -44,7 +44,6 @@ public class SDPesudoFeedBackEngine {
            SortEntity entity = folder.get(i);
            try {
                TermVector vector = new TermVector(entity.getInternalDocID(), field);
-              // System.out.println("stem length: " + vector.stems.length + "  setFequ length: " + vector.stemsFreq.length);
                termVectors.add(vector);
            }catch (IOException e){
                System.out.println("Failed to fetch term vector");
@@ -82,7 +81,8 @@ public class SDPesudoFeedBackEngine {
                 }
             }
             // double lenDoc = vec.positionsLength();
-            double lenDoc = DataCenter.sharedDataCenter().docLengthStore.getDocLength("body", folder.get(i).getInternalDocID());
+            double lenDoc = DataCenter.sharedDataCenter().docLengthStore.getDocLength("body",
+                                                            folder.get(i).getInternalDocID());
             double docWeight = folder.get(i).getScore();
 
             //iterate vocabulary

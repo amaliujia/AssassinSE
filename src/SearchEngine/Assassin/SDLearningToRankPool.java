@@ -30,7 +30,8 @@ public class SDLearningToRankPool {
      * @throws IOException
      *          throws when indexreader throws an exception
      */
-    public String produceFeatureVector(RetrievalModel r, int docid) throws IOException {
+    public String produceFeatureVector(RetrievalModel r, int docid)
+                                               throws IOException {
 
         Document d = QryEval.READER.document(docid);
         int spamscore = Integer.parseInt(d.get("score"));
@@ -110,7 +111,8 @@ public class SDLearningToRankPool {
     }
 
     /**
-     * FromWikipedia score for d (1 if the rawUrl contains "wikipedia.org", otherwise 0)
+     * From Wikipedia score for d (1 if the rawUrl contains
+     * "wikipedia.org", otherwise 0)
      * @param rawUrl
      *          rawUrl in string
      * @return
@@ -143,7 +145,8 @@ public class SDLearningToRankPool {
      * @return
      *      BM25 score for current document in specific field
      */
-    public double vectorSpaceBM25(RetrievalModel r, TermVector v, String field, int docid) throws IOException {
+    public double vectorSpaceBM25(RetrievalModel r, TermVector v, String field, int docid)
+                                                                      throws IOException {
 
         RetrievalModelLearningToRank model = (RetrievalModelLearningToRank)r;
         double result = 0.0;
@@ -197,7 +200,8 @@ public class SDLearningToRankPool {
      * @return
      *      Indri score for current document in specific field
      */
-    public double vectorSapceIndri(RetrievalModel r, TermVector v, String field, int docid) throws IOException {
+    public double vectorSapceIndri(RetrievalModel r, TermVector v, String field, int docid)
+                                                                        throws IOException {
         double result = 1.0;
 
         // global data

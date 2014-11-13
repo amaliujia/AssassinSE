@@ -27,7 +27,9 @@ public class QryopSlWSUM extends QryopSl {
      * @throws IOException
      */
     public double getDefaultScore(RetrievalModel r, long docid) throws IOException {
-        if (r instanceof RetrievalModelUnrankedBoolean || r instanceof  RetrievalModelRankedBoolean || r instanceof RetrievalModelBM25)
+        if (r instanceof RetrievalModelUnrankedBoolean ||
+            r instanceof  RetrievalModelRankedBoolean ||
+            r instanceof RetrievalModelBM25)
             return 0.0;
         else if(r instanceof RetrievalModelIndri){
             double c = 0;
@@ -122,11 +124,13 @@ public class QryopSlWSUM extends QryopSl {
                             docScore += temp;
                             ptrz.nextDoc++;
                         } else {
-                            double temp = (((QryopSl) this.args.get(z)).getDefaultScore(r, smallestForThisIteration) * (this.weights.get(z) / c));
+                            double temp = (((QryopSl) this.args.get(z)).getDefaultScore(r, smallestForThisIteration) *
+                                                                                            (this.weights.get(z) / c));
                             docScore += temp;
                         }
                     }else{
-                        double temp = (((QryopSl) this.args.get(z)).getDefaultScore(r, smallestForThisIteration) * (this.weights.get(z) / c));
+                        double temp = (((QryopSl) this.args.get(z)).getDefaultScore(r, smallestForThisIteration) *
+                                                                                            (this.weights.get(z) / c));
                         docScore += temp;
                     }
                 }

@@ -121,10 +121,13 @@ public class QryopSlWAND extends QryopSl {
                             docScore *= temp;
                             ptrz.nextDoc++;
                         } else {
-                            double temp = (Math.pow(((QryopSl) this.args.get(z)).getDefaultScore(r, smallestForThisIteration), (this.weights.get(z) / c)));                            docScore *= temp;
+                            double temp = (Math.pow(((QryopSl) this.args.get(z)).getDefaultScore(r, smallestForThisIteration),
+                                                                                            (this.weights.get(z) / c)));
+                            docScore *= temp;
                         }
                     }else{
-                        double temp = (Math.pow(((QryopSl) this.args.get(z)).getDefaultScore(r, smallestForThisIteration), (this.weights.get(z) / c)));
+                        double temp = (Math.pow(((QryopSl) this.args.get(z)).getDefaultScore(r, smallestForThisIteration),
+                                                                                            (this.weights.get(z) / c)));
                         docScore *= temp;
                     }
                 }

@@ -99,11 +99,13 @@ public class QryopSlAnd extends QryopSl{
                            docScore *= temp;
                            ptrz.nextDoc++;
                        } else {
-                           double temp = (Math.pow(((QryopSl) this.args.get(z)).getDefaultScore(r, smallestForThisIteration), (1.0 / this.args.size())));
+                           double temp = (Math.pow(((QryopSl) this.args.get(z)).getDefaultScore(r,
+                                            smallestForThisIteration), (1.0 / this.args.size())));
                            docScore *= temp;
                        }
                    }else{
-                       double temp = (Math.pow(((QryopSl) this.args.get(z)).getDefaultScore(r, smallestForThisIteration), (1.0 / this.args.size())));
+                       double temp = (Math.pow(((QryopSl) this.args.get(z)).getDefaultScore(r,
+                                             smallestForThisIteration), (1.0 / this.args.size())));
                        docScore *= temp;
                    }
                 }
@@ -273,13 +275,16 @@ public QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException {
    */
   public double getDefaultScore (RetrievalModel r, long docid) throws IOException {
 
-      if (r instanceof RetrievalModelUnrankedBoolean || r instanceof  RetrievalModelRankedBoolean || r instanceof RetrievalModelBM25)
+      if (r instanceof RetrievalModelUnrankedBoolean ||
+          r instanceof  RetrievalModelRankedBoolean ||
+          r instanceof RetrievalModelBM25)
         return (0.0);
       else if(r instanceof RetrievalModelIndri){
         // the task of #AND is call its args' getDefaultScore function and merge them.
         double defaultScore = 1.0;
         for (int i = 0; i < this.args.size(); i++){
-                defaultScore *= (Math.pow(((QryopSl)this.args.get(i)).getDefaultScore(r, docid), (1.0 / this.args.size())));
+                defaultScore *= (Math.pow(((QryopSl)this.args.get(i)).
+                                getDefaultScore(r, docid), (1.0 / this.args.size())));
         }
         return defaultScore;
       }

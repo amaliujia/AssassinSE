@@ -128,7 +128,8 @@ public class QryopIlWindow extends QryopIl {
                 int max = pos.get(pos.size() - 1);
                 if(this.distance >= (max - min + 1)){
                     if(isFirst == 0){
-                        returnPost = new DocPosting(this.daatPtrs.get(0).invList.getDocid(this.daatPtrs.get(0).nextDoc));
+                        returnPost = new DocPosting(this.daatPtrs.get(0).
+                                    invList.getDocid(this.daatPtrs.get(0).nextDoc));
                         isFirst = 1;
                     }
                     returnPost.tf++;

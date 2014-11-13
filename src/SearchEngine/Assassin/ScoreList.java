@@ -22,11 +22,6 @@ public class ScoreList {
       scores.add(new ScoreListEntry(docid, score));
   }
 
-  public void add(int docid, double score, int tf, int df, int docLen, String field, String term){
-   //   scores.add(new ScoreListEntry(docid, score, tf, df, docLen, field, term));
-  }
-
-
   /**
    *  Get the n'th document id.
    *  @param n The index of the requested document.

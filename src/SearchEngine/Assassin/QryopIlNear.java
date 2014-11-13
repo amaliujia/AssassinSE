@@ -149,7 +149,10 @@ public class QryopIlNear extends QryopIl {
                      isFirst = 1;
                 }
                 returnPosting.tf++;
-                returnPosting.positions.add(this.daatPtrs.get(this.daatPtrs.size() - 1).invList.postings.get(this.daatPtrs.get(this.daatPtrs.size() - 1).nextDoc).positions.get(this.daatPtrs.get(this.daatPtrs.size() - 1).invList.postings.get(this.daatPtrs.get(this.daatPtrs.size() - 1).nextDoc).nextPostion));
+                returnPosting.positions.add(this.daatPtrs.get(this.daatPtrs.size() - 1).invList.postings.
+                                                        get(this.daatPtrs.get(this.daatPtrs.size() - 1).nextDoc).positions.
+                                                        get(this.daatPtrs.get(this.daatPtrs.size() - 1).invList.postings.
+                                                        get(this.daatPtrs.get(this.daatPtrs.size() - 1).nextDoc).nextPostion));
                  for(int z = 1; z < this.daatPtrs.size(); z++){
                      DaaTPtr ptrz = this.daatPtrs.get(z);
                      ptrz.invList.postings.get(ptrz.nextDoc).nextPostion++;
