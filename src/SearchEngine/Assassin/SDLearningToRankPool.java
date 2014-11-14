@@ -5,7 +5,9 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.util.BytesRef;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 
 /**
@@ -16,7 +18,15 @@ public class SDLearningToRankPool {
     // save page rank scores
     private HashMap<Integer, Double> pageRank;
     private String[] terms;
+    private ArrayList<Boolean> disableSetting;
 
+
+    public SDLearningToRankPool(){
+        disableSetting = new ArrayList<Boolean>();
+        for(int i = 0; i < 18; i++){
+            disableSetting.add(true);
+        }
+    }
 
     /**
      * This fucntion will undertake the task in which a well defined
@@ -34,38 +44,83 @@ public class SDLearningToRankPool {
                                                throws IOException {
 
         Document d = QryEval.READER.document(docid);
-        int spamscore = Integer.parseInt(d.get("score"));
-        String rawUrl = d.get("rawUrl");
 
-        int urlDepth = getDepth(rawUrl);
-        int wiki = getWikipediaScore(rawUrl);
-        double pageRankScrore = pageRank.get(docid);
+        int spamscore = 0;
+        if(disableSetting.get(0)) {
+            spamscore = Integer.parseInt(d.get("score"));
+        }
+
+        String rawUrl = d.get("rawUrl");
+        int urlDepth = 0;
+
+        if(disableSetting.get(1)) {
+            urlDepth = getDepth(rawUrl);
+        }
+
+        int wiki = 0;
+        if(disableSetting.get(2)){
+            wiki = getWikipediaScore(rawUrl);
+        }
+
+        double pageRankScrore = 0.0;
+        if(disableSetting.get(3)){
+           pageRankScrore = pageRank.get(docid);
+        }
 
         String field = "body";
         TermVector vector = new TermVector(docid, field);
-        double BM25Body = vectorSpaceBM25(r, vector, field, docid);
-        double IndriBody = vectorSapceIndri(r, vector, field, docid);
+        double BM25Body = 0.0;
+        if(disableSetting.get(4)) {
+            BM25Body = vectorSpaceBM25(r, vector, field, docid);
+        }
+        double IndriBody = 0.0;
+        if(disableSetting.get(5)){
+            IndriBody = vectorSapceIndri(r, vector, field, docid);
+        }
 
-        // TODO: overlap
+        // TODO: overlap get 6
 
         field = "title";
         vector = new TermVector(docid, field);
-        double BM25Title = vectorSpaceBM25(r, vector, field, docid);
-        double IndriTitle = vectorSapceIndri(r, vector, field, docid);
+        double BM25Title = 0.0;
+        if(disableSetting.get(7)) {
+           BM25Title = vectorSpaceBM25(r, vector, field, docid);
+        }
 
-        // TODO: overlap
+        double IndriTitle = 0.0;
+        if(disableSetting.get(8)){
+            IndriTitle = vectorSapceIndri(r, vector, field, docid);
+        }
+
+
+        // TODO: overlap get 10
 
         field = "url";
         vector = new TermVector(docid, field);
-        double BM25Url = vectorSpaceBM25(r, vector, field, docid);
-        double IndriUrl = vectorSapceIndri(r, vector, field, docid);
+        double BM25Url = 0.0;
+        if(disableSetting.get(10)){
+           BM25Url = vectorSpaceBM25(r, vector, field, docid);;
+        }
+
+        double IndriUrl = 0.0;
+        if(disableSetting.get(11)){
+            IndriUrl = vectorSapceIndri(r, vector, field, docid);
+        }
 
         // TODO: overlap
 
         field = "inlink";
         vector = new TermVector(docid, field);
-        double BM25Inlink = vectorSpaceBM25(r, vector, field, docid);
-        double IndrInlink = vectorSapceIndri(r, vector, field, docid);
+        double BM25Inlink = 0.0;
+
+        if(disableSetting.get(13)){
+            BM25Inlink = vectorSpaceBM25(r, vector, field, docid);
+        }
+
+        double IndriLink = 0.0;
+        if(disableSetting.get(14)){
+            IndriLink = vectorSapceIndri(r, vector, field, docid);
+        }
 
         // TODO: overlap
 
@@ -124,6 +179,16 @@ public class SDLearningToRankPool {
             }
             return 0;
         }
+
+    public void setDisableSetting(String[] settings){
+        if(settings.length == 0)
+            return;
+
+        for(int i = 0; i < settings.length; i++){
+            disableSetting.set(Integer.parseInt(settings[i]) - 1, false);
+        }
+    }
+
 
     /**
      * Set page rank scores
@@ -185,7 +250,6 @@ public class SDLearningToRankPool {
                 result += docScore;
             }
         }
-
         return result;
     }
 

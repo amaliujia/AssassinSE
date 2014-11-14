@@ -192,6 +192,11 @@ public class QryEval {
               }
           }
 
+          // get disable setting
+          String disableSetting = params.get("letor:featureDisable");
+          String[] settings = disableSetting.split(",");
+
+
           //get page rank score
           HashMap<Integer, Double> pageRank = new HashMap<Integer, Double>();
           String pageRankFile = params.get("letor:pageRankFile");
@@ -223,6 +228,7 @@ public class QryEval {
           //start to build features vectors for documents of each query
           SDLearningToRankPool pool = new SDLearningToRankPool();
           pool.setPageRank(pageRank);
+          pool.setDisableSetting(settings);
 
           for (int i = 0; i < traningKeys.size(); i++){
               String key = traningKeys.get(i);
