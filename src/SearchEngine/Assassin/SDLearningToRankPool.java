@@ -5,6 +5,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.util.BytesRef;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,12 +22,35 @@ public class SDLearningToRankPool {
     private ArrayList<Boolean> disableSetting;
 
 
+    /**
+     * Constructor for learning to rank pool
+     */
     public SDLearningToRankPool(){
         disableSetting = new ArrayList<Boolean>();
         for(int i = 0; i < 18; i++){
             disableSetting.add(true);
         }
     }
+
+
+    /**
+     *
+     * @param r
+     * @param docid
+     * @param docs
+     * @return
+     */
+    public ArrayList<String> produceNormalizedFeatureVector(RetrievalModel r,
+                                                            int docid, ArrayList<Integer> docs){
+
+        for(int c = 0; c < docs.size(); c++){
+
+        }
+
+        return null;
+    }
+
+
 
     /**
      * This fucntion will undertake the task in which a well defined
@@ -210,7 +234,7 @@ public class SDLearningToRankPool {
      * @return
      *      BM25 score for current document in specific field
      */
-    public double vectorSpaceBM25(RetrievalModel r, TermVector v, String field, int docid)
+    private double vectorSpaceBM25(RetrievalModel r, TermVector v, String field, int docid)
                                                                       throws IOException {
 
         RetrievalModelLearningToRank model = (RetrievalModelLearningToRank)r;
@@ -264,7 +288,7 @@ public class SDLearningToRankPool {
      * @return
      *      Indri score for current document in specific field
      */
-    public double vectorSapceIndri(RetrievalModel r, TermVector v, String field, int docid)
+    private double vectorSapceIndri(RetrievalModel r, TermVector v, String field, int docid)
                                                                         throws IOException {
         double result = 1.0;
 
