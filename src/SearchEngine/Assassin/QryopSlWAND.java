@@ -8,9 +8,14 @@ import java.util.Iterator;
 /**
  * Created by amaliujia on 14-10-15.
  */
+
+/**
+ *
+ */
 public class QryopSlWAND extends QryopSl {
 
     public ArrayList<Double> weights;
+
     public ArrayList<Qryop> newargs = new ArrayList<Qryop>();
 
     public QryopSlWAND(){
@@ -65,7 +70,9 @@ public class QryopSlWAND extends QryopSl {
     /**
      * Indri WSUN
      * @param r
+     *          retrieval model r
      * @return
+     *
      * @throws IOException
      */
     public QryResult evalateIndri(RetrievalModel r) throws IOException{
@@ -219,6 +226,13 @@ public class QryopSlWAND extends QryopSl {
     }
 
 
+    /**
+     * If filed value is valid.
+     * @param field
+     *          input filed in String
+     * @return
+     *         valid or not.
+     */
     public boolean isValidFiled(String field){
         if(field.equals("body") ||
                 field.equals("inlink") ||

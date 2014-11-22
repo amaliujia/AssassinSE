@@ -16,6 +16,8 @@ import java.util.HashSet;
  */
 public class SDLearningToRankPool {
 
+    private final int NUM_FEATURES = 18;
+
     // save page rank scores
     private HashMap<Integer, Double> pageRank;
     private String[] terms;
@@ -32,24 +34,49 @@ public class SDLearningToRankPool {
         }
     }
 
-
     /**
-     *
+     * Produce normalized feature vectors for a query and a set of docs
      * @param r
-     * @param docid
+     *          Retrieval model provides necessary parameters.
      * @param docs
+     *          docs id.
      * @return
+     *          feature vectors in string
      */
     public ArrayList<String> produceNormalizedFeatureVector(RetrievalModel r,
-                                                            int docid, ArrayList<Integer> docs){
+                                                            ArrayList<Integer> docs){
+
+        ArrayList<SDFeatureVector> vectors = new ArrayList<SDFeatureVector>();
 
         for(int c = 0; c < docs.size(); c++){
-
+            try {
+                SDFeatureVector featureVector = produceFeatureVector(r, docs.get(c));
+                vectors.add(featureVector);
+            }catch (Exception e){
+                System.out.println("feature vector produce error");
+                continue;
+            }
         }
 
-        return null;
-    }
+        for(int i = 0; i < NUM_FEATURES; i++){
+            normalizeFeature(vectors, i);
+        }
 
+        ArrayList<String> result = new ArrayList<String>();
+        for(int i = 0; i <vectors.size(); i++){
+            String s;
+            SDFeatureVector v = vectors.get(i);
+            s = " 1:" + v.getFeature(0) + " 2:" + v.getFeature(1) + " 3:" + v.getFeature(2) +
+                " 4:" + v.getFeature(3) + " 5:" + v.getFeature(4) + " 6:" + v.getFeature(5) +
+                " 7:" + v.getFeature(6) + " 8:" + v.getFeature(7) + " 9:" + v.getFeature(8) +
+                " 10:" + v.getFeature(9) + " 11:" + v.getFeature(10) + " 12:" + v.getFeature(11) +
+                " 13:" + v.getFeature(12) + " 14:" + v.getFeature(13) + " 15:" + v.getFeature(14) +
+                " 16:" + v.getFeature(15) + " 17:" + v.getFeature(16) + " 18:" + v.getFeature(17);
+            result.add(s);
+        }
+
+        return result;
+    }
 
 
     /**
@@ -64,94 +91,116 @@ public class SDLearningToRankPool {
      * @throws IOException
      *          throws when indexreader throws an exception
      */
-    public String produceFeatureVector(RetrievalModel r, int docid)
+    public SDFeatureVector produceFeatureVector(RetrievalModel r, int docid)
                                                throws IOException {
+        SDFeatureVector featureVector = new SDFeatureVector();
 
         Document d = QryEval.READER.document(docid);
 
-        int spamscore = 0;
+        //int spamscore = 0;
         if(disableSetting.get(0)) {
-            spamscore = Integer.parseInt(d.get("score"));
+            featureVector.spamscore = Integer.parseInt(d.get("score"));
+            featureVector.features.set(0, featureVector.spamscore);
         }
 
         String rawUrl = d.get("rawUrl");
-        int urlDepth = 0;
+        //int urlDepth = 0;
 
         if(disableSetting.get(1)) {
-            urlDepth = getDepth(rawUrl);
+            featureVector.urlDepth = getDepth(rawUrl);
+            featureVector.features.set(1, featureVector.urlDepth);
         }
 
-        int wiki = 0;
+        //int wiki = 0;
         if(disableSetting.get(2)){
-            wiki = getWikipediaScore(rawUrl);
+            featureVector.wiki = getWikipediaScore(rawUrl);
+            featureVector.features.set(2, featureVector.wiki);
         }
 
-        double pageRankScrore = 0.0;
+        //double pageRankScrore = 0.0;
         if(disableSetting.get(3)){
-           pageRankScrore = pageRank.get(docid);
+            featureVector.pageRankScrore = pageRank.get(docid);
+            featureVector.features.set(3, featureVector.pageRankScrore);
         }
 
+        //TODO: term vector for a filed may not exist.
         String field = "body";
         TermVector vector = new TermVector(docid, field);
-        double BM25Body = 0.0;
+        //double BM25Body = 0.0;
+
         if(disableSetting.get(4)) {
-            BM25Body = vectorSpaceBM25(r, vector, field, docid);
-        }
-        double IndriBody = 0.0;
-        if(disableSetting.get(5)){
-            IndriBody = vectorSapceIndri(r, vector, field, docid);
+            featureVector.BM25Body = vectorSpaceBM25(r, vector, field, docid);
+            featureVector.features.set(4, featureVector.BM25Body);
         }
 
-        // TODO: overlap get 6
+       // double IndriBody = 0.0;
+        if(disableSetting.get(5)){
+            featureVector.IndriBody = vectorSapceIndri(r, vector, field, docid);
+            featureVector.features.set(5, featureVector.IndriBody);
+        }
+
+        if(disableSetting.get(6)){
+           featureVector.overlapBody = termOverlapping(vector);
+        }
 
         field = "title";
         vector = new TermVector(docid, field);
-        double BM25Title = 0.0;
+       // double BM25Title = 0.0;
         if(disableSetting.get(7)) {
-           BM25Title = vectorSpaceBM25(r, vector, field, docid);
+            featureVector.BM25Title = vectorSpaceBM25(r, vector, field, docid);
+            featureVector.features.set(7, featureVector.BM25Title);
         }
 
-        double IndriTitle = 0.0;
+        //double IndriTitle = 0.0;
         if(disableSetting.get(8)){
-            IndriTitle = vectorSapceIndri(r, vector, field, docid);
+            featureVector.IndriTitle = vectorSapceIndri(r, vector, field, docid);
+            featureVector.features.set(8, featureVector.IndriTitle);
         }
 
-
-        // TODO: overlap get 10
+        if(disableSetting.get(9)){
+            featureVector.overlapTitle = termOverlapping(vector);
+        }
 
         field = "url";
         vector = new TermVector(docid, field);
-        double BM25Url = 0.0;
+       // double BM25Url = 0.0;
         if(disableSetting.get(10)){
-           BM25Url = vectorSpaceBM25(r, vector, field, docid);;
+            featureVector.BM25Url = vectorSpaceBM25(r, vector, field, docid);
+            featureVector.features.set(10, featureVector.BM25Url);
         }
 
-        double IndriUrl = 0.0;
+        //double IndriUrl = 0.0;
         if(disableSetting.get(11)){
-            IndriUrl = vectorSapceIndri(r, vector, field, docid);
+            featureVector.IndriUrl = vectorSapceIndri(r, vector, field, docid);
+            featureVector.features.set(11, featureVector.IndriUrl);
         }
 
-        // TODO: overlap
+        if(disableSetting.get(12)){
+            featureVector.overlapUrl = termOverlapping(vector);
+        }
 
         field = "inlink";
         vector = new TermVector(docid, field);
-        double BM25Inlink = 0.0;
+       // double BM25Inlink = 0.0;
 
         if(disableSetting.get(13)){
-            BM25Inlink = vectorSpaceBM25(r, vector, field, docid);
+            featureVector.BM25Inlink = vectorSpaceBM25(r, vector, field, docid);
+            featureVector.features.set(13, featureVector.BM25Inlink);
         }
 
-        double IndriLink = 0.0;
+       // double IndriLink = 0.0;
         if(disableSetting.get(14)){
-            IndriLink = vectorSapceIndri(r, vector, field, docid);
+            featureVector.IndriInlink = vectorSapceIndri(r, vector, field, docid);
+            featureVector.features.set(14, featureVector.IndriInlink);
         }
 
-        // TODO: overlap
-
+        if(disableSetting.get(15)){
+            featureVector.overlaplink = termOverlapping(vector);
+        }
 
         // TODO: two custom features
 
-        return "";
+        return featureVector;
     }
 
 
@@ -325,4 +374,62 @@ public class SDLearningToRankPool {
         }
         return result;
     }
+
+    /**
+     * Normalize a specific feature and let range of feature between 0 and 1.
+     * @param vectors
+     */
+    private void normalizeFeature(ArrayList<SDFeatureVector> vectors, int feature){
+        if(!disableSetting.get(feature)){
+            return;
+        }
+
+        // maximum and minimum;
+        double maximum = Double.MIN_VALUE;
+        double minimum = Double.MAX_VALUE;
+
+        // find maximum and minimum by traversal all features.
+        for(int i = 0; i < vectors.size(); i++){
+            if(vectors.get(i).getFeature(feature) > maximum){
+                maximum = vectors.get(i).getFeature(feature);
+            }
+
+            if(vectors.get(i).getFeature(feature) < minimum){
+                minimum = vectors.get(i).getFeature(feature);
+            }
+        }
+
+        double divisor = maximum - minimum;
+
+        // normalize feature
+        for(int i = 0; i < vectors.size(); i++) {
+            SDFeatureVector featureVector= vectors.get(i);
+            featureVector.features.set(feature, (featureVector.getFeature(feature) - minimum) / divisor);
+        }
+       return;
+    }
+
+    /**
+     * Compute term overlapping percentage for terms vectors and queries
+     * @param termVector
+     *          target term vector
+     * @return
+     *          overlap score
+     */
+    private double termOverlapping(TermVector termVector){
+        int count = 0;
+        double queryLength = terms.length;
+        HashSet<String> queryTerms = new HashSet<String>();
+        for(int i = 0; i < terms.length; i++){
+            queryTerms.add(terms[i]);
+        }
+
+        for(int j = 1; j < termVector.stemsLength(); j++){
+            if(queryTerms.contains(termVector.stemString(j))){
+                count++;
+            }
+        }
+        return ((double)count) / queryLength;
+    }
+
 }

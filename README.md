@@ -20,7 +20,7 @@ Milestones
 
 7. Support nested #NEAR operations
 
-8. Support Indri 
+8. Support Indri (Language Statistics Model and Inference Network) 
 
 9. Support #WINDOW
 

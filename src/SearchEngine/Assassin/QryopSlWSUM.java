@@ -151,6 +151,10 @@ public class QryopSlWSUM extends QryopSl {
         return result;
     }
 
+    /**
+     *
+     * @return
+     */
     public String toString() {
         String result = new String();
         for(Iterator<Qryop> i = this.args.iterator(); i.hasNext();){
@@ -222,6 +226,11 @@ public class QryopSlWSUM extends QryopSl {
         this.args = tempArgs;
     }
 
+    /**
+     *
+     * @param field
+     * @return
+     */
     public boolean isValidFiled(String field){
         if(field.equals("body") ||
                 field.equals("inlink") ||
