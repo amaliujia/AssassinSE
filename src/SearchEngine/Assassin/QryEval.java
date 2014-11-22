@@ -164,6 +164,9 @@ public class QryEval {
       if(model instanceof RetrievalModelLearningToRank){// learning to rank model
           //initialization
           String traningFilePath = params.get("letor:trainingFeatureVectorsFile");
+          String learningModelPath = params.get("letor:svmRankLearnPath");
+          String FEAT_GEN = params.get("letor:svmRankParamC");
+          String modelOutputFile = params.get("letor:svmRankModelFile");
           featuresWriter = new BufferedWriter(new FileWriter(new File(traningFilePath)));
 
           //preprocessing relevant documents
@@ -193,20 +196,26 @@ public class QryEval {
           }
 
           // get disable setting
-          String disableSetting = params.get("letor:featureDisable");
-          String[] settings = disableSetting.split(",");
-
+          String[] settings = new String[0];
+          if(params.containsKey("letor:featureDisable")) {
+              String disableSetting = params.get("letor:featureDisable");
+              settings = disableSetting.split(",");
+          }
 
           //get page rank score
-          HashMap<Integer, Double> pageRank = new HashMap<Integer, Double>();
+          //HashMap<Integer, Double> pageRank = new HashMap<Integer, Double>();
+          HashMap<String, Double> pageRank = new HashMap<String, Double>();
           String pageRankFile = params.get("letor:pageRankFile");
+          if(pageRankFile == null){
+              throw new Exception("PageRank file doesn't exist!");
+          }
           Scanner scanner = new Scanner(new File(pageRankFile));
 
           while(scanner.hasNext()){
               String cur = scanner.nextLine();
               String[] fileScore = cur.split("\t");
-              int id = getInternalDocid(fileScore[0]);
-              pageRank.put(id, Double.parseDouble(fileScore[1]));
+             // int id = getInternalDocid(fileScore[0]);
+              pageRank.put(fileScore[0], Double.parseDouble(fileScore[1]));
           }
 
           //read training queies
@@ -220,8 +229,8 @@ public class QryEval {
           String q = "";
           while((q = traningBufferReader.readLine()) != null){
               String[] pair = q.split(":");
-              traningQueries.add(pair[0]);
-              traningKeys.add(pair[1]);
+              traningQueries.add(pair[1]);
+              traningKeys.add(pair[0]);
           }
           trainingFile.close();
 
@@ -254,13 +263,50 @@ public class QryEval {
               ArrayList<String> vs = pool.produceNormalizedFeatureVector(model, docsInternalIds);
 
               //write feature vector into target file
-              for(int j = 0; j < docsInternalIds.get(j); j++){
+              for(int j = 0; j < docsInternalIds.size(); j++){
                   featuresWriter.write(docsRelevance.get(j) + " qid:" + key + vs.get(j)
                                         + " # " + docs.get(j).split(" ")[2] + "\n");
               }
           }
+          try{
+              featuresWriter.close();
+          }catch (Exception e){
+              e.printStackTrace();
+          }
 
-          featuresWriter.close();
+          // Since features vectors have been well prepared, next step is to train SVM model.
+
+          // runs svm_rank_learn from within Java to train the model
+          // execPath is the location of the svm_rank_learn utility,
+          // which is specified by letor:svmRankLearnPath in the parameter file.
+          // FEAT_GEN.c is the value of the letor:c parameter.
+          Process cmdProc = Runtime.getRuntime().exec(
+                  new String[] { learningModelPath, "-c", FEAT_GEN, traningFilePath,
+                          modelOutputFile });
+
+          // The stdout/stderr consuming code MUST be included.
+          // It prevents the OS from running out of output buffer space and stalling.
+
+          // consume stdout and print it out for debugging purposes
+          BufferedReader stdoutReader = new BufferedReader(
+                  new InputStreamReader(cmdProc.getInputStream()));
+          String l;
+          while ((l = stdoutReader.readLine()) != null) {
+              System.out.println(l);
+          }
+          // consume stderr and print it for debugging purposes
+          BufferedReader stderrReader = new BufferedReader(
+                  new InputStreamReader(cmdProc.getErrorStream()));
+          while ((l = stderrReader.readLine()) != null) {
+              System.out.println(l);
+          }
+
+          // get the return value from the executable. 0 means success, non-zero
+          // indicates a problem
+          int retValue = cmdProc.waitFor();
+          if (retValue != 0) {
+              throw new Exception("SVM Rank crashed.");
+          }
 
       }else if(!params.containsKey("fb") || params.get("fb").equals("false")) { //normal search engine model
 

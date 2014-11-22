@@ -19,8 +19,10 @@ public class SDLearningToRankPool {
     private final int NUM_FEATURES = 18;
 
     // save page rank scores
-    private HashMap<Integer, Double> pageRank;
-    private String[] terms;
+    //private HashMap<Integer, Double> pageRank;
+    private HashMap<String, Double> pageRank;
+    //private String[] terms;
+    private ArrayList<String> terms;
     private ArrayList<Boolean> disableSetting;
 
 
@@ -28,6 +30,7 @@ public class SDLearningToRankPool {
      * Constructor for learning to rank pool
      */
     public SDLearningToRankPool(){
+        terms = new ArrayList<String>();
         disableSetting = new ArrayList<Boolean>();
         for(int i = 0; i < 18; i++){
             disableSetting.add(true);
@@ -53,7 +56,7 @@ public class SDLearningToRankPool {
                 SDFeatureVector featureVector = produceFeatureVector(r, docs.get(c));
                 vectors.add(featureVector);
             }catch (Exception e){
-                System.out.println("feature vector produce error");
+               // System.out.println("feature vector produce error");
                 continue;
             }
         }
@@ -119,82 +122,108 @@ public class SDLearningToRankPool {
 
         //double pageRankScrore = 0.0;
         if(disableSetting.get(3)){
-            featureVector.pageRankScrore = pageRank.get(docid);
+            try {
+                featureVector.pageRankScrore = pageRank.get(QryEval.getExternalDocid(docid));
+            }catch (Exception e){
+               // System.out.println("No page rank score");
+                featureVector.pageRankScrore = 0;
+            }
             featureVector.features.set(3, featureVector.pageRankScrore);
         }
 
         //TODO: term vector for a filed may not exist.
         String field = "body";
-        TermVector vector = new TermVector(docid, field);
+        TermVector vector = null;
+        try{
+            vector = new TermVector(docid, field);
+        }catch (Exception e){
+          // System.out.println("Term vector is not indexed");
+        }
+
         //double BM25Body = 0.0;
 
-        if(disableSetting.get(4)) {
+        if(disableSetting.get(4) && vector != null) {
             featureVector.BM25Body = vectorSpaceBM25(r, vector, field, docid);
             featureVector.features.set(4, featureVector.BM25Body);
         }
 
        // double IndriBody = 0.0;
-        if(disableSetting.get(5)){
+        if(disableSetting.get(5) && vector != null ){
             featureVector.IndriBody = vectorSapceIndri(r, vector, field, docid);
             featureVector.features.set(5, featureVector.IndriBody);
         }
 
-        if(disableSetting.get(6)){
+        if(disableSetting.get(6) && vector != null ){
            featureVector.overlapBody = termOverlapping(vector);
         }
 
         field = "title";
-        vector = new TermVector(docid, field);
+        vector = null;
+        try{
+            vector = new TermVector(docid, field);
+        }catch (Exception e){
+          //  System.out.println("Term vector is not indexed");
+        }
        // double BM25Title = 0.0;
-        if(disableSetting.get(7)) {
+        if(disableSetting.get(7) && vector != null) {
             featureVector.BM25Title = vectorSpaceBM25(r, vector, field, docid);
             featureVector.features.set(7, featureVector.BM25Title);
         }
 
         //double IndriTitle = 0.0;
-        if(disableSetting.get(8)){
+        if(disableSetting.get(8) && vector != null){
             featureVector.IndriTitle = vectorSapceIndri(r, vector, field, docid);
             featureVector.features.set(8, featureVector.IndriTitle);
         }
 
-        if(disableSetting.get(9)){
+        if(disableSetting.get(9) && vector != null){
             featureVector.overlapTitle = termOverlapping(vector);
         }
 
         field = "url";
-        vector = new TermVector(docid, field);
+        vector = null;
+        try{
+            vector = new TermVector(docid, field);
+        }catch (Exception e){
+            System.out.println("Term vector is not indexed");
+        }
        // double BM25Url = 0.0;
-        if(disableSetting.get(10)){
+        if(disableSetting.get(10) && vector != null){
             featureVector.BM25Url = vectorSpaceBM25(r, vector, field, docid);
             featureVector.features.set(10, featureVector.BM25Url);
         }
 
         //double IndriUrl = 0.0;
-        if(disableSetting.get(11)){
+        if(disableSetting.get(11) && vector != null){
             featureVector.IndriUrl = vectorSapceIndri(r, vector, field, docid);
             featureVector.features.set(11, featureVector.IndriUrl);
         }
 
-        if(disableSetting.get(12)){
+        if(disableSetting.get(12) && vector != null){
             featureVector.overlapUrl = termOverlapping(vector);
         }
 
         field = "inlink";
-        vector = new TermVector(docid, field);
+        vector = null;
+        try{
+            vector = new TermVector(docid, field);
+        }catch (Exception e){
+          //  System.out.println("Term vector is not indexed");
+        }
        // double BM25Inlink = 0.0;
 
-        if(disableSetting.get(13)){
+        if(disableSetting.get(13) && vector != null){
             featureVector.BM25Inlink = vectorSpaceBM25(r, vector, field, docid);
             featureVector.features.set(13, featureVector.BM25Inlink);
         }
 
        // double IndriLink = 0.0;
-        if(disableSetting.get(14)){
+        if(disableSetting.get(14) && vector != null){
             featureVector.IndriInlink = vectorSapceIndri(r, vector, field, docid);
             featureVector.features.set(14, featureVector.IndriInlink);
         }
 
-        if(disableSetting.get(15)){
+        if(disableSetting.get(15) && vector != null){
             featureVector.overlaplink = termOverlapping(vector);
         }
 
@@ -215,7 +244,7 @@ public class SDLearningToRankPool {
         for(int j = 0; j < buffer.length; j++){
             String[] c = QryEval.tokenizeQuery(buffer[j]);
             if(c.length != 0){
-                this.terms[i++] = c[0];
+                this.terms.add(c[0]);
             }
         }
     }
@@ -268,7 +297,7 @@ public class SDLearningToRankPool {
      * @param scores
      *         page rank scores collection
      */
-    public void setPageRank(HashMap<Integer, Double> scores) {
+    public void setPageRank(HashMap<String, Double> scores) {
         this.pageRank = scores;
     }
 
@@ -310,8 +339,8 @@ public class SDLearningToRankPool {
         double docLen = model.docLengthStore.getDocLength(field, docid);
 
         // compute BM25 for document.
-        for(int i = 0; i < terms.length; i++){
-            String curTerm = terms[i];
+        for(int i = 0; i < terms.size(); i++){
+            String curTerm = terms.get(i);
             if(vocabulary.containsKey(curTerm)){
                 //TODO: df for a specific field may not exit.
                 double df = QryEval.READER.docFreq(new Term(field, new BytesRef(curTerm)));
@@ -356,8 +385,8 @@ public class SDLearningToRankPool {
         }
 
         // compute P(document, query)
-        for(int i = 0; i < terms.length; i++){
-            String curTerm = terms[i];
+        for(int i = 0; i < terms.size(); i++){
+            String curTerm = terms.get(i);
             //TODO: ctf for a specific field may not exit.
             double ctf = QryEval.READER.totalTermFreq(new Term(field, new BytesRef(curTerm)));
             double pmle = ctf / collectionLen;
@@ -365,11 +394,11 @@ public class SDLearningToRankPool {
                 double tf = vocabulary.get(curTerm);
                 double score = (((model.lambda * (tf + (model.mu * pmle))) / (lenDoc + model.mu))) +
                         ((1 - model.lambda) * pmle);
-                result *= Math.pow(score, 1 / (terms.length));
+                result *= Math.pow(score, 1 / (terms.size()));
             }else{
                 double score = (((model.lambda * ((model.mu * pmle))) / (lenDoc + model.mu))) +
                         ((1 - model.lambda) * pmle);
-                result *= Math.pow(score, 1 / (terms.length));
+                result *= Math.pow(score, 1 / (terms.size()));
             }
         }
         return result;
@@ -400,6 +429,13 @@ public class SDLearningToRankPool {
         }
 
         double divisor = maximum - minimum;
+        if(divisor == 0){
+            for(int i = 0; i < vectors.size(); i++) {
+                SDFeatureVector featureVector= vectors.get(i);
+                featureVector.features.set(feature, divisor);
+            }
+            return;
+        }
 
         // normalize feature
         for(int i = 0; i < vectors.size(); i++) {
@@ -418,10 +454,10 @@ public class SDLearningToRankPool {
      */
     private double termOverlapping(TermVector termVector){
         int count = 0;
-        double queryLength = terms.length;
+        double queryLength = terms.size();
         HashSet<String> queryTerms = new HashSet<String>();
-        for(int i = 0; i < terms.length; i++){
-            queryTerms.add(terms[i]);
+        for(int i = 0; i < terms.size(); i++){
+            queryTerms.add(terms.get(i));
         }
 
         for(int j = 1; j < termVector.stemsLength(); j++){
