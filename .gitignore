@@ -82,3 +82,5 @@ query/trainingqueries
 query/relevanceDocs
 
 query/PageRank
+
+output/testFeaturesvectors

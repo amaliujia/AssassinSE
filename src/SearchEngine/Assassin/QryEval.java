@@ -11,6 +11,7 @@ package SearchEngine.Assassin;
 
 import java.io.*;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 import org.apache.lucene.analysis.Analyzer.TokenStreamComponents;
@@ -307,6 +308,31 @@ public class QryEval {
           if (retValue != 0) {
               throw new Exception("SVM Rank crashed.");
           }
+
+
+          //Read test queries
+          RetrievalModel modelBM25 = new RetrievalModelBM25();
+          dataCenter.k1 = Double.parseDouble(params.get("BM25:k_1"));
+          dataCenter.b = Double.parseDouble(params.get("BM25:b"));
+          dataCenter.k3 = Double.parseDouble(params.get("BM25:k_3"));
+
+          String testFeatureVectors = params.get("letor:testingFeatureVectorsFile");
+          featuresWriter = new BufferedWriter(new FileWriter(new File(testFeatureVectors)));
+
+
+          for (int i = 0; i < keys.size(); i++) {
+              String key = keys.get(i);
+              String que = queries.get(i);
+              qTree = parseQuery(que, modelBM25);
+              printFeatureVectors(key, qTree.evaluate(modelBM25), qTree, featuresWriter, model, pool, que);
+          }
+
+          try{
+              featuresWriter.close();
+          }catch (Exception e){
+              e.printStackTrace();
+          }
+
 
       }else if(!params.containsKey("fb") || params.get("fb").equals("false")) { //normal search engine model
 
@@ -719,6 +745,57 @@ public class QryEval {
           }
   }
 
+
+    /**
+     *
+      * @param queryID
+     * @param result
+     * @param qTree
+     * @throws IOException
+     */
+    static void printFeatureVectors(String queryID, QryResult result, Qryop qTree, BufferedWriter featrueWriter,
+                                    RetrievalModel modelLeanringToRank, SDLearningToRankPool pool, String query)
+                                    throws IOException {
+        try {
+            if (result.docScores.scores.size() < 1) {
+                writer.write(queryID + "\tQ0\tdummy\t1\t0\trun-1\n");
+            } else {
+                HashMap<String, Double> map = new HashMap<String, Double>();
+                for(int i = 0; i < result.docScores.scores.size(); i++){
+                    map.put(getExternalDocid(result.docScores.scores.get(i).getDocid()),
+                            result.docScores.getDocidScore(i));
+                }
+                List<Map.Entry<String, Double>> folder = new ArrayList<Map.Entry<String, Double>>(map.entrySet());
+                Collections.sort(folder, new Comparator<Map.Entry<String, Double>>() {
+                    public int compare(Map.Entry<String, Double> e1,
+                                       Map.Entry<String, Double> e2) {
+                        if(!e1.getValue().equals(e2.getValue())) {
+                            if(e2.getValue() > e1.getValue()) return 1;
+                            else return -1;
+                        }
+                        else
+                            return (e1.getKey()).toString().compareTo(e2.getKey().toString());
+                    }
+                });
+
+                ArrayList<Integer> internalDocids = new ArrayList<Integer>();
+                for (int i = 0; i < result.docScores.scores.size() && i < 100; i++) {
+                      internalDocids.add(getInternalDocid(folder.get(i).getKey()));
+                }
+
+                pool.addQuery(query);
+
+                ArrayList<String> features = pool.produceNormalizedFeatureVector(modelLeanringToRank, internalDocids);
+                for(int j = 0; j < internalDocids.size(); j++){
+                    featuresWriter.write("0 qid:" + queryID + features.get(j)
+                            + " # " + folder.get(j).getKey() + "\n");
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Print the query results and compute feedback.

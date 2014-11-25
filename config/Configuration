@@ -25,3 +25,4 @@ letor:svmRankLearnPath=SVM/svm_rank_learn
 letor:svmRankClassifyPath=SVM/svm_rank_classify
 letor:svmRankParamC=0.001
 letor:svmRankModelFile=SVM/model
+letor:testingFeatureVectorsFile=output/testFeaturesvectors
