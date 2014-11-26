@@ -1,13 +1,13 @@
 package SearchEngine.Assassin;
 
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.MultiDocValues;
+import org.apache.lucene.index.MultiFields;
+import org.apache.lucene.index.NumericDocValues;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.MultiDocValues;
-import org.apache.lucene.index.MultiFields;
 
 /**
  * DocLengthStore is used to access the document lengths of indexed docs.

@@ -7,13 +7,17 @@
 
 package SearchEngine.Assassin;
 
-import java.util.*;
-import java.io.*;
-
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.*;
-import org.apache.lucene.util.*;
-import org.apache.lucene.search.*;
+import org.apache.lucene.index.DocsAndPositionsEnum;
+import org.apache.lucene.index.MultiFields;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.DocIdSetIterator;
+import org.apache.lucene.util.BytesRef;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Vector;
 
 public class InvList {
 

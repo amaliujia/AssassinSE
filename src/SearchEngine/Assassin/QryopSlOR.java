@@ -1,6 +1,6 @@
 package SearchEngine.Assassin;
 
-import java.io.*;
+import java.io.IOException;
 
 public class QryopSlOR extends QryopSl {
 

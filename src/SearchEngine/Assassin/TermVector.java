@@ -9,12 +9,12 @@
 
 package SearchEngine.Assassin;
 
-import java.io.*;
-
 import org.apache.lucene.index.DocsAndPositionsEnum;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.Terms;
 import org.apache.lucene.index.TermsEnum;
+
+import java.io.IOException;
 
 public class TermVector {
 

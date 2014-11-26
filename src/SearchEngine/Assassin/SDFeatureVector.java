@@ -97,7 +97,14 @@ public class SDFeatureVector {
     }
 
     public String toString(){
-        return null;
+        String s;
+        s = "features: 1:" + getFeature(0) + " 2:" + getFeature(1) + " 3:" + getFeature(2) +
+                " 4:" + getFeature(3) + " 5:" + getFeature(4) + " 6:" + getFeature(5) +
+                " 7:" + getFeature(6) + " 8:" + getFeature(7) + " 9:" + getFeature(8) +
+                " 10:" + getFeature(9) + " 11:" + getFeature(10) + " 12:" + getFeature(11) +
+                " 13:" + getFeature(12) + " 14:" + getFeature(13) + " 15:" + getFeature(14) +
+                " 16:" + getFeature(15) + " 17:" + getFeature(16) + " 18:" + getFeature(17);
+        return s;
     }
 
 
