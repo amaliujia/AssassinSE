@@ -790,7 +790,6 @@ public class QryEval {
                     featuresWriter.write("0 qid:" + queryID + features.get(j)
                             + " # " + folder.get(j).getKey() + "\n");
                 }
-
             }
         } catch (Exception e) {
             e.printStackTrace();

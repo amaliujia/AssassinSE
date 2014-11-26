@@ -131,7 +131,6 @@ public class SDLearningToRankPool {
             featureVector.features.set(3, featureVector.pageRankScrore);
         }
 
-        //TODO: term vector for a filed may not exist.
         String field = "body";
         TermVector vector = null;
         try{
