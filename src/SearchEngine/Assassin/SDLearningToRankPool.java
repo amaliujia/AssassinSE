@@ -55,7 +55,7 @@ public class SDLearningToRankPool {
                 SDFeatureVector featureVector = produceFeatureVector(r, docs.get(c));
                 vectors.add(featureVector);
             }catch (Exception e){
-               // System.out.println("feature vector produce error");
+                System.out.println("feature vector produce error");
                 continue;
             }
         }
@@ -153,6 +153,7 @@ public class SDLearningToRankPool {
 
         if(disableSetting.get(6) && vector != null ){
            featureVector.overlapBody = termOverlapping(vector);
+           featureVector.features.set(6, featureVector.overlapBody);
         }
 
         field = "title";
@@ -176,6 +177,7 @@ public class SDLearningToRankPool {
 
         if(disableSetting.get(9) && vector != null){
             featureVector.overlapTitle = termOverlapping(vector);
+            featureVector.features.set(9, featureVector.overlapTitle);
         }
 
         field = "url";
@@ -199,6 +201,7 @@ public class SDLearningToRankPool {
 
         if(disableSetting.get(12) && vector != null){
             featureVector.overlapUrl = termOverlapping(vector);
+            featureVector.features.set(12, featureVector.overlapUrl);
         }
 
         field = "inlink";
@@ -208,7 +211,6 @@ public class SDLearningToRankPool {
         }catch (Exception e){
           //  System.out.println("Term vector is not indexed");
         }
-       // double BM25Inlink = 0.0;
 
         if(disableSetting.get(13) && vector != null){
             featureVector.BM25Inlink = vectorSpaceBM25(r, vector, field, docid);
@@ -223,6 +225,7 @@ public class SDLearningToRankPool {
 
         if(disableSetting.get(15) && vector != null){
             featureVector.overlaplink = termOverlapping(vector);
+            featureVector.features.set(15, featureVector.overlaplink);
         }
 
         // TODO: two custom features
@@ -237,6 +240,7 @@ public class SDLearningToRankPool {
      */
     void addQuery(String query) throws IOException {
         int i = 0;
+        this.terms.clear();
         String[] buffer = query.split(" ");
 
         for(int j = 0; j < buffer.length; j++){
@@ -340,7 +344,6 @@ public class SDLearningToRankPool {
         for(int i = 0; i < terms.size(); i++){
             String curTerm = terms.get(i);
             if(vocabulary.containsKey(curTerm)){
-                //TODO: df for a specific field may not exit.
                 double df = QryEval.READER.docFreq(new Term(field, new BytesRef(curTerm)));
                 double tf = vocabulary.get(curTerm);
                 double a = Math.log((N - df + 0.5) / (df + 0.5));
@@ -367,11 +370,15 @@ public class SDLearningToRankPool {
     private double vectorSapceIndri(RetrievalModel r, TermVector v, String field, int docid)
                                                                         throws IOException {
         double result = 1.0;
-
+        int count = 0;
+        if(docid == 368685 && field.equals("url")){
+            System.out.println("here you are!");
+        }
         // global data
         double collectionLen = QryEval.READER.getSumTotalTermFreq(field);
         RetrievalModelLearningToRank model = (RetrievalModelLearningToRank)r;
         double lenDoc = (model).docLengthStore.getDocLength(field, docid);
+
         // build vocabulary
         HashMap<String, Double> vocabulary = new HashMap<String, Double>();
 
@@ -385,19 +392,22 @@ public class SDLearningToRankPool {
         // compute P(document, query)
         for(int i = 0; i < terms.size(); i++){
             String curTerm = terms.get(i);
-            //TODO: ctf for a specific field may not exit.
             double ctf = QryEval.READER.totalTermFreq(new Term(field, new BytesRef(curTerm)));
             double pmle = ctf / collectionLen;
             if(vocabulary.containsKey(curTerm)){
+                count++;
                 double tf = vocabulary.get(curTerm);
                 double score = (((model.lambda * (tf + (model.mu * pmle))) / (lenDoc + model.mu))) +
-                        ((1 - model.lambda) * pmle);
-                result *= Math.pow(score, 1 / (terms.size()));
+                        (((double)1 - model.lambda) * pmle);
+                result *= Math.pow(score, (double)1 / (terms.size()));
             }else{
                 double score = (((model.lambda * ((model.mu * pmle))) / (lenDoc + model.mu))) +
-                        ((1 - model.lambda) * pmle);
-                result *= Math.pow(score, 1 / (terms.size()));
+                        (((double)1 - model.lambda) * pmle);
+                result *= Math.pow(score, (double)1 / (terms.size()));
             }
+        }
+        if(count == 0){
+            result = 0;
         }
         return result;
     }
@@ -453,16 +463,23 @@ public class SDLearningToRankPool {
     private double termOverlapping(TermVector termVector){
         int count = 0;
         double queryLength = terms.size();
-        HashSet<String> queryTerms = new HashSet<String>();
-        for(int i = 0; i < terms.size(); i++){
-            queryTerms.add(terms.get(i));
-        }
+//        HashSet<String> queryTerms = new HashSet<String>();
+//        for(int i = 0; i < terms.size(); i++){
+//            queryTerms.add(terms.get(i));
+//        }
+//
+//        for(int j = 1; j < termVector.stemsLength(); j++){
+//            if(queryTerms.contains(termVector.stemString(j))){
+//                count++;
+//            }
+//        }
 
-        for(int j = 1; j < termVector.stemsLength(); j++){
-            if(queryTerms.contains(termVector.stemString(j))){
-                count++;
-            }
-        }
+           for(int i = 0; i < terms.size(); i++){
+               String curTerm = terms.get(i);
+               if(termVector.containStem(curTerm)){
+                   count++;
+               }
+           }
         return ((double)count) / queryLength;
     }
 

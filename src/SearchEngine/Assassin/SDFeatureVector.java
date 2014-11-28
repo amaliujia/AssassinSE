@@ -63,6 +63,7 @@ public class SDFeatureVector {
 
 
     public ArrayList<Double> features;
+
     /**
      * This is constructor for SDFeatureVector
      */

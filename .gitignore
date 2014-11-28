@@ -84,3 +84,18 @@ query/relevanceDocs
 query/PageRank
 
 output/testFeaturesvectors
+
+QryEval/*
+SVM/model
+
+SVM/testDocumentScore
+
+query/testQuery
+
+query/relevanceDocs
+
+config/Configuration
+
+query/trainingqueries
+
+SVM/trainingFeatureVectorsFile

@@ -255,6 +255,11 @@ public class QryEval {
               ArrayList<Integer> docsRelevance = new ArrayList<Integer>();
               for(int j = 0; j < docs.size(); j++){
                     String[] docinfo = docs.get(j).split(" ");
+//                    if(docinfo[2].equals("clueweb09-en0003-07-27266")){
+//                        System.out.println("-----------------------");
+//                        System.out.println(getInternalDocid(docinfo[2]));
+//                        System.out.println("-----------------------");
+//                    }
                     int docid = getInternalDocid(docinfo[2]);
                     docsInternalIds.add(docid);
                     int relevance = Integer.parseInt(docinfo[3]);
@@ -275,40 +280,8 @@ public class QryEval {
               e.printStackTrace();
           }
 
-          // Since features vectors have been well prepared, next step is to train SVM model.
-
-          // runs svm_rank_learn from within Java to train the model
-          // execPath is the location of the svm_rank_learn utility,
-          // which is specified by letor:svmRankLearnPath in the parameter file.
-          // FEAT_GEN.c is the value of the letor:c parameter.
-          Process cmdProc = Runtime.getRuntime().exec(
-                  new String[] { learningModelPath, "-c", FEAT_GEN, traningFilePath,
-                          modelOutputFile });
-
-          // The stdout/stderr consuming code MUST be included.
-          // It prevents the OS from running out of output buffer space and stalling.
-
-          // consume stdout and print it out for debugging purposes
-          BufferedReader stdoutReader = new BufferedReader(
-                  new InputStreamReader(cmdProc.getInputStream()));
-          String l;
-          while ((l = stdoutReader.readLine()) != null) {
-              System.out.println(l);
-          }
-          // consume stderr and print it for debugging purposes
-          BufferedReader stderrReader = new BufferedReader(
-                  new InputStreamReader(cmdProc.getErrorStream()));
-          while ((l = stderrReader.readLine()) != null) {
-              System.out.println(l);
-          }
-
-          // get the return value from the executable. 0 means success, non-zero
-          // indicates a problem
-          int retValue = cmdProc.waitFor();
-          if (retValue != 0) {
-              throw new Exception("SVM Rank crashed.");
-          }
-
+          // train SVM model
+          trainSVM(learningModelPath, FEAT_GEN, traningFilePath, modelOutputFile);
 
           //Read test queries
           RetrievalModel modelBM25 = new RetrievalModelBM25();
@@ -332,6 +305,14 @@ public class QryEval {
           }catch (Exception e){
               e.printStackTrace();
           }
+
+          // call SVM classifier to produce new score
+          String execPath = params.get("letor:svmRankClassifyPath");
+          String testDataPath = params.get("letor:testingFeatureVectorsFile");
+          String modelPath = params.get("letor:svmRankModelFile");
+          String predictionPath = params.get("letor:testingDocumentScores");
+
+          svmClassifier(execPath, testDataPath, modelPath, predictionPath);
 
 
       }else if(!params.containsKey("fb") || params.get("fb").equals("false")) { //normal search engine model
@@ -779,6 +760,10 @@ public class QryEval {
                 });
 
                 ArrayList<Integer> internalDocids = new ArrayList<Integer>();
+
+                if(result.docScores.scores.size() < 100){
+                    System.out.println("It exit  " + queryID + "  " + query);
+                }
                 for (int i = 0; i < result.docScores.scores.size() && i < 100; i++) {
                       internalDocids.add(getInternalDocid(folder.get(i).getKey()));
                 }
@@ -866,4 +851,96 @@ public class QryEval {
     }
     return tokens.toArray(new String[tokens.size()]);
   }
+
+    /**
+     *
+     * @param learningModelPath
+     *        the SVM Rank trainer executable
+     * @param FEAT_GEN
+     *        argument for SVM
+     * @param traningFilePath
+     *        path to feature vectors file
+     * @param modelOutputFile
+     *        path to save trained model
+     * @throws IOException
+     *          throws if some files cannot be found
+     * @throws InterruptedException
+     *          throws if training process is interrupted
+     * @throws Exception
+     *          throws when SVM crash
+     */
+   private static void trainSVM(String learningModelPath, String FEAT_GEN, String traningFilePath,
+                         String modelOutputFile) throws Exception{
+       // Since features vectors have been well prepared, next step is to train SVM model.
+
+       // runs svm_rank_learn from within Java to train the model
+       // execPath is the location of the svm_rank_learn utility,
+       // which is specified by letor:svmRankLearnPath in the parameter file.
+       // FEAT_GEN.c is the value of the letor:c parameter.
+       Process cmdProc = Runtime.getRuntime().exec(
+               new String[] { learningModelPath, "-c", FEAT_GEN, traningFilePath,
+                       modelOutputFile });
+
+       // The stdout/stderr consuming code MUST be included.
+       // It prevents the OS from running out of output buffer space and stalling.
+
+       // consume stdout and print it out for debugging purposes
+       BufferedReader stdoutReader = new BufferedReader(
+               new InputStreamReader(cmdProc.getInputStream()));
+       String l;
+       while ((l = stdoutReader.readLine()) != null) {
+           System.out.println(l);
+       }
+       // consume stderr and print it for debugging purposes
+       BufferedReader stderrReader = new BufferedReader(
+               new InputStreamReader(cmdProc.getErrorStream()));
+       while ((l = stderrReader.readLine()) != null) {
+           System.out.println(l);
+       }
+
+       // get the return value from the executable. 0 means success, non-zero
+       // indicates a problem
+       int retValue = cmdProc.waitFor();
+       if (retValue != 0) {
+           throw new Exception("SVM Rank crashed.");
+       }
+   }
+
+   private static void svmClassifier(String execPath, String textDataPath, String modelPath, String predictionPath)
+                                                    throws Exception {
+       // runs svm_rank_clasifier from within Java to train the model
+       // execPath is the location of the svm_rank_learn utility,
+       // which is specified by letor:svmRankClassifyPath in the parameter file.
+       // modelPath is the location of trained SVM model
+       // which is specified by letor:svmRankModelFile in parameter file
+       // predictionPath is the location of prediction score file
+       // which is specified by letor:testingDocumentScores
+       Process cmdProc = Runtime.getRuntime().exec(
+               new String[] { execPath, textDataPath, modelPath, predictionPath });
+
+       // The stdout/stderr consuming code MUST be included.
+       // It prevents the OS from running out of output buffer space and stalling.
+
+       // consume stdout and print it out for debugging purposes
+       BufferedReader stdoutReader = new BufferedReader(
+               new InputStreamReader(cmdProc.getInputStream()));
+       String line;
+       while ((line = stdoutReader.readLine()) != null) {
+           System.out.println(line);
+       }
+       // consume stderr and print it for debugging purposes
+       BufferedReader stderrReader = new BufferedReader(
+               new InputStreamReader(cmdProc.getErrorStream()));
+       while ((line = stderrReader.readLine()) != null) {
+           System.out.println(line);
+       }
+
+       // get the return value from the executable. 0 means success, non-zero
+       // indicates a problem
+       int retValue = cmdProc.waitFor();
+       if (retValue != 0) {
+           throw new Exception("SVM Rank crashed.");
+       }
+   }
+
 }

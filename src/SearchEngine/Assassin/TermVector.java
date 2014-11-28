@@ -164,5 +164,25 @@ public class TermVector {
   public int stemDf(int i) throws IOException {
     return QryEval.READER.docFreq(terms[i]);
   }
+
+    /**
+     *
+     * @param term
+     * @return
+     */
+    public boolean containStem(String term){
+        int index = 1;
+        while(index < stems.length){
+            if(stems[index].equals(term)){
+                break;
+            }
+            index++;
+        }
+        if(index == stems.length){
+            return false;
+        }
+        return true;
+    }
+
   
 }
