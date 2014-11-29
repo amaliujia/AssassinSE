@@ -68,27 +68,27 @@ public class SDFeatureVector {
      * This is constructor for SDFeatureVector
      */
     public SDFeatureVector(){
-        spamscore = 0;
-        urlDepth = 0;
-        wiki = 0;
-        pageRankScrore = 0;
-        BM25Body = 0;
-        IndriBody = 0;
-        overlapBody = 0;
-        BM25Title = 0;
-        IndriTitle = 0;
-        overlapTitle = 0;
-        BM25Url = 0;
-        IndriUrl = 0;
-        overlapUrl = 0;
-        BM25Inlink = 0;
-        IndriInlink = 0;
-        overlaplink = 0;
+        spamscore = -1;
+        urlDepth = -1;
+        wiki = -1;
+        pageRankScrore = -1;
+        BM25Body = -1;
+        IndriBody = -1;
+        overlapBody = -1;
+        BM25Title = -1;
+        IndriTitle = -1;
+        overlapTitle = -1;
+        BM25Url = -1;
+        IndriUrl = -1;
+        overlapUrl = -1;
+        BM25Inlink = -1;
+        IndriInlink = -1;
+        overlaplink = -1;
 
         features = new ArrayList<Double>();
 
         for(int i = 0; i < NUM_FEATURES; i++){
-            features.add(0.0);
+             features.add(-1.0);
         }
     }
 

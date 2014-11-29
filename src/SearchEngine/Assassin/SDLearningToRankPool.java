@@ -121,13 +121,18 @@ public class SDLearningToRankPool {
 
         //double pageRankScrore = 0.0;
         if(disableSetting.get(3)){
-            try {
-                featureVector.pageRankScrore = pageRank.get(QryEval.getExternalDocid(docid));
-            }catch (Exception e){
-               // System.out.println("No page rank score");
-                featureVector.pageRankScrore = 0;
+//            try {
+//                featureVector.pageRankScrore = pageRank.get(QryEval.getExternalDocid(docid));
+//            }catch (Exception e){
+//               // System.out.println("No page rank score");
+//                featureVector.pageRankScrore = -1.0;
+//            }
+//            featureVector.features.set(3, featureVector.pageRankScrore);
+            String key = QryEval.getExternalDocid(docid);
+            if(pageRank.containsKey(key)){
+                featureVector.pageRankScrore = pageRank.get(key);
+                featureVector.features.set(3, featureVector.pageRankScrore);
             }
-            featureVector.features.set(3, featureVector.pageRankScrore);
         }
 
         String field = "body";
@@ -278,11 +283,11 @@ public class SDLearningToRankPool {
      *         if it is wikipedia
      */
     private int getWikipediaScore(String rawUrl){
-            if(rawUrl.contains(rawUrl)) {
+            if(rawUrl.indexOf("wikipedia.org") != -1) {
                  return 1;
             }
             return 0;
-        }
+     }
 
     public void setDisableSetting(String[] settings){
         if(settings.length == 0)
@@ -371,9 +376,6 @@ public class SDLearningToRankPool {
                                                                         throws IOException {
         double result = 1.0;
         int count = 0;
-        if(docid == 368685 && field.equals("url")){
-            System.out.println("here you are!");
-        }
         // global data
         double collectionLen = QryEval.READER.getSumTotalTermFreq(field);
         RetrievalModelLearningToRank model = (RetrievalModelLearningToRank)r;
@@ -418,6 +420,9 @@ public class SDLearningToRankPool {
      */
     private void normalizeFeature(ArrayList<SDFeatureVector> vectors, int feature){
         if(!disableSetting.get(feature)){
+            for(int i = 0; i < vectors.size(); i++){
+                vectors.get(i).features.set(feature, 0.0);
+            }
             return;
         }
 
@@ -427,12 +432,14 @@ public class SDLearningToRankPool {
 
         // find maximum and minimum by traversal all features.
         for(int i = 0; i < vectors.size(); i++){
-            if(vectors.get(i).getFeature(feature) > maximum){
-                maximum = vectors.get(i).getFeature(feature);
-            }
+            if(vectors.get(i).getFeature(feature) != -1) {
+                if (vectors.get(i).getFeature(feature) > maximum) {
+                    maximum = vectors.get(i).getFeature(feature);
+                }
 
-            if(vectors.get(i).getFeature(feature) < minimum){
-                minimum = vectors.get(i).getFeature(feature);
+                if (vectors.get(i).getFeature(feature) < minimum) {
+                    minimum = vectors.get(i).getFeature(feature);
+                }
             }
         }
 
@@ -447,8 +454,12 @@ public class SDLearningToRankPool {
 
         // normalize feature
         for(int i = 0; i < vectors.size(); i++) {
-            SDFeatureVector featureVector= vectors.get(i);
-            featureVector.features.set(feature, (featureVector.getFeature(feature) - minimum) / divisor);
+            if(vectors.get(i).features.get(feature) == -1) {
+                vectors.get(i).features.set(feature, 0.0);
+            }else {
+                SDFeatureVector featureVector = vectors.get(i);
+                featureVector.features.set(feature, (featureVector.getFeature(feature) - minimum) / divisor);
+            }
         }
        return;
     }
@@ -463,23 +474,13 @@ public class SDLearningToRankPool {
     private double termOverlapping(TermVector termVector){
         int count = 0;
         double queryLength = terms.size();
-//        HashSet<String> queryTerms = new HashSet<String>();
-//        for(int i = 0; i < terms.size(); i++){
-//            queryTerms.add(terms.get(i));
-//        }
-//
-//        for(int j = 1; j < termVector.stemsLength(); j++){
-//            if(queryTerms.contains(termVector.stemString(j))){
-//                count++;
-//            }
-//        }
 
-           for(int i = 0; i < terms.size(); i++){
-               String curTerm = terms.get(i);
-               if(termVector.containStem(curTerm)){
-                   count++;
-               }
+        for(int i = 0; i < terms.size(); i++){
+           String curTerm = terms.get(i);
+           if(termVector.containStem(curTerm)){
+              count++;
            }
+        }
         return ((double)count) / queryLength;
     }
 
