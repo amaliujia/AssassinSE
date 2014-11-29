@@ -21,8 +21,10 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.*;
 
+import static java.lang.System.currentTimeMillis;
 import static java.lang.System.exit;
 
 public class QryEval {
@@ -255,11 +257,6 @@ public class QryEval {
               ArrayList<Integer> docsRelevance = new ArrayList<Integer>();
               for(int j = 0; j < docs.size(); j++){
                     String[] docinfo = docs.get(j).split(" ");
-//                    if(docinfo[2].equals("clueweb09-en0003-07-27266")){
-//                        System.out.println("-----------------------");
-//                        System.out.println(getInternalDocid(docinfo[2]));
-//                        System.out.println("-----------------------");
-//                    }
                     int docid = getInternalDocid(docinfo[2]);
                     docsInternalIds.add(docid);
                     int relevance = Integer.parseInt(docinfo[3]);
@@ -289,6 +286,7 @@ public class QryEval {
           dataCenter.b = Double.parseDouble(params.get("BM25:b"));
           dataCenter.k3 = Double.parseDouble(params.get("BM25:k_3"));
 
+          HashMap<String, ArrayList<String>> rerankPool = new HashMap<String, ArrayList<String>>();
           String testFeatureVectors = params.get("letor:testingFeatureVectorsFile");
           featuresWriter = new BufferedWriter(new FileWriter(new File(testFeatureVectors)));
 
@@ -297,7 +295,7 @@ public class QryEval {
               String key = keys.get(i);
               String que = queries.get(i);
               qTree = parseQuery(que, modelBM25);
-              printFeatureVectors(key, qTree.evaluate(modelBM25), qTree, featuresWriter, model, pool, que);
+              printFeatureVectors(key, qTree.evaluate(modelBM25), qTree, featuresWriter, model, pool, que, rerankPool);
           }
 
           try{
@@ -314,6 +312,8 @@ public class QryEval {
 
           svmClassifier(execPath, testDataPath, modelPath, predictionPath);
 
+          //print rerank result
+          printRerankResult(rerankPool, predictionPath, keys);
 
       }else if(!params.containsKey("fb") || params.get("fb").equals("false")) { //normal search engine model
 
@@ -735,8 +735,8 @@ public class QryEval {
      * @throws IOException
      */
     static void printFeatureVectors(String queryID, QryResult result, Qryop qTree, BufferedWriter featrueWriter,
-                                    RetrievalModel modelLeanringToRank, SDLearningToRankPool pool, String query)
-                                    throws IOException {
+                                    RetrievalModel modelLeanringToRank, SDLearningToRankPool pool, String query,
+                                    HashMap<String, ArrayList<String>> rerankPool) throws IOException {
         try {
             if (result.docScores.scores.size() < 1) {
                 writer.write(queryID + "\tQ0\tdummy\t1\t0\trun-1\n");
@@ -760,13 +760,15 @@ public class QryEval {
                 });
 
                 ArrayList<Integer> internalDocids = new ArrayList<Integer>();
-
-                if(result.docScores.scores.size() < 100){
-                    System.out.println("It exit  " + queryID + "  " + query);
-                }
+                ArrayList<String> docExternIds = new ArrayList<String>();
+//                if(result.docScores.scores.size() < 100){
+//                    System.out.println("It exit  " + queryID + "  " + query);
+//                }
                 for (int i = 0; i < result.docScores.scores.size() && i < 100; i++) {
                       internalDocids.add(getInternalDocid(folder.get(i).getKey()));
+                      docExternIds.add(folder.get(i).getKey());
                 }
+                rerankPool.put(queryID, docExternIds);
 
                 pool.addQuery(query);
 
@@ -906,6 +908,20 @@ public class QryEval {
        }
    }
 
+    /**
+     * Use SVM classifier to produce new scores
+     * @param execPath
+     *          Path to SVM classifier executable
+     * @param textDataPath
+     *          path to target documents' feature vector
+     * @param modelPath
+     *          path to tranined SVM model.
+     * @param predictionPath
+     *         path to result score files.
+     * @throws Exception
+     *      throw IOException when files do not exist
+     *      throw Exception when SVM Classifier crash
+     */
    private static void svmClassifier(String execPath, String textDataPath, String modelPath, String predictionPath)
                                                     throws Exception {
        // runs svm_rank_clasifier from within Java to train the model
@@ -939,8 +955,46 @@ public class QryEval {
        // indicates a problem
        int retValue = cmdProc.waitFor();
        if (retValue != 0) {
-           throw new Exception("SVM Rank crashed.");
+           throw new Exception("SVM Classifier crashed.");
        }
    }
+
+   private static void printRerankResult(HashMap<String, ArrayList<String>> rerankPool,
+                                    String predictionPath, ArrayList<String> keys) throws IOException {
+       Scanner scanner = new Scanner(new File(predictionPath));
+       if(scanner == null){
+          throw new FileNotFoundException("Prediction file not found");
+       }
+
+
+       for(int i = 0; i < keys.size(); i++){
+           String curKey = keys.get(i);
+           ArrayList<String> curDocs = rerankPool.get(curKey);
+           ArrayList<SortEntity> sortEntitries = new ArrayList<SortEntity>();
+
+           int j = 0;
+           while(j < curDocs.size() && scanner.hasNext()){
+               String s = scanner.next();
+               sortEntitries.add(new SortEntity(curDocs.get(j), Double.parseDouble(s)));
+               j++;
+           }
+           if(j < curDocs.size()){
+               System.err.println("Prediction files do not contain all scores");
+               throw new NoSuchElementException("Prediction files do not contain all scores");
+           }
+           Collections.sort(sortEntitries);
+
+           for (int z = 0; z < sortEntitries.size(); z++) {
+               writer.write(curKey + "\tQ0\t"
+                       + sortEntitries.get(z).getExternalDocid()
+                       + "\t"
+                       + (z + 1)
+                       + "\t"
+                       + sortEntitries.get(z).getScore()
+                       + "\trun-1\n");
+           }
+       }
+   }
+
 
 }

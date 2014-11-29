@@ -18,10 +18,6 @@ public class SortEntity implements Comparable<SortEntity>{
         externDocID = b;
         scores = c;
     }
-//    public void getInternalDocID(){
-//
-//    }
-
 
     /**
      *
@@ -41,7 +37,7 @@ public class SortEntity implements Comparable<SortEntity>{
      */
     public int getInternalDocID() {return this.internalDocID;}
 
-    @Override
+
     public int compareTo(SortEntity b) {
         if(this.getScore() == b.getScore()){
             String externalIdA = this.getExternalDocid();
