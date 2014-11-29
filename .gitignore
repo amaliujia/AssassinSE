@@ -101,3 +101,5 @@ query/trainingqueries
 SVM/trainingFeatureVectorsFile
 
 query/testQuery
+
+query/experiement2
