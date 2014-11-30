@@ -184,5 +184,23 @@ public class TermVector {
         return true;
     }
 
-  
+    /**
+     *
+     * @param term
+     * @return
+     */
+    public int getStemTF(String term){
+        int index = 1;
+        while(index < stems.length){
+            if(stems[index].equals(term)){
+                break;
+            }
+            index++;
+        }
+        if(index == stems.length){
+            return -1;
+        }
+        return stemFreq(index);
+    }
+
 }

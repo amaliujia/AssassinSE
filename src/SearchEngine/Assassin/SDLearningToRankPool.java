@@ -233,8 +233,21 @@ public class SDLearningToRankPool {
             featureVector.features.set(15, featureVector.overlaplink);
         }
 
-        // TODO: two custom features
 
+        field = "body";
+        vector = null;
+        try{
+            vector = new TermVector(docid, field);
+        }catch (Exception e){
+            //  System.out.println("Term vector is not indexed");
+        }
+
+        if(disableSetting.get(16) && vector != null){
+           featureVector.tfMean = tfMean(vector);
+           featureVector.features.set(16, featureVector.tfMean);
+        }
+
+        // TODO: one custom features
         return featureVector;
     }
 
@@ -483,5 +496,24 @@ public class SDLearningToRankPool {
         }
         return ((double)count) / queryLength;
     }
+
+
+    /**
+     *
+     * @param termVector
+     * @return
+     */
+    private double tfMean(TermVector termVector){
+        double tf = 0;
+
+        for(int i = 0; i < terms.size(); i++) {
+            int curTf = termVector.getStemTF(terms.get(i));
+            if (curTf != -1) {
+                tf += curTf;
+            }
+        }
+        return tf / (double)terms.size();
+    }
+
 
 }

@@ -959,6 +959,13 @@ public class QryEval {
        }
    }
 
+    /**
+     *
+     * @param rerankPool
+     * @param predictionPath
+     * @param keys
+     * @throws IOException
+     */
    private static void printRerankResult(HashMap<String, ArrayList<String>> rerankPool,
                                     String predictionPath, ArrayList<String> keys) throws IOException {
        Scanner scanner = new Scanner(new File(predictionPath));

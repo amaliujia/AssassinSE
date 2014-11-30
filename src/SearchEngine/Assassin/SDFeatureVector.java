@@ -58,6 +58,7 @@ public class SDFeatureVector {
     public double overlaplink;
 
     // feature 17
+    public double tfMean;
 
     // feature 18
 
@@ -84,6 +85,7 @@ public class SDFeatureVector {
         BM25Inlink = -1;
         IndriInlink = -1;
         overlaplink = -1;
+        tfMean = -1;
 
         features = new ArrayList<Double>();
 
