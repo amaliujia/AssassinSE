@@ -549,7 +549,7 @@ public class SDLearningToRankPool {
             return 1;
         }
 
-        if(url.indexOf(".org") != -1){
+        if(url.indexOf(".gov") != -1){
             return 1;
         }
         return 0;

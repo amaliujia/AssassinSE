@@ -20,6 +20,11 @@ public class QryResult {
 
   ScoreList docScores = new ScoreList();
   InvList invertedList = new InvList();
+
+    /**
+     *
+     * @throws IOException
+     */
   public void sort() throws IOException{
       docScores.sort();
       invertedList.sort();
