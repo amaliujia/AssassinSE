@@ -106,7 +106,6 @@ public class SDLearningToRankPool {
         }
 
         String rawUrl = d.get("rawUrl");
-        //int urlDepth = 0;
 
         if(disableSetting.get(1)) {
             featureVector.urlDepth = getDepth(rawUrl);
@@ -234,20 +233,18 @@ public class SDLearningToRankPool {
         }
 
 
-        field = "body";
-        vector = null;
-        try{
-            vector = new TermVector(docid, field);
-        }catch (Exception e){
-            //  System.out.println("Term vector is not indexed");
-        }
-
+        // tf mean in all fields
         if(disableSetting.get(16) && vector != null){
-           featureVector.tfMean = tfMean(vector);
+           featureVector.tfMean = tfMean(docid);
            featureVector.features.set(16, featureVector.tfMean);
         }
 
-        // TODO: one custom features
+        // url domain feature
+        if(disableSetting.get(17)){
+            featureVector.domain = domainUrl(rawUrl);
+            featureVector.features.set(17, featureVector.domain);
+        }
+
         return featureVector;
     }
 
@@ -397,6 +394,9 @@ public class SDLearningToRankPool {
         // build vocabulary
         HashMap<String, Double> vocabulary = new HashMap<String, Double>();
 
+        if(docid == 272352){
+            System.out.println();
+        }
         for(int j = 0; j < v.stemsLength(); j++){
             String stem = v.stemString(j);
             if(stem != null && !vocabulary.containsKey(stem)){
@@ -500,19 +500,59 @@ public class SDLearningToRankPool {
 
     /**
      *
-     * @param termVector
+     * @param docid
      * @return
      */
-    private double tfMean(TermVector termVector){
+    private double tfMean(int docid){
         double tf = 0;
 
+        tf += tfBasedOnField(docid, "body");
+        tf += tfBasedOnField(docid, "url");
+        tf += tfBasedOnField(docid, "title");
+        tf += tfBasedOnField(docid, "inlink");
+
+        return tf / (double)(terms.size() * 4);
+    }
+
+    /**
+     *
+     * @param docid
+     * @param field
+     * @return
+     */
+    private double tfBasedOnField(int docid, String field){
+        double tf = 1.0;
+        TermVector vector = null;
+        try{
+            vector = new TermVector(docid, field);
+        }catch (Exception e){
+            //  System.out.println("Term vector is not indexed");
+        }
+        if(vector == null) return 0;
+
         for(int i = 0; i < terms.size(); i++) {
-            int curTf = termVector.getStemTF(terms.get(i));
+            int curTf = vector.getStemTF(terms.get(i));
             if (curTf != -1) {
                 tf += curTf;
             }
         }
-        return tf / (double)terms.size();
+        return tf;
+    }
+
+    /**
+     *
+     * @param url
+     * @return
+     */
+    private int domainUrl(String url){
+        if(url.indexOf(".edu") != -1){
+            return 1;
+        }
+
+        if(url.indexOf(".org") != -1){
+            return 1;
+        }
+        return 0;
     }
 
 

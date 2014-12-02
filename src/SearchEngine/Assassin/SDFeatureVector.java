@@ -61,7 +61,7 @@ public class SDFeatureVector {
     public double tfMean;
 
     // feature 18
-
+    public double domain;
 
     public ArrayList<Double> features;
 
@@ -86,6 +86,7 @@ public class SDFeatureVector {
         IndriInlink = -1;
         overlaplink = -1;
         tfMean = -1;
+        domain = -1;
 
         features = new ArrayList<Double>();
 
