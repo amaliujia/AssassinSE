@@ -1002,6 +1002,4 @@ public class QryEval {
            }
        }
    }
-
-
 }
