@@ -15,7 +15,20 @@ public class RetrievalModelBM25 extends RetrievalModel{
 
     @Override
     public boolean setParameter(String parameterName, double value) {
-        return false;
+        if(parameterName.equals("k1")){
+            k1 = value;
+        }else if(parameterName.equals("b")){
+            b = value;
+        }else if(parameterName.equals("k3")){
+            k3 = value;
+        }else if(parameterName.equals("avgLenDoc")){
+            avgLenDoc = (int)value;
+        }else if(parameterName.equals("numDocs")){
+            numDocs = (int)value;
+        }else{
+            return false;
+        }
+        return true;
     }
 
     @Override
