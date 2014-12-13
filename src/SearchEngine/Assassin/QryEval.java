@@ -1,12 +1,3 @@
-/**
- *  QryEval illustrates the architecture for the portion of a search
- *  engine that evaluates queries.  It is a template for class
- *  homework assignments, so it emphasizes simplicity over efficiency.
- *  It implements an unranked Boolean retrieval model, however it is
- *  easily extended to other retrieval models.  For more information,
- *  see the ReadMe.txt file.
- */
-
 package SearchEngine.Assassin;
 
 import org.apache.lucene.analysis.Analyzer.TokenStreamComponents;
@@ -21,10 +12,8 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.*;
 
-import static java.lang.System.currentTimeMillis;
 import static java.lang.System.exit;
 
 public class QryEval {
@@ -68,7 +57,7 @@ public class QryEval {
     // read in the parameter file; one parameter per line in format of key=value
     Map<String, String> params = new HashMap<String, String>();
     Scanner scan = new Scanner(new File(args[0]));
-    String line = null;
+    String line;
     do {
       line = scan.nextLine();
       String[] pair = line.split("=");
@@ -112,10 +101,10 @@ public class QryEval {
     }
 
     if(model instanceof RetrievalModelBM25){
-        dataCenter.k1 = Double.parseDouble(params.get("BM25:k_1"));
-        dataCenter.b = Double.parseDouble(params.get("BM25:b"));
-        dataCenter.k3 = Double.parseDouble(params.get("BM25:k_3"));
-        System.out.println("BM25 parameters  " + dataCenter.k1 + "  " + dataCenter.b + "  " + dataCenter.k3);
+        DataCenter.k1 = Double.parseDouble(params.get("BM25:k_1"));
+        DataCenter.b = Double.parseDouble(params.get("BM25:b"));
+        DataCenter.k3 = Double.parseDouble(params.get("BM25:k_3"));
+        System.out.println("BM25 parameters  " + DataCenter.k1 + "  " + DataCenter.b + "  " + DataCenter.k3);
     }else if(model instanceof RetrievalModelIndri){
         model.setParameter("mu", Double.parseDouble(params.get("Indri:mu")));
         model.setParameter("lambda",Double.parseDouble(params.get("Indri:lambda")));
@@ -145,7 +134,7 @@ public class QryEval {
     ArrayList<String> queries = new ArrayList<String>();
     ArrayList<String> keys = new ArrayList<String>();
     try{
-       String str = "";
+       String str;
        f = new FileInputStream(params.get("queryFilePath"));
        fileReader = new InputStreamReader(f);
        bufferReader = new BufferedReader(fileReader);
@@ -176,7 +165,7 @@ public class QryEval {
           //preprocessing relevant documents
           HashMap<String, ArrayList<String>> revelanceMap = new HashMap<String, ArrayList<String>>();
           File relevanceFiles = new File(params.get("letor:trainingQrelsFile"));
-          Scanner s = null;
+          Scanner s;
           try{
               s= new Scanner(relevanceFiles);
           }catch (FileNotFoundException e){
@@ -230,7 +219,7 @@ public class QryEval {
           ArrayList<String> traningKeys = new ArrayList<String>();
 
           // read traning queries
-          String q = "";
+          String q;
           while((q = traningBufferReader.readLine()) != null){
               String[] pair = q.split(":");
               traningQueries.add(pair[1]);
@@ -283,9 +272,9 @@ public class QryEval {
 
           //Read test queries
           RetrievalModel modelBM25 = new RetrievalModelBM25();
-          dataCenter.k1 = Double.parseDouble(params.get("BM25:k_1"));
-          dataCenter.b = Double.parseDouble(params.get("BM25:b"));
-          dataCenter.k3 = Double.parseDouble(params.get("BM25:k_3"));
+          DataCenter.k1 = Double.parseDouble(params.get("BM25:k_1"));
+          DataCenter.b = Double.parseDouble(params.get("BM25:b"));
+          DataCenter.k3 = Double.parseDouble(params.get("BM25:k_3"));
 
           HashMap<String, ArrayList<String>> rerankPool = new HashMap<String, ArrayList<String>>();
           String testFeatureVectors = params.get("letor:testingFeatureVectorsFile");
@@ -296,7 +285,7 @@ public class QryEval {
               String key = keys.get(i);
               String que = queries.get(i);
               qTree = parseQuery(que, modelBM25);
-              printFeatureVectors(key, qTree.evaluate(modelBM25), qTree, featuresWriter, model, pool, que, rerankPool);
+              printFeatureVectors(key, qTree.evaluate(modelBM25), model, pool, que, rerankPool);
           }
 
           try{
@@ -340,7 +329,7 @@ public class QryEval {
 
            // read reference document
            File referenceFile = new File(initialRankingFilePath);
-            Scanner scanner = null;
+            Scanner scanner;
            try{
                scanner = new Scanner(referenceFile);
            }catch (FileNotFoundException e){
@@ -350,7 +339,7 @@ public class QryEval {
            }
 
            for(int q = 0; q < keys.size(); q++) {
-               String docRecord = "";
+               String docRecord;
                int counter = docNum;
                ArrayList<SortEntity> currentQuery = new ArrayList<SortEntity>();
                while (scanner.hasNext() && counter != 0) {
@@ -432,19 +421,7 @@ public class QryEval {
       }catch (Exception e){
           System.exit(1);
       }
-      printMemoryUsage(true);
-  }
-
-  /**
-   *  Write an error message and exit.  This can be done in other
-   *  ways, but I wanted something that takes just one statement so
-   *  that it is easy to insert checks without cluttering the code.
-   *  @param message The error message to write before exiting.
-   *  @return void
-   */
-  static void fatalError (String message) {
-    System.err.println (message);
-    exit(1);
+      Util.printMemoryUsage(true);
   }
 
   /**
@@ -531,7 +508,7 @@ public class QryEval {
     // Tokenize the query.
 
     StringTokenizer tokens = new StringTokenizer(qString, "\t\n\r ,()", true);
-    String token = null;
+    String token;
     boolean isWeight = true;
     // Each pass of the loop processes one token. To improve
     // efficiency and clarity, the query operator on the top of the
@@ -650,25 +627,6 @@ public class QryEval {
     return currentOp;
   }
 
-  /**
-   *  Print a message indicating the amount of memory used.  The
-   *  caller can indicate whether garbage collection should be
-   *  performed, which slows the program but reduces memory usage.
-   *  @param gc If true, run the garbage collector before reporting.
-   *  @return void
-   */
-  public static void printMemoryUsage (boolean gc) {
-
-    Runtime runtime = Runtime.getRuntime();
-
-    if (gc) {
-      runtime.gc();
-    }
-
-    System.out.println ("Memory used:  " +
-			((runtime.totalMemory() - runtime.freeMemory()) /
-			 (1024L * 1024L)) + " MB");
-  }
 
   /**
    * Print the query results.
@@ -683,34 +641,11 @@ public class QryEval {
    * @throws IOException
    */
   static void printResults(String queryID, QryResult result, Qryop qTree) throws IOException {
-
-    /*
-     *  Create the trec_eval output.  Your code should write to the
-     *  file specified in the parameter file, and it should write the
-     *  results that you retrieved above.  This code just allows the
-     *  testing infrastructure to work on QryEval.
-     */
           try {
               if (result.docScores.scores.size() < 1) {
                   writer.write(queryID + "\tQ0\tdummy\t1\t0\trun-1\n");
               } else {
-                  HashMap<String, Double> map = new HashMap<String, Double>();
-                  for(int i = 0; i < result.docScores.scores.size(); i++){
-                      map.put(getExternalDocid(result.docScores.scores.get(i).getDocid()),
-                                                        result.docScores.getDocidScore(i));
-                  }
-                  List<Map.Entry<String, Double>> folder = new ArrayList<Map.Entry<String, Double>>(map.entrySet());
-                  Collections.sort(folder, new Comparator<Map.Entry<String, Double>>() {
-                      public int compare(Map.Entry<String, Double> e1,
-                                         Map.Entry<String, Double> e2) {
-                          if(!e1.getValue().equals(e2.getValue())) {
-                              if(e2.getValue() > e1.getValue()) return 1;
-                              else return -1;
-                          }
-                          else
-                              return (e1.getKey()).toString().compareTo(e2.getKey().toString());
-                      }
-                  });
+                  List<Map.Entry<String, Double>> folder = Util.sortHashMap(result);
                   for (int i = 0; i < result.docScores.scores.size() && i < 100; i++) {
                       writer.write(queryID + "\tQ0\t"
                               + folder.get(i).getKey()
@@ -726,45 +661,23 @@ public class QryEval {
               e.printStackTrace();
           }
   }
-
-
     /**
      *
-      * @param queryID
+     * @param queryID
      * @param result
-     * @param qTree
      * @throws IOException
      */
-    static void printFeatureVectors(String queryID, QryResult result, Qryop qTree, BufferedWriter featrueWriter,
+    static void printFeatureVectors(String queryID, QryResult result,
                                     RetrievalModel modelLeanringToRank, SDLearningToRankPool pool, String query,
                                     HashMap<String, ArrayList<String>> rerankPool) throws IOException {
         try {
             if (result.docScores.scores.size() < 1) {
                 writer.write(queryID + "\tQ0\tdummy\t1\t0\trun-1\n");
             } else {
-                HashMap<String, Double> map = new HashMap<String, Double>();
-                for(int i = 0; i < result.docScores.scores.size(); i++){
-                    map.put(getExternalDocid(result.docScores.scores.get(i).getDocid()),
-                            result.docScores.getDocidScore(i));
-                }
-                List<Map.Entry<String, Double>> folder = new ArrayList<Map.Entry<String, Double>>(map.entrySet());
-                Collections.sort(folder, new Comparator<Map.Entry<String, Double>>() {
-                    public int compare(Map.Entry<String, Double> e1,
-                                       Map.Entry<String, Double> e2) {
-                        if(!e1.getValue().equals(e2.getValue())) {
-                            if(e2.getValue() > e1.getValue()) return 1;
-                            else return -1;
-                        }
-                        else
-                            return (e1.getKey()).toString().compareTo(e2.getKey().toString());
-                    }
-                });
-
+                List<Map.Entry<String, Double>> folder = Util.sortHashMap(result);
                 ArrayList<Integer> internalDocids = new ArrayList<Integer>();
                 ArrayList<String> docExternIds = new ArrayList<String>();
-//                if(result.docScores.scores.size() < 100){
-//                    System.out.println("It exit  " + queryID + "  " + query);
-//                }
+
                 for (int i = 0; i < result.docScores.scores.size() && i < 100; i++) {
                       internalDocids.add(getInternalDocid(folder.get(i).getKey()));
                       docExternIds.add(folder.get(i).getKey());
@@ -787,20 +700,12 @@ public class QryEval {
     /**
      * Print the query results and compute feedback.
      *
-     *
      * @param result Result object generated by
      *               {@link SearchEngine.Assassin.Qryop#evaluate(SearchEngine.Assassin.RetrievalModel)}.
      * @throws IOException
      */
     static String ResultsAfterFeedback(String queryID, QryResult result, Qryop qTree,
                              int docNum, int termNum, double mu) throws IOException {
-
-    /*
-     *  Create the trec_eval output.  Your code should write to the
-     *  file specified in the parameter file, and it should write the
-     *  results that you retrieved above.  This code just allows the
-     *  testing infrastructure to work on QryEval.
-     */
         try {
             if (result.docScores.scores.size() < 1) {
                 writer.write(queryID + "\tQ0\tdummy\t1\t0\trun-1\n");
@@ -821,7 +726,7 @@ public class QryEval {
                 SDPesudoFeedBackEngine feedBackEngine = new SDPesudoFeedBackEngine(termNum, newFolder, queryID, mu);
                 String newQuery = feedBackEngine.SDFeedback();
                 //System.out.println(newQuery);
-                return  newQuery;
+                return newQuery;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -831,8 +736,7 @@ public class QryEval {
 
   /**
    *  Given a query string, returns the terms one at a time with stopwords
-   *  removed and the terms stemmed using the Krovetz stemmer.
-   *
+   *  removed and the terms stemmed using the Krovetz stemmer. d
    *  Use this method to process raw query terms.
    *
    *  @param query String containing query
@@ -874,18 +778,9 @@ public class QryEval {
      */
    private static void trainSVM(String learningModelPath, String FEAT_GEN, String traningFilePath,
                          String modelOutputFile) throws Exception{
-       // Since features vectors have been well prepared, next step is to train SVM model.
-
-       // runs svm_rank_learn from within Java to train the model
-       // execPath is the location of the svm_rank_learn utility,
-       // which is specified by letor:svmRankLearnPath in the parameter file.
-       // FEAT_GEN.c is the value of the letor:c parameter.
        Process cmdProc = Runtime.getRuntime().exec(
                new String[] { learningModelPath, "-c", FEAT_GEN, traningFilePath,
                        modelOutputFile });
-
-       // The stdout/stderr consuming code MUST be included.
-       // It prevents the OS from running out of output buffer space and stalling.
 
        // consume stdout and print it out for debugging purposes
        BufferedReader stdoutReader = new BufferedReader(
@@ -925,18 +820,8 @@ public class QryEval {
      */
    private static void svmClassifier(String execPath, String textDataPath, String modelPath, String predictionPath)
                                                     throws Exception {
-       // runs svm_rank_clasifier from within Java to train the model
-       // execPath is the location of the svm_rank_learn utility,
-       // which is specified by letor:svmRankClassifyPath in the parameter file.
-       // modelPath is the location of trained SVM model
-       // which is specified by letor:svmRankModelFile in parameter file
-       // predictionPath is the location of prediction score file
-       // which is specified by letor:testingDocumentScores
        Process cmdProc = Runtime.getRuntime().exec(
                new String[] { execPath, textDataPath, modelPath, predictionPath });
-
-       // The stdout/stderr consuming code MUST be included.
-       // It prevents the OS from running out of output buffer space and stalling.
 
        // consume stdout and print it out for debugging purposes
        BufferedReader stdoutReader = new BufferedReader(
@@ -978,27 +863,27 @@ public class QryEval {
        for(int i = 0; i < keys.size(); i++){
            String curKey = keys.get(i);
            ArrayList<String> curDocs = rerankPool.get(curKey);
-           ArrayList<SortEntity> sortEntitries = new ArrayList<SortEntity>();
+           ArrayList<SortEntity> sortEntities = new ArrayList<SortEntity>();
 
            int j = 0;
            while(j < curDocs.size() && scanner.hasNext()){
                String s = scanner.next();
-               sortEntitries.add(new SortEntity(curDocs.get(j), Double.parseDouble(s)));
+               sortEntities.add(new SortEntity(curDocs.get(j), Double.parseDouble(s)));
                j++;
            }
            if(j < curDocs.size()){
                System.err.println("Prediction files do not contain all scores");
                throw new NoSuchElementException("Prediction files do not contain all scores");
            }
-           Collections.sort(sortEntitries);
+           Collections.sort(sortEntities);
 
-           for (int z = 0; z < sortEntitries.size(); z++) {
+           for (int z = 0; z < sortEntities.size(); z++) {
                writer.write(curKey + "\tQ0\t"
-                       + sortEntitries.get(z).getExternalDocid()
+                       + sortEntities.get(z).getExternalDocid()
                        + "\t"
                        + (z + 1)
                        + "\t"
-                       + sortEntitries.get(z).getScore()
+                       + sortEntities.get(z).getScore()
                        + "\trun-1\n");
            }
        }
