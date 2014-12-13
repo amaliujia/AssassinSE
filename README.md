@@ -3,7 +3,7 @@ AssassinSE
 
 This is a distributed, large scale Search Engine.
 
-This is a assassin, elegant and fatal.
+This is a assassin, graceful and fatal.
 
 Milestones
 ==========
