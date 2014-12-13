@@ -16,11 +16,11 @@ public class TestMemory {
 
         //Print used memory
         System.out.println("Used Memory:"
-                + (runtime.totalMemory() - runtime.freeMemory()) / mb);
+                           + (runtime.totalMemory() - runtime.freeMemory()) / mb);
 
         //Print free memory
         System.out.println("Free Memory:"
-                + runtime.freeMemory() / mb);
+                           + runtime.freeMemory() / mb);
 
         //Print total available memory
         System.out.println("Total Memory:" + runtime.totalMemory() / mb);

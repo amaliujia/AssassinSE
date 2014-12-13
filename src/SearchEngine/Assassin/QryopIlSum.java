@@ -38,8 +38,8 @@ public class QryopIlSum extends QryopSl {
      * @param q
      * @throws IOException
      */
-    public void add(Qryop ...q) throws IOException{
-        for(int i = 0; i < q.length; i++){
+    public void add(Qryop ...q) throws IOException {
+        for(int i = 0; i < q.length; i++) {
             this.args.add(q[i]);
         }
     }
@@ -51,28 +51,28 @@ public class QryopIlSum extends QryopSl {
      * @throws IOException
      */
     public QryResult evaluate(RetrievalModel r) throws IOException {
-       allocDaaTPtrs(r);
-       QryResult result = new QryResult();
-       DataCenter dataCenter = DataCenter.sharedDataCenter();
+        allocDaaTPtrs(r);
+        QryResult result = new QryResult();
+        DataCenter dataCenter = DataCenter.sharedDataCenter();
 
         // use hashtable to compute and save intermediate scroes.
         HashMap<Integer, Double> map = new HashMap<Integer, Double>();
-        for(int j = 0; j < this.daatPtrs.size(); j++){
+        for(int j = 0; j < this.daatPtrs.size(); j++) {
             DaaTPtr ptrj = this.daatPtrs.get(j);
-            while(ptrj.nextDoc < ptrj.scoreList.scores.size()){
+            while(ptrj.nextDoc < ptrj.scoreList.scores.size()) {
                 int docid = ptrj.scoreList.getDocid(ptrj.nextDoc);
                 double score = ptrj.scoreList.getDocidScore(ptrj.nextDoc);
-                if(map.containsKey(ptrj.scoreList.getDocid(ptrj.nextDoc))){
+                if(map.containsKey(ptrj.scoreList.getDocid(ptrj.nextDoc))) {
                     double updateSocre = score + map.get(ptrj.scoreList.getDocid(ptrj.nextDoc));
                     map.put(ptrj.scoreList.getDocid(ptrj.nextDoc), updateSocre);
-                }else{
+                } else {
                     map.put(ptrj.scoreList.getDocid(ptrj.nextDoc), score);
                 }
                 ptrj.nextDoc++;
             }
         }
         // computation finished, fetch results from hashtable and put it into scorelist
-        for (Integer docid : map.keySet()){
+        for (Integer docid : map.keySet()) {
             result.docScores.add(docid, map.get(docid));
         }
         freeDaaTPtrs();
@@ -86,7 +86,7 @@ public class QryopIlSum extends QryopSl {
     @Override
     public String toString() {
         String result = new String();
-        for(Iterator<Qryop> i = this.args.iterator(); i.hasNext();){
+        for(Iterator<Qryop> i = this.args.iterator(); i.hasNext();) {
             result += (i.next().toString() + " ");
         }
         return "#SUM( " + result + ")";

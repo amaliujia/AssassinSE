@@ -13,10 +13,10 @@ public class DataCenter {
     public static double b;
     public static double k3;
 
-    public static DataCenter sharedDataCenter(){
-       if(dataCenter == null)
-           dataCenter = new DataCenter();
-       return dataCenter;
+    public static DataCenter sharedDataCenter() {
+        if(dataCenter == null)
+            dataCenter = new DataCenter();
+        return dataCenter;
     }
 
 

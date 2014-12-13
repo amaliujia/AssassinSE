@@ -3,7 +3,7 @@ package SearchEngine.Assassin;
 /**
  * Created by amaliujia on 14-9-7.
  */
-public class ScoreListEntry implements Comparable<ScoreListEntry>{
+public class ScoreListEntry implements Comparable<ScoreListEntry> {
 
     private int docid;
     private double score;
@@ -13,11 +13,13 @@ public class ScoreListEntry implements Comparable<ScoreListEntry>{
         this.score = score;
     }
 
-    public double getScore(){
+    public double getScore() {
         return this.score;
     }
 
-    public int getDocid(){ return docid; }
+    public int getDocid() {
+        return docid;
+    }
 
 
     public int compareTo(ScoreListEntry b) {

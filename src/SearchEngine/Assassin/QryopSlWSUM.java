@@ -14,7 +14,7 @@ public class QryopSlWSUM extends QryopSl {
     public ArrayList<Qryop> newargs = new ArrayList<Qryop>();
 
 
-    public QryopSlWSUM(){
+    public QryopSlWSUM() {
         weights = new ArrayList<Double>();
         newargs = new ArrayList<Qryop>();
     }
@@ -28,17 +28,17 @@ public class QryopSlWSUM extends QryopSl {
      */
     public double getDefaultScore(RetrievalModel r, long docid) throws IOException {
         if (r instanceof RetrievalModelUnrankedBoolean ||
-            r instanceof  RetrievalModelRankedBoolean ||
-            r instanceof RetrievalModelBM25)
+                r instanceof  RetrievalModelRankedBoolean ||
+                r instanceof RetrievalModelBM25)
             return 0.0;
-        else if(r instanceof RetrievalModelIndri){
+        else if(r instanceof RetrievalModelIndri) {
             double c = 0;
-            for(int z = 0; z < this.weights.size(); z++){
+            for(int z = 0; z < this.weights.size(); z++) {
                 c += this.weights.get(z);
             }
             // the task of #WAND is call its args' getDefaultScore function and merge them.
             double defaultScore = 0.0;
-            for (int i = 0; i < this.args.size(); i++){
+            for (int i = 0; i < this.args.size(); i++) {
                 defaultScore += ((QryopSl)this.args.get(i)).getDefaultScore(r, docid) * (this.weights.get(i) / c);
             }
             return defaultScore;
@@ -52,14 +52,14 @@ public class QryopSlWSUM extends QryopSl {
     }
 
     public void add(Qryop... q) throws IOException {
-        for(int i = 0; i < q.length; i++){
+        for(int i = 0; i < q.length; i++) {
             this.args.add(q[i]);
         }
     }
 
 
     public QryResult evaluate(RetrievalModel r) throws IOException {
-        if(r instanceof RetrievalModelIndri){
+        if(r instanceof RetrievalModelIndri) {
             return evaluateIndri(r);
         }
         return null;
@@ -71,8 +71,8 @@ public class QryopSlWSUM extends QryopSl {
      * @return
      * @throws IOException
      */
-    public QryResult evaluateIndri(RetrievalModel r) throws IOException{
-       // WSUMAllocDaaTPtrs(r);
+    public QryResult evaluateIndri(RetrievalModel r) throws IOException {
+        // WSUMAllocDaaTPtrs(r);
         allocDaaTPtrs(r);
         QryResult result = new QryResult();
 
@@ -82,7 +82,7 @@ public class QryopSlWSUM extends QryopSl {
         int []a = new int[this.daatPtrs.size()];
         double c = 0;
 
-        for(int z = 0; z < this.weights.size(); z++){
+        for(int z = 0; z < this.weights.size(); z++) {
             c += this.weights.get(z);
         }
 
@@ -113,8 +113,8 @@ public class QryopSlWSUM extends QryopSl {
             }
             double docScore = 0.0;
             // compute scores and default scores.
-            if(smallestForThisIteration != Integer.MAX_VALUE){
-                for(int z = 0; z < this.daatPtrs.size(); z++){
+            if(smallestForThisIteration != Integer.MAX_VALUE) {
+                for(int z = 0; z < this.daatPtrs.size(); z++) {
                     if(a[z] == -1) {
                         DaaTPtr ptrz = this.daatPtrs.get(z);
                         int docid = ptrz.scoreList.getDocid(ptrz.nextDoc);
@@ -125,12 +125,12 @@ public class QryopSlWSUM extends QryopSl {
                             ptrz.nextDoc++;
                         } else {
                             double temp = (((QryopSl) this.args.get(z)).getDefaultScore(r, smallestForThisIteration) *
-                                                                                            (this.weights.get(z) / c));
+                                           (this.weights.get(z) / c));
                             docScore += temp;
                         }
-                    }else{
+                    } else {
                         double temp = (((QryopSl) this.args.get(z)).getDefaultScore(r, smallestForThisIteration) *
-                                                                                            (this.weights.get(z) / c));
+                                       (this.weights.get(z) / c));
                         docScore += temp;
                     }
                 }
@@ -157,7 +157,7 @@ public class QryopSlWSUM extends QryopSl {
      */
     public String toString() {
         String result = new String();
-        for(Iterator<Qryop> i = this.args.iterator(); i.hasNext();){
+        for(Iterator<Qryop> i = this.args.iterator(); i.hasNext();) {
             result += (i.next().toString() + " ");
         }
         return "#WSUM( " + result + ")";
@@ -170,7 +170,7 @@ public class QryopSlWSUM extends QryopSl {
      *         Indicate what model it is using
      * @throws IOException
      */
-    public void WSUMAllocDaaTPtrs(RetrievalModel r) throws IOException{
+    public void WSUMAllocDaaTPtrs(RetrievalModel r) throws IOException {
         filter();
         this.weights = new ArrayList<Double>();
         for (int i = 0; i < this.args.size(); i++) {
@@ -187,7 +187,7 @@ public class QryopSlWSUM extends QryopSl {
 
                 this.daatPtrs.add(ptri);
                 this.newargs.add(this.args.get(i));
-            }else{
+            } else {
                 String term = ((QryopIlTerm)this.args.get(i)).getTerm();
                 term += ("." + ((QryopIlTerm)this.args.get(i)).getField());
                 Double weigh = Double.parseDouble(term);
@@ -199,25 +199,25 @@ public class QryopSlWSUM extends QryopSl {
     /**
      * filter those invalid args.
      */
-    public void filter(){
+    public void filter() {
         ArrayList<Qryop> tempArgs = new ArrayList<Qryop>();
 
-        for(int i = 0; i < this.args.size() - 1; i++){
+        for(int i = 0; i < this.args.size() - 1; i++) {
             if(this.args.get(i) instanceof QryopIlTerm && this.args.get(i + 1) instanceof QryopIlTerm) {
-                  String filed1 = ((QryopIlTerm) this.args.get(i)).getField();
-                  String filed2 =  ((QryopIlTerm) this.args.get(i + 1)).getField();
+                String filed1 = ((QryopIlTerm) this.args.get(i)).getField();
+                String filed2 =  ((QryopIlTerm) this.args.get(i + 1)).getField();
                 if (!isValidFiled(filed1) && !isValidFiled(filed2)) {
                     continue;
                 }
 
                 tempArgs.add(this.args.get(i));
-            }else{
+            } else {
                 tempArgs.add(this.args.get(i));
             }
         }
 
         if((this.args.get(this.args.size() - 1) instanceof QryopIlTerm) &&
-                ((QryopIlTerm)this.args.get(this.args.size() - 1)).getTerm().equals("0")){
+                ((QryopIlTerm)this.args.get(this.args.size() - 1)).getTerm().equals("0")) {
             this.args = tempArgs;
             return;
         }
@@ -231,12 +231,12 @@ public class QryopSlWSUM extends QryopSl {
      * @param field
      * @return
      */
-    public boolean isValidFiled(String field){
+    public boolean isValidFiled(String field) {
         if(field.equals("body") ||
                 field.equals("inlink") ||
                 field.equals("url") ||
                 field.equals("title") ||
-                field.equals("keywords")){
+                field.equals("keywords")) {
             return true;
         }
         return false;

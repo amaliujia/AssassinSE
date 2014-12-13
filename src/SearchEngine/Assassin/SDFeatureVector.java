@@ -68,7 +68,7 @@ public class SDFeatureVector {
     /**
      * This is constructor for SDFeatureVector
      */
-    public SDFeatureVector(){
+    public SDFeatureVector() {
         spamscore = -1;
         urlDepth = -1;
         wiki = -1;
@@ -90,24 +90,24 @@ public class SDFeatureVector {
 
         features = new ArrayList<Double>();
 
-        for(int i = 0; i < NUM_FEATURES; i++){
-             features.add(-1.0);
+        for(int i = 0; i < NUM_FEATURES; i++) {
+            features.add(-1.0);
         }
     }
 
 
-    public double getFeature(int i){
+    public double getFeature(int i) {
         return features.get(i);
     }
 
-    public String toString(){
+    public String toString() {
         String s;
         s = "features: 1:" + getFeature(0) + " 2:" + getFeature(1) + " 3:" + getFeature(2) +
-                " 4:" + getFeature(3) + " 5:" + getFeature(4) + " 6:" + getFeature(5) +
-                " 7:" + getFeature(6) + " 8:" + getFeature(7) + " 9:" + getFeature(8) +
-                " 10:" + getFeature(9) + " 11:" + getFeature(10) + " 12:" + getFeature(11) +
-                " 13:" + getFeature(12) + " 14:" + getFeature(13) + " 15:" + getFeature(14) +
-                " 16:" + getFeature(15) + " 17:" + getFeature(16) + " 18:" + getFeature(17);
+            " 4:" + getFeature(3) + " 5:" + getFeature(4) + " 6:" + getFeature(5) +
+            " 7:" + getFeature(6) + " 8:" + getFeature(7) + " 9:" + getFeature(8) +
+            " 10:" + getFeature(9) + " 11:" + getFeature(10) + " 12:" + getFeature(11) +
+            " 13:" + getFeature(12) + " 14:" + getFeature(13) + " 15:" + getFeature(14) +
+            " 16:" + getFeature(15) + " 17:" + getFeature(16) + " 18:" + getFeature(17);
         return s;
     }
 

@@ -3,7 +3,7 @@ package SearchEngine.Assassin;
 /**
  * Created by amaliujia on 14-9-8.
  */
-public class RetrievalModelRankedBoolean extends RetrievalModel{
+public class RetrievalModelRankedBoolean extends RetrievalModel {
     /**
      * Set a retrieval model parameter.
      * @param parameterName
@@ -12,8 +12,8 @@ public class RetrievalModelRankedBoolean extends RetrievalModel{
      */
     public boolean setParameter (String parameterName, double value) {
         System.err.println ("Error: Unknown parameter name for retrieval model " +
-                "RankedBoolean: " +
-                parameterName);
+                            "RankedBoolean: " +
+                            parameterName);
         return false;
     }
 
@@ -25,8 +25,8 @@ public class RetrievalModelRankedBoolean extends RetrievalModel{
      */
     public boolean setParameter (String parameterName, String value) {
         System.err.println ("Error: Unknown parameter name for retrieval model " +
-                "RankedBoolean: " +
-                parameterName);
+                            "RankedBoolean: " +
+                            parameterName);
         return false;
     }
 }

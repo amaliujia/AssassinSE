@@ -27,7 +27,7 @@ public class SDPesudoFeedBackEngine {
      *
      * @param queryID
      */
-    public SDPesudoFeedBackEngine(int termNum, ArrayList<SortEntity> result, String queryID, Double mu){
+    public SDPesudoFeedBackEngine(int termNum, ArrayList<SortEntity> result, String queryID, Double mu) {
         this.termNum = termNum;
         folder = result;
         this.queryID = queryID;
@@ -40,38 +40,38 @@ public class SDPesudoFeedBackEngine {
      */
     public String SDFeedback() throws IOException {
         termVectors = new ArrayList<TermVector>();
-        for(int i = 0; i < folder.size(); i++){
-           SortEntity entity = folder.get(i);
-           try {
-               TermVector vector = new TermVector(entity.getInternalDocID(), field);
-               termVectors.add(vector);
-           }catch (IOException e){
-               System.out.println("Failed to fetch term vector");
-               continue;
-           }
+        for(int i = 0; i < folder.size(); i++) {
+            SortEntity entity = folder.get(i);
+            try {
+                TermVector vector = new TermVector(entity.getInternalDocID(), field);
+                termVectors.add(vector);
+            } catch (IOException e) {
+                System.out.println("Failed to fetch term vector");
+                continue;
+            }
         }
 
         HashMap<Integer, Double> docWeightMap = new HashMap<Integer, Double>();
-        for(int i = 0; i < folder.size(); i++){
+        for(int i = 0; i < folder.size(); i++) {
             docWeightMap.put(folder.get(i).getInternalDocID(), folder.get(i).getScore());
         }
 
         //record all terms in a hashmap
 
-        for(int i = 0 ; i < termVectors.size(); i++){
-           TermVector vec = termVectors.get(i);
-           for(int j = 0; j < vec.stemsLength(); j++){
-               String stem = vec.stemString(j);
-               if(stem != null && !expansionTermMap.containsKey(stem)){
-                   expansionTermMap.put(stem, 0.0);
-               }
-           }
+        for(int i = 0 ; i < termVectors.size(); i++) {
+            TermVector vec = termVectors.get(i);
+            for(int j = 0; j < vec.stemsLength(); j++) {
+                String stem = vec.stemString(j);
+                if(stem != null && !expansionTermMap.containsKey(stem)) {
+                    expansionTermMap.put(stem, 0.0);
+                }
+            }
         }
 
         double collectionLen = QryEval.READER.getSumTotalTermFreq(field);
 
         for(int i = 0; i < folder.size(); i++) {
-           // System.out.println("folder: " + i);
+            // System.out.println("folder: " + i);
             TermVector vec = termVectors.get(i);
             HashMap<String, Double> termMap = new HashMap<String, Double>();
             for (int z = 0; z < vec.stemsLength(); z++) {
@@ -82,7 +82,7 @@ public class SDPesudoFeedBackEngine {
             }
             // double lenDoc = vec.positionsLength();
             double lenDoc = DataCenter.sharedDataCenter().docLengthStore.getDocLength("body",
-                                                            folder.get(i).getInternalDocID());
+                            folder.get(i).getInternalDocID());
             double docWeight = folder.get(i).getScore();
 
             //iterate vocabulary
@@ -127,11 +127,11 @@ public class SDPesudoFeedBackEngine {
 
         // Term computation done
         String result = "#WAND ( ";
-        for(int z = 0; z < termNum; z++){
+        for(int z = 0; z < termNum; z++) {
             if(sortedList.get(z).getKey().indexOf('.') != -1 ||
-               sortedList.get(z).getKey().indexOf(',') != -1){
-               termNum++;
-               continue;
+                    sortedList.get(z).getKey().indexOf(',') != -1) {
+                termNum++;
+                continue;
             }
             result += (sortedList.get(z).getValue() + " " + sortedList.get(z).getKey() + " ");
         }

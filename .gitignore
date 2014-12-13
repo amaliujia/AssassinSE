@@ -103,3 +103,5 @@ SVM/trainingFeatureVectorsFile
 query/testQuery
 
 query/experiement2
+
+*.orig

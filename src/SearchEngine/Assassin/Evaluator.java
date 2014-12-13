@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 public class Evaluator {
 
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException {
         File target = new File("output/standard.txt");
         Scanner scanner1 = new Scanner(target);
         HashMap<String, Integer>map = new HashMap<String, Integer>();
@@ -41,15 +41,15 @@ public class Evaluator {
 //            }
 //
 //        }
-        while (scanner.hasNext()){
+        while (scanner.hasNext()) {
             String s1 = scanner.nextLine();
             String s2 = scanner1.nextLine();
             String[] t1 = s1.split("\t");
             String[] t2 = s2.split(" ");
-            if(t1[2].equals(t2[2])){
+            if(t1[2].equals(t2[2])) {
                 hit++;
-            } else{
-                   System.out.println(t1[0]);
+            } else {
+                System.out.println(t1[0]);
             }
         }
         System.out.println(hit);

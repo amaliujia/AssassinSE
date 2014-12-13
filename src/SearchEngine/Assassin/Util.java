@@ -26,8 +26,8 @@ public class Util {
         }
 
         System.out.println ("Memory used:  " +
-                ((runtime.totalMemory() - runtime.freeMemory()) /
-                        (1024L * 1024L)) + " MB");
+                            ((runtime.totalMemory() - runtime.freeMemory()) /
+                             (1024L * 1024L)) + " MB");
     }
 
 

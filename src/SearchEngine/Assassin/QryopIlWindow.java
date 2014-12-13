@@ -28,8 +28,8 @@ public class QryopIlWindow extends QryopIl {
      *
      * @param q
      */
-    public void QryopIlWindow(Qryop... q){
-        for(int i = 0; i < q.length; i++){
+    public void QryopIlWindow(Qryop... q) {
+        for(int i = 0; i < q.length; i++) {
             this.args.add(q[i]);
         }
     }
@@ -56,9 +56,9 @@ public class QryopIlWindow extends QryopIl {
         allocDaaTPtrs(r);
         QryResult result = new QryResult();
 
-        if(this.daatPtrs.size() == 0){
+        if(this.daatPtrs.size() == 0) {
             return null;
-        }else if(this.daatPtrs.size() == 1){
+        } else if(this.daatPtrs.size() == 1) {
             result.invertedList.field = this.daatPtrs.get(0).invList.field;
             result.invertedList.postings = this.daatPtrs.get(0).invList.postings;
             result.invertedList.df = this.daatPtrs.get(0).invList.df;
@@ -73,7 +73,7 @@ public class QryopIlWindow extends QryopIl {
         DaaTPtr basePtr = null;
         int baseIndex = -1;
         for (int i=0; i<(this.daatPtrs.size()-1); i++) {
-            if(this.daatPtrs.get(i).invList.postings.size() < minInvList){
+            if(this.daatPtrs.get(i).invList.postings.size() < minInvList) {
                 basePtr = this.daatPtrs.get(i);
                 minInvList = basePtr.invList.postings.size();
                 baseIndex = i;
@@ -91,7 +91,7 @@ public class QryopIlWindow extends QryopIl {
             // If so, at least this doc have all terms we try to find
 
             for (int j = 0; j<this.daatPtrs.size(); j++) {
-                if(j != baseIndex){
+                if(j != baseIndex) {
                     DaaTPtr ptrj = this.daatPtrs.get(j);
 
                     while (true) {
@@ -113,37 +113,37 @@ public class QryopIlWindow extends QryopIl {
 
             OK:
             //for(; post.nextPostion < post.positions.size();){
-            while(true){
+            while(true) {
                 //pos.add(post.positions.get(post.nextPostion));
-                for(int j = 0; j < daatPtrs.size(); j++){
-                  DaaTPtr ptrj = this.daatPtrs.get(j);
-                  DocPosting postj = ptrj.invList.postings.get(ptrj.nextDoc);
-                  if(postj.nextPostion >= postj.positions.size()){
-                      break OK;
-                  }
-                  pos.add(postj.positions.get(postj.nextPostion));
+                for(int j = 0; j < daatPtrs.size(); j++) {
+                    DaaTPtr ptrj = this.daatPtrs.get(j);
+                    DocPosting postj = ptrj.invList.postings.get(ptrj.nextDoc);
+                    if(postj.nextPostion >= postj.positions.size()) {
+                        break OK;
+                    }
+                    pos.add(postj.positions.get(postj.nextPostion));
                 }
                 Collections.sort(pos);
                 int min = pos.get(0);
                 int max = pos.get(pos.size() - 1);
-                if(this.distance >= (max - min + 1)){
-                    if(isFirst == 0){
+                if(this.distance >= (max - min + 1)) {
+                    if(isFirst == 0) {
                         returnPost = new DocPosting(this.daatPtrs.get(0).
-                                    invList.getDocid(this.daatPtrs.get(0).nextDoc));
+                                                    invList.getDocid(this.daatPtrs.get(0).nextDoc));
                         isFirst = 1;
                     }
                     returnPost.tf++;
                     returnPost.positions.add(max);
-                    for(int z = 0; z < daatPtrs.size(); z++){
+                    for(int z = 0; z < daatPtrs.size(); z++) {
                         DaaTPtr ptrz = this.daatPtrs.get(z);
                         DocPosting posting = ptrz.invList.postings.get(ptrz.nextDoc);
                         posting.nextPostion++;
                     }
-                }else{
-                    for(int z = 0; z < daatPtrs.size(); z++){
+                } else {
+                    for(int z = 0; z < daatPtrs.size(); z++) {
                         DaaTPtr ptrz = this.daatPtrs.get(z);
                         DocPosting posting = ptrz.invList.postings.get(ptrz.nextDoc);
-                        if(min == posting.positions.get(posting.nextPostion)){
+                        if(min == posting.positions.get(posting.nextPostion)) {
                             posting.nextPostion++;
                             break;
                         }
@@ -151,7 +151,7 @@ public class QryopIlWindow extends QryopIl {
                 }
                 pos.clear();
             }
-            if(isFirst == 1){
+            if(isFirst == 1) {
                 result.invertedList.appendPosting(returnPost.docid, returnPost.positions);
 //                result.invertedList.postings.add(returnPost);
 //                result.invertedList.df++;
@@ -163,7 +163,7 @@ public class QryopIlWindow extends QryopIl {
 
     public String toString() {
         String result = new String();
-        for(Iterator<Qryop> i = this.args.iterator(); i.hasNext();){
+        for(Iterator<Qryop> i = this.args.iterator(); i.hasNext();) {
             result += (i.next().toString() + " ");
         }
         return "#WINDOW( " + result + ")";

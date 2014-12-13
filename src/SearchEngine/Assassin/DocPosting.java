@@ -8,7 +8,7 @@ import java.util.Vector;
  */
 //  Utility class that makes it easier to construct postings.
 
-public class DocPosting implements Comparable<DocPosting>{
+public class DocPosting implements Comparable<DocPosting> {
 
     public int docid = 0;
     public int tf = 0;
@@ -32,14 +32,14 @@ public class DocPosting implements Comparable<DocPosting>{
         nextPostion = 0;
     }
 
-    public DocPosting(int d){
+    public DocPosting(int d) {
         this.docid = d;
     }
 
-    public DocPosting(){
+    public DocPosting() {
     }
 
-    public int getDocid(){
+    public int getDocid() {
         return docid;
     }
 

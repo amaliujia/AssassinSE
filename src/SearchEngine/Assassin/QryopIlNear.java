@@ -15,27 +15,33 @@ public class QryopIlNear extends QryopIl {
      *
      * @param d
      */
-    public void setDistance(int d){this.distance = d;}
+    public void setDistance(int d) {
+        this.distance = d;
+    }
 
     /**
      *
      * @param d
      * @return
      */
-    public int getDistance(int d){return this.distance;}
+    public int getDistance(int d) {
+        return this.distance;
+    }
 
     /**
      *
      * @param d
      */
-    public QryopIlNear(int d){this.distance = d;}
+    public QryopIlNear(int d) {
+        this.distance = d;
+    }
 
     /**
      *
      * @param q
      */
-    public void QryopIlNear(Qryop... q){
-        for(int i = 0; i < q.length; i++){
+    public void QryopIlNear(Qryop... q) {
+        for(int i = 0; i < q.length; i++) {
             this.args.add(q[i]);
         }
     }
@@ -65,14 +71,14 @@ public class QryopIlNear extends QryopIl {
      * @return
      * @throws IOException
      */
-    public  QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException{
+    public  QryResult evaluateRankedBoolean(RetrievalModel r) throws IOException {
         allocDaaTPtrs(r);
         syntaxCheckArgResults(this.daatPtrs);
         QryResult result = new QryResult();
 
-        if(this.daatPtrs.size() == 0){
+        if(this.daatPtrs.size() == 0) {
             return null;
-        }else if(this.daatPtrs.size() == 1){
+        } else if(this.daatPtrs.size() == 1) {
             result.invertedList.field = this.daatPtrs.get(0).invList.field;
             result.invertedList.postings = this.daatPtrs.get(0).invList.postings;
             result.invertedList.df = this.daatPtrs.get(0).invList.df;
@@ -87,7 +93,7 @@ public class QryopIlNear extends QryopIl {
         DaaTPtr basePtr = null;
         int baseIndex = -1;
         for (int i=0; i<(this.daatPtrs.size()-1); i++) {
-            if(this.daatPtrs.get(i).invList.postings.size() < minInvList){
+            if(this.daatPtrs.get(i).invList.postings.size() < minInvList) {
                 basePtr = this.daatPtrs.get(i);
                 minInvList = basePtr.invList.postings.size();
                 baseIndex = i;
@@ -104,7 +110,7 @@ public class QryopIlNear extends QryopIl {
             // If so, at least this doc have all terms we try to find
 
             for (int j = 0; j<this.daatPtrs.size(); j++) {
-                if(j != baseIndex){
+                if(j != baseIndex) {
                     DaaTPtr ptrj = this.daatPtrs.get(j);
 
                     while (true) {
@@ -124,46 +130,46 @@ public class QryopIlNear extends QryopIl {
             int isFirst = 0;
             DocPosting returnPosting = null;
 
-             OK:
-             for(; post.nextPostion < post.positions.size(); post.nextPostion++){
+            OK:
+            for(; post.nextPostion < post.positions.size(); post.nextPostion++) {
                 int first = post.positions.get(post.nextPostion);
-                for(int j = 1; j < this.daatPtrs.size(); j++){
+                for(int j = 1; j < this.daatPtrs.size(); j++) {
                     DaaTPtr ptrj = this.daatPtrs.get(j);
                     DocPosting postj = ptrj.invList.postings.get(ptrj.nextDoc);
-                    while (true){
-                        if(postj.nextPostion >= postj.positions.size()){  // cannot match
+                    while (true) {
+                        if(postj.nextPostion >= postj.positions.size()) { // cannot match
                             break OK ;
-                        }else if(postj.positions.get(postj.nextPostion) <= first){ // too small
+                        } else if(postj.positions.get(postj.nextPostion) <= first) { // too small
                             postj.nextPostion++;
                             continue;
-                        }else if(postj.positions.get(postj.nextPostion) <= (first + this.distance)){ // match
+                        } else if(postj.positions.get(postj.nextPostion) <= (first + this.distance)) { // match
                             first = postj.positions.get(postj.nextPostion);
                             break;
-                        }else{ // try next combination
+                        } else { // try next combination
                             continue OK;
                         }
                     }
                 }
-                if(isFirst == 0){
-                     returnPosting = new DocPosting(ptr0.invList.getDocid(ptr0.nextDoc));
-                     isFirst = 1;
+                if(isFirst == 0) {
+                    returnPosting = new DocPosting(ptr0.invList.getDocid(ptr0.nextDoc));
+                    isFirst = 1;
                 }
                 returnPosting.tf++;
                 returnPosting.positions.add(this.daatPtrs.get(this.daatPtrs.size() - 1).invList.postings.
-                                                        get(this.daatPtrs.get(this.daatPtrs.size() - 1).nextDoc).positions.
-                                                        get(this.daatPtrs.get(this.daatPtrs.size() - 1).invList.postings.
-                                                        get(this.daatPtrs.get(this.daatPtrs.size() - 1).nextDoc).nextPostion));
-                 for(int z = 1; z < this.daatPtrs.size(); z++){
-                     DaaTPtr ptrz = this.daatPtrs.get(z);
-                     ptrz.invList.postings.get(ptrz.nextDoc).nextPostion++;
-                 }
-              }
+                                            get(this.daatPtrs.get(this.daatPtrs.size() - 1).nextDoc).positions.
+                                            get(this.daatPtrs.get(this.daatPtrs.size() - 1).invList.postings.
+                                                get(this.daatPtrs.get(this.daatPtrs.size() - 1).nextDoc).nextPostion));
+                for(int z = 1; z < this.daatPtrs.size(); z++) {
+                    DaaTPtr ptrz = this.daatPtrs.get(z);
+                    ptrz.invList.postings.get(ptrz.nextDoc).nextPostion++;
+                }
+            }
 
-               if(isFirst == 1) {
-                 result.invertedList.appendPosting(ptr0.invList.getDocid(ptr0.nextDoc), returnPosting.positions);
-                 //result.invertedList.df++;
+            if(isFirst == 1) {
+                result.invertedList.appendPosting(ptr0.invList.getDocid(ptr0.nextDoc), returnPosting.positions);
+                //result.invertedList.df++;
                 // result.invertedList.postings.add(returnPosting);
-               }
+            }
         }
 
         freeDaaTPtrs();
@@ -176,7 +182,7 @@ public class QryopIlNear extends QryopIl {
      * @return
      * @throws IOException
      */
-    public QryResult evaluateBoolean(RetrievalModel r) throws IOException{
+    public QryResult evaluateBoolean(RetrievalModel r) throws IOException {
         allocDaaTPtrs(r);
         syntaxCheckArgResults(this.daatPtrs);
         QryResult result = new QryResult();
@@ -187,7 +193,7 @@ public class QryopIlNear extends QryopIl {
         DaaTPtr basePtr = null;
         int baseIndex = -1;
         for (int i=0; i<(this.daatPtrs.size()-1); i++) {
-            if(this.daatPtrs.get(i).invList.postings.size() < minInvList){
+            if(this.daatPtrs.get(i).invList.postings.size() < minInvList) {
                 basePtr = this.daatPtrs.get(i);
                 minInvList = basePtr.invList.postings.size();
                 baseIndex = i;
@@ -207,7 +213,7 @@ public class QryopIlNear extends QryopIl {
             // If so, at least this doc have all terms we try to find
 
             for (int j = 0; j<this.daatPtrs.size(); j++) {
-                if(j != baseIndex){
+                if(j != baseIndex) {
                     DaaTPtr ptrj = this.daatPtrs.get(j);
 
                     while (true) {
@@ -228,21 +234,21 @@ public class QryopIlNear extends QryopIl {
             double score = 1.0;
 
             POSTIONEND:
-            for(; post.nextPostion < post.positions.size(); post.nextPostion++){
+            for(; post.nextPostion < post.positions.size(); post.nextPostion++) {
                 int first = post.positions.get(post.nextPostion);
-                for(int j = 1; j < this.daatPtrs.size(); j++){
+                for(int j = 1; j < this.daatPtrs.size(); j++) {
                     DaaTPtr ptrj = this.daatPtrs.get(j);
                     DocPosting postj = ptrj.invList.postings.get(ptrj.nextDoc);
-                    while (true){
-                        if(postj.nextPostion >= postj.positions.size()){
+                    while (true) {
+                        if(postj.nextPostion >= postj.positions.size()) {
                             break POSTIONEND;
-                        }else if(postj.positions.get(postj.nextPostion) <= first){
+                        } else if(postj.positions.get(postj.nextPostion) <= first) {
                             postj.nextPostion++;
                             continue;
-                        }else if(postj.positions.get(postj.nextPostion) <= (first + this.distance)){
+                        } else if(postj.positions.get(postj.nextPostion) <= (first + this.distance)) {
                             first = postj.positions.get(postj.nextPostion);
                             break;
-                        }else{
+                        } else {
                             continue POSTIONEND;
                         }
                     }
@@ -264,11 +270,11 @@ public class QryopIlNear extends QryopIl {
      */
     @Override
     public String toString() {
-       String result = new String();
-       for(Iterator<Qryop> i = this.args.iterator(); i.hasNext();){
-         result += (i.next().toString() + " ");
-       }
-       return "#Near( " + result + ")";
+        String result = new String();
+        for(Iterator<Qryop> i = this.args.iterator(); i.hasNext();) {
+            result += (i.next().toString() + " ");
+        }
+        return "#Near( " + result + ")";
     }
 
     /**
@@ -282,11 +288,11 @@ public class QryopIlNear extends QryopIl {
         for (int i=0; i<this.args.size(); i++) {
 
             if (! (this.args.get(i) instanceof QryopIl))
-                QryEval.fatalError ("Error:  Invalid argument in " +
-                        this.toString());
+                Util.fatalError ("Error:  Invalid argument in " +
+                                    this.toString());
             else if ((i>0) && (! ptrs.get(i).invList.field.equals (ptrs.get(0).invList.field)))
-                QryEval.fatalError ("Error:  Arguments must be in the same field:  " +
-                        this.toString());
+                Util.fatalError ("Error:  Arguments must be in the same field:  " +
+                                    this.toString());
         }
         return true;
     }

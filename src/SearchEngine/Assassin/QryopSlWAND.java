@@ -18,7 +18,7 @@ public class QryopSlWAND extends QryopSl {
 
     public ArrayList<Qryop> newargs = new ArrayList<Qryop>();
 
-    public QryopSlWAND(){
+    public QryopSlWAND() {
         weights = new ArrayList<Double>();
         newargs = new ArrayList<Qryop>();
     }
@@ -34,15 +34,15 @@ public class QryopSlWAND extends QryopSl {
 
         if (r instanceof RetrievalModelUnrankedBoolean || r instanceof  RetrievalModelRankedBoolean || r instanceof RetrievalModelBM25)
             return 0.0;
-        else if(r instanceof RetrievalModelIndri){
+        else if(r instanceof RetrievalModelIndri) {
             double c = 0;
-            for(int z = 0; z < this.weights.size(); z++){
+            for(int z = 0; z < this.weights.size(); z++) {
                 c += this.weights.get(z);
             }
 
             // the task of #WAND is call its args' getDefaultScore function and merge them.
             double defaultScore = 1.0;
-            for (int i = 0; i < this.args.size(); i++){
+            for (int i = 0; i < this.args.size(); i++) {
                 defaultScore *= (Math.pow(((QryopSl)this.args.get(i)).getDefaultScore(r, docid), (this.weights.get(i) / c)));
             }
             return defaultScore;
@@ -55,13 +55,13 @@ public class QryopSlWAND extends QryopSl {
     }
 
     public void add(Qryop... q) throws IOException {
-        for(int i = 0; i < q.length; i++){
+        for(int i = 0; i < q.length; i++) {
             this.args.add(q[i]);
         }
     }
 
     public QryResult evaluate(RetrievalModel r) throws IOException {
-        if(r instanceof RetrievalModelIndri){
+        if(r instanceof RetrievalModelIndri) {
             return evalateIndri(r);
         }
         return null;
@@ -75,7 +75,7 @@ public class QryopSlWAND extends QryopSl {
      *
      * @throws IOException
      */
-    public QryResult evalateIndri(RetrievalModel r) throws IOException{
+    public QryResult evalateIndri(RetrievalModel r) throws IOException {
         //WANDAllocDaaTPtrs(r);
         allocDaaTPtrs(r);
         QryResult result = new QryResult();
@@ -86,7 +86,7 @@ public class QryopSlWAND extends QryopSl {
         int []a = new int[this.daatPtrs.size()];
         double c = 0;
 
-        for(int z = 0; z < this.weights.size(); z++){
+        for(int z = 0; z < this.weights.size(); z++) {
             c += this.weights.get(z);
         }
 
@@ -117,8 +117,8 @@ public class QryopSlWAND extends QryopSl {
             }
             double docScore = 1.0;
             // compute scores and default scores.
-            if(smallestForThisIteration != Integer.MAX_VALUE){
-                for(int z = 0; z < this.daatPtrs.size(); z++){
+            if(smallestForThisIteration != Integer.MAX_VALUE) {
+                for(int z = 0; z < this.daatPtrs.size(); z++) {
                     if(a[z] == -1) {
                         DaaTPtr ptrz = this.daatPtrs.get(z);
                         int docid = ptrz.scoreList.getDocid(ptrz.nextDoc);
@@ -129,12 +129,12 @@ public class QryopSlWAND extends QryopSl {
                             ptrz.nextDoc++;
                         } else {
                             double temp = (Math.pow(((QryopSl) this.args.get(z)).getDefaultScore(r, smallestForThisIteration),
-                                                                                            (this.weights.get(z) / c)));
+                                                    (this.weights.get(z) / c)));
                             docScore *= temp;
                         }
-                    }else{
+                    } else {
                         double temp = (Math.pow(((QryopSl) this.args.get(z)).getDefaultScore(r, smallestForThisIteration),
-                                                                                            (this.weights.get(z) / c)));
+                                                (this.weights.get(z) / c)));
                         docScore *= temp;
                     }
                 }
@@ -157,7 +157,7 @@ public class QryopSlWAND extends QryopSl {
 
     public String toString() {
         String result = new String();
-        for(Iterator<Qryop> i = this.args.iterator(); i.hasNext();){
+        for(Iterator<Qryop> i = this.args.iterator(); i.hasNext();) {
             result += (i.next().toString() + " ");
         }
         return "#WAND( " + result + ")";
@@ -170,7 +170,7 @@ public class QryopSlWAND extends QryopSl {
      *         Indicate what model it is using
      * @throws IOException
      */
-    public void WANDAllocDaaTPtrs(RetrievalModel r) throws IOException{
+    public void WANDAllocDaaTPtrs(RetrievalModel r) throws IOException {
         filter();
         this.weights = new ArrayList<Double>();
         for (int i = 0; i < this.args.size(); i++) {
@@ -187,11 +187,11 @@ public class QryopSlWAND extends QryopSl {
 
                 this.daatPtrs.add(ptri);
                 this.newargs.add(this.args.get(i));
-            }else{
-               String term = ((QryopIlTerm)this.args.get(i)).getTerm();
-               term += ("." + ((QryopIlTerm)this.args.get(i)).getField());
-               Double weigh = Double.parseDouble(term);
-               this.weights.add(weigh);
+            } else {
+                String term = ((QryopIlTerm)this.args.get(i)).getTerm();
+                term += ("." + ((QryopIlTerm)this.args.get(i)).getField());
+                Double weigh = Double.parseDouble(term);
+                this.weights.add(weigh);
             }
         }
     }
@@ -233,12 +233,12 @@ public class QryopSlWAND extends QryopSl {
      * @return
      *         valid or not.
      */
-    public boolean isValidFiled(String field){
+    public boolean isValidFiled(String field) {
         if(field.equals("body") ||
                 field.equals("inlink") ||
                 field.equals("url") ||
                 field.equals("title") ||
-                field.equals("keywords")){
+                field.equals("keywords")) {
             return true;
         }
         return false;

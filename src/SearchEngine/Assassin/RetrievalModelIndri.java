@@ -14,11 +14,11 @@ public class RetrievalModelIndri extends RetrievalModel {
      */
     @Override
     public boolean setParameter(String parameterName, double value) {
-        if(parameterName.equals("mu")){
+        if(parameterName.equals("mu")) {
             mu = value;
-        }else if(parameterName.equals("lambda")){
+        } else if(parameterName.equals("lambda")) {
             lambda = value;
-        }else{
+        } else {
             return false;
         }
         return true;
@@ -32,9 +32,9 @@ public class RetrievalModelIndri extends RetrievalModel {
      */
     @Override
     public boolean setParameter(String parameterName, String value) {
-        if(parameterName.equals("smoothing")){
+        if(parameterName.equals("smoothing")) {
             smoothing = value;
-        }else{
+        } else {
             return false;
         }
         return true;

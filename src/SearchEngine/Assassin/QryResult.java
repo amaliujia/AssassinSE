@@ -16,17 +16,17 @@ import java.io.IOException;
 
 public class QryResult {
 
-  // Store the results of different types of query operators.
+    // Store the results of different types of query operators.
 
-  ScoreList docScores = new ScoreList();
-  InvList invertedList = new InvList();
+    ScoreList docScores = new ScoreList();
+    InvList invertedList = new InvList();
 
     /**
      *
      * @throws IOException
      */
-  public void sort() throws IOException{
-      docScores.sort();
-      invertedList.sort();
-  }
+    public void sort() throws IOException {
+        docScores.sort();
+        invertedList.sort();
+    }
 }

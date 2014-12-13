@@ -3,7 +3,7 @@ package SearchEngine.Assassin;
 /**
  * Created by amaliujia on 14-9-21.
  */
-public class RetrievalModelBM25 extends RetrievalModel{
+public class RetrievalModelBM25 extends RetrievalModel {
 
     // BM25
     public DocLengthStore docLengthStore;
@@ -15,17 +15,17 @@ public class RetrievalModelBM25 extends RetrievalModel{
 
     @Override
     public boolean setParameter(String parameterName, double value) {
-        if(parameterName.equals("k1")){
+        if(parameterName.equals("k1")) {
             k1 = value;
-        }else if(parameterName.equals("b")){
+        } else if(parameterName.equals("b")) {
             b = value;
-        }else if(parameterName.equals("k3")){
+        } else if(parameterName.equals("k3")) {
             k3 = value;
-        }else if(parameterName.equals("avgLenDoc")){
+        } else if(parameterName.equals("avgLenDoc")) {
             avgLenDoc = (int)value;
-        }else if(parameterName.equals("numDocs")){
+        } else if(parameterName.equals("numDocs")) {
             numDocs = (int)value;
-        }else{
+        } else {
             return false;
         }
         return true;
