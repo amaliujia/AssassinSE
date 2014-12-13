@@ -4,7 +4,7 @@ package SearchEngine.Assassin;
  * Created by amaliujia on 14-9-21.
  */
 public class DataCenter {
-    public static DataCenter  dataCenter = null;
+    public static DataCenter dataCenter = null;
 
     public DocLengthStore docLengthStore;
     public int numDocs;
