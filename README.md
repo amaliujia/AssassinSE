@@ -5,6 +5,12 @@ This is a distributed, large scale Search Engine.
 
 This is a assassin, graceful and fatal.
 
+Description
+==========
+
+AssassinSE is a text-based search engine. It defines its own query operators and implements different kinds of models, like boolean retrieval model, Okapi BM25 model and language statistic model. In addition, unsupervised pseudo relevance feedback and query expansion has been utilized to improve performance of this search engine. Furthermore, AssassinSE uses learning to rank (more specifically, SVM) to do relevance analyze.
+
+
 Milestones
 ==========
 1. Support #AND #OR #NEAR operators.
