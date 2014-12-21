@@ -349,9 +349,9 @@ public class SDLearningToRankPool {
             }
         }
 
-        double b = model.b;
-        double k1 = model.k1;
-        double k3 = model.k3;
+        double b = RetrievalModelLearningToRank.b;
+        double k1 = RetrievalModelLearningToRank.k1;
+        double k3 = RetrievalModelLearningToRank.k3;
         double docLen = model.docLengthStore.getDocLength(field, docid);
 
         // compute BM25 for document.

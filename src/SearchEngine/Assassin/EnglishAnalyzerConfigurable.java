@@ -25,7 +25,7 @@ public final class EnglishAnalyzerConfigurable extends StopwordAnalyzerBase {
 
     public enum StemmerType {
         NONE, PORTER, KSTEM
-    };
+    }
 
     private final CharArraySet stemExclusionSet;
     private Boolean doLowerCase = true;

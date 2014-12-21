@@ -22,7 +22,7 @@ public abstract class Qryop {
         protected ScoreList scoreList;	// A qry arg's score list (if any)
         protected InvList invList;		// A qry arg's inverted list (if any)
         protected int nextDoc;		// The next document to examine
-    };
+    }
 
     //  Initially the query operator starts with no arguments and no
     //  DaaTPtrs.
@@ -73,7 +73,7 @@ public abstract class Qryop {
      */
     public void remove(int i) {
         this.args.remove(i);
-    };
+    }
 
     /*
      *  Return a string version of this query operator.

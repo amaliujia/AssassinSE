@@ -108,9 +108,9 @@ public class QryopSlScore extends QryopSl {
         int N = dataCenter.numDocs;
         int df =  result.invertedList.df;
         String field = result.invertedList.field;
-        double k1 = dataCenter.k1;
-        double k3 = dataCenter.k3;
-        double b = dataCenter.b;
+        double k1 = DataCenter.k1;
+        double k3 = DataCenter.k3;
+        double b = DataCenter.b;
         double avgLen = (double)QryEval.READER.getSumTotalTermFreq(field)
                         / (double)QryEval.READER.getDocCount(field);
         // core part of algorithm. logic is similar with #OR, iterate all docid
