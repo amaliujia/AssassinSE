@@ -35,7 +35,7 @@ public class QryopIlTerm extends QryopIl {
         this.field = f;
     }
 
-    /*
+    /**
      *  Every Qryop is required to have an add method that appends
      *  query arguments, but that doesn't make sense for the Term
      *  query operator.  So, it's here, but it does nothing.  Ugly.
@@ -58,7 +58,7 @@ public class QryopIlTerm extends QryopIl {
         return result;
     }
 
-    /*
+    /**
      *  Return a string version of this query operator.
      *  @return The string version of this query operator.
      */

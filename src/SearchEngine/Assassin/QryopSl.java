@@ -38,7 +38,7 @@ public abstract class QryopSl extends Qryop {
         }
     }
 
-    /*
+    /**
      *  Calculate the default score for the specified document if it
      *  does not match the query operator.  This score is 0 for many
      *  retrieval models, but not all retrieval models.

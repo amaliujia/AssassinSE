@@ -125,7 +125,7 @@ public class QryopSlAnd extends QryopSl {
         freeDaaTPtrs();
         return result;
     }
-    /*
+    /**
         Evaluate the query by ranked boolean retrieval model
         @param r a RetrievalModel, for this one, a RankedRetrievalModel
         @return The result of the query
@@ -264,7 +264,7 @@ public class QryopSlAnd extends QryopSl {
         return result;
     }
 
-    /*
+    /**
      *  Calculate the default score for the specified document if it
      *  does not match the query operator.  This score is 0 for many
      *  retrieval models, but not all retrieval models.
@@ -291,7 +291,7 @@ public class QryopSlAnd extends QryopSl {
         return 0.0;
     }
 
-    /*
+    /**
      *  Return a string version of this query operator.
      *  @return The string version of this query operator.
      */

@@ -17,7 +17,6 @@ public class QryopSlScore extends QryopSl {
 
     public int ctf;
     String filed;
-    // HashMap<Integer, Double> ids;
 
     /**
      *  Construct a new SCORE operator.  The SCORE operator accepts just

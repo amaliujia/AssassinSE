@@ -253,7 +253,6 @@ public class QryopIlNear extends QryopIl {
                         }
                     }
                 }
-                //TODO: add postion to #NEAR
                 DocPosting returnPosting = new DocPosting(ptr0.invList.getDocid(ptr0.nextDoc));
                 result.invertedList.postings.add(returnPosting);
                 result.invertedList.df++;

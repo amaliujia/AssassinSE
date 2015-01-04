@@ -4,12 +4,23 @@ import java.io.IOException;
 
 public class QryopSlOR extends QryopSl {
 
+    /**
+     *
+     * @param q
+     */
     public QryopSlOR(Qryop... q) {
         for(int i = 0; i < q.length; i++) {
             this.args.add(q[i]);
         }
     }
 
+    /**
+     *
+     * @param r A retrieval model that controls how the operator behaves.
+     * @param docid The internal id of the document that needs a default score.
+     * @return
+     * @throws IOException
+     */
     @Override
     public double getDefaultScore(RetrievalModel r, long docid) throws IOException {
         if(r instanceof RetrievalModelUnrankedBoolean) {
@@ -171,7 +182,10 @@ public class QryopSlOR extends QryopSl {
     }
 
 
-
+    /**
+     *
+     * @return
+     */
     public String toString() {
         String result = new String();
         for(int i = 0; i < this.args.size(); i++) {
