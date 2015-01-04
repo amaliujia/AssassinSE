@@ -525,7 +525,7 @@ public class SDLearningToRankPool {
         try {
             vector = new TermVector(docid, field);
         } catch (Exception e) {
-            //  System.out.println("Term vector is not indexed");
+            System.out.println("Term vector is not indexed");
         }
         if(vector == null) return 0;
 

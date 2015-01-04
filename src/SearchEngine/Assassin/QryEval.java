@@ -355,7 +355,6 @@ public class QryEval {
                             break;
                         } else {
                             counter--;
-                            // System.out.println(docRecord);
                             int docid = getInternalDocid(infos[2]);
                             SortEntity entity = new SortEntity(docid, infos[2], Double.parseDouble(infos[4]));
                             currentQuery.add(entity);

@@ -112,9 +112,7 @@ public class QryopIlWindow extends QryopIl {
             int isFirst = 0;
 
             OK:
-            //for(; post.nextPostion < post.positions.size();){
             while(true) {
-                //pos.add(post.positions.get(post.nextPostion));
                 for(int j = 0; j < daatPtrs.size(); j++) {
                     DaaTPtr ptrj = this.daatPtrs.get(j);
                     DocPosting postj = ptrj.invList.postings.get(ptrj.nextDoc);
@@ -153,8 +151,6 @@ public class QryopIlWindow extends QryopIl {
             }
             if(isFirst == 1) {
                 result.invertedList.appendPosting(returnPost.docid, returnPost.positions);
-//                result.invertedList.postings.add(returnPost);
-//                result.invertedList.df++;
             }
         }
         freeDaaTPtrs();

@@ -261,7 +261,6 @@ public class QryopSlAnd extends QryopSl {
         }
 
         freeDaaTPtrs ();
-        // result.sort();
         return result;
     }
 
