@@ -104,6 +104,8 @@ public class QryEval {
             model = new RetrievalModelIndri();
         } else if(modelType.equals("letor")) {
             model = new RetrievalModelLearningToRank();
+        } else if(modelType.equals("Bipartite")){
+           model = new BipartiteClusteringModel();
         } else {
             return;
         }
@@ -313,7 +315,9 @@ public class QryEval {
             //print rerank result
             printRerankResult(rerankPool, predictionPath, keys);
 
-        } else if(!params.containsKey("fb") || params.get("fb").equals("false")) { //normal search engine model
+        }else if(model instanceof  BipartiteClusteringModel){
+
+        }else if(!params.containsKey("fb") || params.get("fb").equals("false")) { //normal search engine model
 
             for (int i = 0; i < keys.size(); i++) {
                 String key = keys.get(i);
