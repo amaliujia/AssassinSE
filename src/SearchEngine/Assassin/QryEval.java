@@ -8,6 +8,7 @@ import SearchEngine.Assassin.PesudoFeedback.SDPesudoFeedBackEngine;
 import SearchEngine.Assassin.RetrievalModel.*;
 import SearchEngine.Assassin.Util.DataCenter;
 import SearchEngine.Assassin.Util.Util;
+import TextMingingEngine.Clustering.BipartiteClustering;
 import org.apache.lucene.analysis.Analyzer.TokenStreamComponents;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -316,7 +317,7 @@ public class QryEval {
             printRerankResult(rerankPool, predictionPath, keys);
 
         }else if(model instanceof  BipartiteClusteringModel){
-
+            BipartiteClustering bipartiteClustering = new BipartiteClustering(params);
         }else if(!params.containsKey("fb") || params.get("fb").equals("false")) { //normal search engine model
 
             for (int i = 0; i < keys.size(); i++) {
