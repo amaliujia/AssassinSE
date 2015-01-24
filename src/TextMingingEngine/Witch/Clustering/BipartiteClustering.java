@@ -2,11 +2,13 @@ package TextMingingEngine.Witch.Clustering;
 
 
 import SearchEngine.Assassin.Util.Util;
+import TextMingingEngine.Witch.Index.Cluster;
 import TextMingingEngine.Witch.Index.ClusteringIndex;
 import TextMingingEngine.Witch.Index.ClusteringInvList;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -25,6 +27,10 @@ public class BipartiteClustering {
         index.beginIndexing();
     }
 
+    /**
+     *
+     * @param params
+     */
     private void readDf(Map<String, String> params){
         if(!params.containsKey("bi:devdf")){
             Util.fatalError("bi:devdf does not exist");
@@ -48,6 +54,10 @@ public class BipartiteClustering {
         }
     }
 
+    /**
+     *
+     * @param params
+     */
     private void readDict(Map<String, String> params){
         if(!params.containsKey("bi:devdic")){
             Util.fatalError("bi:devdic does not exist");
@@ -71,6 +81,10 @@ public class BipartiteClustering {
         }
     }
 
+    /**
+     *
+     * @param params
+     */
     private void readInvLists(Map<String, String> params){
         if(!params.containsKey("bi:devdocVectors")){
             Util.fatalError("bi:devdocVectors does not exist");
@@ -96,6 +110,26 @@ public class BipartiteClustering {
         }
     }
 
+    /**
+     *  K mean algorithm for one iteration.
+     * @param vectors
+     *         vector space waiting for clustering.
+     * @param k
+     *          cluster number
+     */
+    private List<Cluster> KMean(List<ClusteringInvList> vectors, List<ClusteringInvList> centroids){
+        return null;
+    }
+
+    /**
+     * Compute similarity between two vectors.
+     * @param vec1
+     *          vector one.
+     * @param vec2
+     *          vector two.
+     * @return
+     *          cosine similarity between vector one and vector two.
+     */
     private double CosineSimilarity(ClusteringInvList vec1, ClusteringInvList vec2){
         double result = 0;
         while(vec1.nextPos < vec1.getPostingSize() && vec2.nextPos < vec2.getPostingSize()){
@@ -113,5 +147,4 @@ public class BipartiteClustering {
 
         return result / (vec1.vectorNorm() * vec2.vectorNorm());
     }
-
 }
