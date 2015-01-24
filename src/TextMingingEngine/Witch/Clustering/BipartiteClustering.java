@@ -1,9 +1,9 @@
-package TextMingingEngine.Clustering;
+package TextMingingEngine.Witch.Clustering;
 
 
 import SearchEngine.Assassin.Util.Util;
-import TextMingingEngine.Index.ClusteringIndex;
-import TextMingingEngine.Index.ClusteringInvList;
+import TextMingingEngine.Witch.Index.ClusteringIndex;
+import TextMingingEngine.Witch.Index.ClusteringInvList;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -94,4 +94,23 @@ public class BipartiteClustering {
             e.printStackTrace();
         }
     }
+
+    private double CosineSimilarity(ClusteringInvList vec1, ClusteringInvList vec2){
+        double result = 0;
+        while(vec1.nextPos < vec1.getPostingSize() && vec2.nextPos < vec2.getPostingSize()){
+            if(vec1.currentWord() == vec2.currentWord()){
+                result += (vec1.currentTf() * vec2.currentTf());
+            }else if(vec1.currentWord() < vec2.currentWord()){
+               vec1.nextPos++;
+            }else{
+                vec2.nextPos++;
+            }
+        }
+
+        vec1.nextPos = 0;
+        vec2.nextPos = 0;
+
+        return result / (vec1.vectorNorm() * vec2.vectorNorm());
+    }
+
 }
