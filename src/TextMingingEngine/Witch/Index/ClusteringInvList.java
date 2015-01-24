@@ -75,4 +75,12 @@ public class ClusteringInvList {
     public ClusteringVectorType type(){
         return this.type;
     }
+
+    public String toString(){
+        String re = "";
+        for(int i = 0; i < postings.size(); i++){
+            re += this.getID(i) + " ";
+        }
+        return re;
+    }
 }

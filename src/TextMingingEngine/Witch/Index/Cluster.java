@@ -21,4 +21,17 @@ public class Cluster {
     public ClusteringInvList centroid(){
         return this.centroid;
     }
+
+    public void clearVec(){
+        this.vectors.clear();
+    }
+
+    public void addVec(ClusteringInvList vec){
+        vectors.add(vec);
+    }
+
+    public String toString(){
+        return new String(centroid.toString() + "\t" + vectors.size());
+    }
+
 }

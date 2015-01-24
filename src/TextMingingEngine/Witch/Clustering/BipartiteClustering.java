@@ -25,6 +25,8 @@ public class BipartiteClustering {
         readDf(params);
         readDict(params);
         index.beginIndexing();
+
+
     }
 
     /**
@@ -110,6 +112,17 @@ public class BipartiteClustering {
         }
     }
 
+
+    /**
+     *
+     * @param vectors
+     * @param k
+     * @return
+     */
+    private List<Cluster> KMeanIterations(List<ClusteringInvList> vectors, int k){
+        return null;
+    }
+
     /**
      *  K mean algorithm for one iteration.
      * @param vectors
@@ -117,8 +130,25 @@ public class BipartiteClustering {
      * @param k
      *          cluster number
      */
-    private List<Cluster> KMean(List<ClusteringInvList> vectors, List<ClusteringInvList> centroids){
-        return null;
+    private List<Cluster> KMean(List<ClusteringInvList> vectors, List<Cluster> clusters){
+        for(int i = 0; i < clusters.size(); i++){
+            Cluster cluster = clusters.get(i);
+            cluster.clearVec();
+        }
+
+        for(int i = 0; i < vectors.size(); i++){
+            int cur = -1;
+            double min = Double.MAX_VALUE;
+            for(int j = 0; j < clusters.size(); j++){
+               double cos = CosineSimilarity(vectors.get(i), clusters.get(j).centroid());
+                if(cos < min){
+                    cur = j;
+                    min = cos;
+                }
+            }
+            clusters.get(cur).addVec(vectors.get(i));
+        }
+        return clusters;
     }
 
     /**

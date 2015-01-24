@@ -39,6 +39,8 @@ Milestones
 
 13. Implement feature-based machine learning algorithm to rank
 
+14. Implement bipartite clustering algorithm
+
 Copyright
 =======
 
