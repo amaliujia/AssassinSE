@@ -22,6 +22,7 @@ public class BipartiteClustering {
         readInvLists(params);
         readDf(params);
         readDict(params);
+        index.beginIndexing();
     }
 
     private void readDf(Map<String, String> params){

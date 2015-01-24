@@ -17,13 +17,14 @@ public class ClusteringIndex {
 
     List<ClusteringInvList> invLists;
 
-    int collectionLength;
+    ClusteringMatrix matrix;
+
+    int collectionLength = 0;
 
     public ClusteringIndex(){
         docFreqList = new ArrayList<Integer>();
         dict = new HashMap<String, Integer>();
         invLists = new ArrayList<ClusteringInvList>();
-        collectionLength = invLists.size();
     }
 
     public void addTermFreq(int df){
@@ -36,10 +37,23 @@ public class ClusteringIndex {
 
     public void addinvList(ClusteringInvList invList){
         invLists.add(invList);
+        collectionLength++;
     }
-//
-//    private void computeIDF(){
-//        idfList = new ArrayList<Double>();
-//        for (int i = 0; i < ClusteringInvList)
-//    }
+
+    public void beginIndexing(){
+        computeIDF();
+        matrix = new ClusteringMatrix();
+        matrix.createRowVectors(invLists, idfList);
+        //matrix.createColumnVectors(invLists, idfList);
+        matrix.readColumnVectors();
+    }
+
+    private void computeIDF() {
+        idfList = new ArrayList<Double>();
+        double idf = -1.0;
+        for(int i = 0; i < docFreqList.size(); i++){
+            idf =  Math.log(collectionLength / (double)docFreqList.get(i) + 1);
+            idfList.add(idf);
+        }
+    }
 }
