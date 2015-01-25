@@ -1,5 +1,7 @@
 package TextMiningEngine.Witch.Index;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Vector;
 
 /**
@@ -86,5 +88,9 @@ public class ClusteringInvList {
 
     public void resetPoint(){
         this.nextPos = 0;
+    }
+
+    public void sortVec(){
+        Collections.sort(postings);
     }
 }

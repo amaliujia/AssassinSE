@@ -18,6 +18,8 @@ public class BipartiteClustering {
 
     private ClusteringIndex index;
 
+    private static final double threshold = 0.1;
+
     public BipartiteClustering(Map<String, String> params){
         index = new ClusteringIndex();
         readInvLists(params);
@@ -25,7 +27,7 @@ public class BipartiteClustering {
         readDict(params);
         index.beginIndexing();
 
-        KMeanIterations(index.matrix.getRowVectors(), 5);
+        KMeanIterations(index.matrix.getColumnVectors(), 5);
     }
 
     /**
@@ -92,7 +94,6 @@ public class BipartiteClustering {
         }
 
         String path = params.get("bi:devdocVectors");
-//        int c = 0;
         try {
             Scanner scanner = new Scanner(new File(path));
             String line;
@@ -110,8 +111,9 @@ public class BipartiteClustering {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-    }
 
+        index.sortInvList();
+    }
 
     /**
      *
@@ -128,11 +130,28 @@ public class BipartiteClustering {
             clusters.add(new Cluster(ClusteringVectorType.DOCUMENT, vectors.get(ran)));
         }
 
-        for(int i = 0; i < 20; i++){
+        double preInterval = Double.MAX_VALUE;
+
+        for(int i = 0; i < 1000000000; i++){
+            ArrayList<ClusteringInvList> preCentroids = new ArrayList<ClusteringInvList>();
+            for(Cluster c : clusters){
+                preCentroids.add(c.centroid());
+            }
             clusters = KMean(vectors, clusters);
             for(int j = 0; j < clusters.size(); j++){
                 updateCentroid(clusters.get(j));
             }
+
+            ArrayList<ClusteringInvList> curCentroids = new ArrayList<ClusteringInvList>();
+            for(Cluster c : clusters){
+                curCentroids.add(c.centroid());
+            }
+            if ((preInterval = isStable(preCentroids, curCentroids, preInterval)) == 0){
+                System.err.println(i);
+                break;
+            }
+            if(i % 10 == 0)
+                 System.err.println(i);
         }
 
         return clusters;
@@ -245,4 +264,48 @@ public class BipartiteClustering {
 
         return randomNum;
     }
+
+    private double isStable(List<ClusteringInvList> preCentroid, List<ClusteringInvList> curCentroids, double preInternal){
+        double interval = 0.0;
+
+        for(int i = 0; i < preCentroid.size(); i++){
+            interval += distanceNorm(preCentroid.get(i), curCentroids.get(i));
+        }
+
+       // interval = interval / preCentroid.size();
+        System.out.println(interval);
+
+        if(Math.abs(interval - preInternal) < threshold){
+            return 0;
+        }
+        return interval;
+    }
+
+    private double distanceNorm(ClusteringInvList vec1, ClusteringInvList vec2){
+        double result = 0;
+        while(vec1.nextPos < vec1.getPostingSize() && vec2.nextPos < vec2.getPostingSize()){
+            if(vec1.currentWord() == vec2.currentWord()){
+                double d1 = vec1.currentTf();
+                double d2 = vec2.currentTf();
+                result += Math.pow(vec1.currentTf() - vec2.currentTf(), 2);
+                vec1.nextPos++;
+                vec2.nextPos++;
+            }else if(vec1.currentWord() < vec2.currentWord()){
+                double d1 = vec1.currentTf();
+                result += Math.pow(vec1.currentTf(), 2);
+                vec1.nextPos++;
+            }else{
+                double d2 = vec2.currentTf();
+                result += Math.pow(vec2.currentTf(), 2);
+                vec2.nextPos++;
+            }
+        }
+
+        vec1.nextPos = 0;
+        vec2.nextPos = 0;
+
+        return Math.sqrt(result);
+    }
 }
+
+

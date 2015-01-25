@@ -1,9 +1,6 @@
 package TextMiningEngine.Witch.Index;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by amaliujia on 15-1-23.
@@ -54,6 +51,12 @@ public class ClusteringIndex {
         for(int i = 0; i < docFreqList.size(); i++){
             idf =  Math.log(collectionLength / (double)docFreqList.get(i) + 1);
             idfList.add(idf);
+        }
+    }
+
+    public void sortInvList(){
+        for(ClusteringInvList invList : invLists){
+            invList.sortVec();
         }
     }
 }
