@@ -37,12 +37,16 @@ public class ClusteringIndex {
         collectionLength++;
     }
 
-    public void beginIndexing(){
+    public void beginIndexing(boolean ifCreating){
         computeIDF();
         matrix = new ClusteringMatrix();
         matrix.createRowVectors(invLists, idfList);
-        //matrix.createColumnVectors(invLists, idfList);
-        matrix.readColumnVectors();
+
+        if(ifCreating){
+            matrix.createColumnVectors(invLists, idfList);
+        }else{
+            matrix.readColumnVectors();
+        }
     }
 
     private void computeIDF() {

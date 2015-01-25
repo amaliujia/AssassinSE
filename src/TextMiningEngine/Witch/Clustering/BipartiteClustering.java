@@ -25,7 +25,7 @@ public class BipartiteClustering {
         readInvLists(params);
         readDf(params);
         readDict(params);
-        index.beginIndexing();
+        index.beginIndexing(false);
 
         KMeanIterations(index.matrix.getColumnVectors(), 5);
     }
