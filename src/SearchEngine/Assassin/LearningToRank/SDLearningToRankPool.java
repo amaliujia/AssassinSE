@@ -1,6 +1,5 @@
 package SearchEngine.Assassin.LearningToRank;
 
-import SearchEngine.Assassin.LearningToRank.SDFeatureVector;
 import SearchEngine.Assassin.Lucene.TermVector;
 import SearchEngine.Assassin.QryEval;
 import SearchEngine.Assassin.RetrievalModel.RetrievalModel;

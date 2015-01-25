@@ -1,8 +1,7 @@
 package SearchEngine.Assassin.Util;
 
-import SearchEngine.Assassin.QryEval;
 import SearchEngine.Assassin.Operators.QryResult;
-
+import SearchEngine.Assassin.QryEval;
 
 import java.io.IOException;
 import java.util.*;

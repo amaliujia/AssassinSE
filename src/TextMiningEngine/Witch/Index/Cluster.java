@@ -1,5 +1,6 @@
 package TextMiningEngine.Witch.Index;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,11 +13,13 @@ public class Cluster {
 
     public Cluster(ClusteringVectorType type){
         this.type = type;
+        this.vectors = new ArrayList<ClusteringInvList>();
     }
 
     public Cluster(ClusteringVectorType type, ClusteringInvList cen){
         this.type = type;
         this.centroid = cen;
+        this.vectors = new ArrayList<ClusteringInvList>();
     }
 
 

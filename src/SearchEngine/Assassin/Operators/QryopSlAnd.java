@@ -3,8 +3,8 @@
  */
 package SearchEngine.Assassin.Operators;
 
-import SearchEngine.Assassin.RetrievalModel.*;
 import SearchEngine.Assassin.DataStructure.ScoreList;
+import SearchEngine.Assassin.RetrievalModel.*;
 
 import java.io.IOException;
 

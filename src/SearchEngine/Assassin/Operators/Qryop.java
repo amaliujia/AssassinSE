@@ -10,8 +10,8 @@
 package SearchEngine.Assassin.Operators;
 
 import SearchEngine.Assassin.DataStructure.InvList;
-import SearchEngine.Assassin.RetrievalModel.RetrievalModel;
 import SearchEngine.Assassin.DataStructure.ScoreList;
+import SearchEngine.Assassin.RetrievalModel.RetrievalModel;
 
 import java.io.IOException;
 import java.util.ArrayList;

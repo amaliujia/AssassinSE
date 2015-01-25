@@ -92,15 +92,16 @@ public class BipartiteClustering {
         }
 
         String path = params.get("bi:devdocVectors");
+//        int c = 0;
         try {
             Scanner scanner = new Scanner(new File(path));
             String line;
             ClusteringInvList invList;
-            while (scanner.hasNext()){
+            while (scanner.hasNext()) {
                 line = scanner.nextLine();
                 String[] args = line.split(" ");
                 invList = new ClusteringInvList();
-                for(int i = 0; i < args.length; i++){
+                for (int i = 0; i < args.length; i++) {
                     String[] ss = args[i].split(":");
                     invList.addPosting(Integer.parseInt(ss[0]), Integer.parseInt(ss[1]));
                 }
@@ -119,7 +120,6 @@ public class BipartiteClustering {
      * @return
      */
     private List<Cluster> KMeanIterations(List<ClusteringInvList> vectors, int k){
-
         int len = vectors.size();
         List<Cluster> clusters = new ArrayList<Cluster>();
 
@@ -139,11 +139,10 @@ public class BipartiteClustering {
     }
 
     /**
-     *  K mean algorithm for one iteration.
+     *
      * @param vectors
-     *         vector space waiting for clustering.
-     * @param k
-     *          cluster number
+     * @param clusters
+     * @return
      */
     private List<Cluster> KMean(List<ClusteringInvList> vectors, List<Cluster> clusters){
         for(int i = 0; i < clusters.size(); i++){
@@ -166,13 +165,34 @@ public class BipartiteClustering {
         return clusters;
     }
 
+    /**
+     * recompute cluster centroid.
+     * @param cluster
+     *          target cluster.
+     */
     private void updateCentroid(Cluster cluster){
-        // initialize inverted list point
-        for(int i = 0; i < cluster.clusterSize(); i++){
-            cluster.getVec(i).resetPoint();
+        Map<Integer, Double> features = new TreeMap<Integer, Double>();
+        int totalSize = cluster.clusterSize();
+
+        for (int i = 0; i < cluster.clusterSize(); i++){
+            ClusteringInvList vec = cluster.getVec(i);
+            for(int j = 0; j < vec.getPostingSize(); j++){
+                int id = vec.getID(j);
+                if(features.containsKey(id)){
+                    features.put(id, vec.getWeight(j) + features.get(id));
+                }else {
+                    features.put(id, vec.getWeight(j));
+                }
+            }
         }
 
-
+        ClusteringInvList centroid = new ClusteringInvList();
+        Iterator<Integer> it = features.keySet().iterator();
+        while (it.hasNext()){
+            int id = it.next();
+            centroid.addPosting(id, features.get(id) / totalSize);
+        }
+        cluster.setCentroid(centroid);
     }
 
     /**
@@ -189,6 +209,8 @@ public class BipartiteClustering {
         while(vec1.nextPos < vec1.getPostingSize() && vec2.nextPos < vec2.getPostingSize()){
             if(vec1.currentWord() == vec2.currentWord()){
                 result += (vec1.currentTf() * vec2.currentTf());
+                vec1.nextPos++;
+                vec2.nextPos++;
             }else if(vec1.currentWord() < vec2.currentWord()){
                vec1.nextPos++;
             }else{
@@ -202,7 +224,15 @@ public class BipartiteClustering {
         return result / (vec1.vectorNorm() * vec2.vectorNorm());
     }
 
-
+    /**
+     * produce a random integer between min and max.
+     * @param min
+     *          left edge of random edge.
+     * @param max
+     *          right edge of random edge.
+     * @return
+     *          random integer.
+     */
     private static int randInt(int min, int max) {
 
         // NOTE: Usually this should be a field rather than a method

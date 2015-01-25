@@ -7,8 +7,8 @@
  */
 package SearchEngine.Assassin.Operators;
 
-import SearchEngine.Assassin.*;
 import SearchEngine.Assassin.DataStructure.InvList;
+import SearchEngine.Assassin.QryEval;
 import SearchEngine.Assassin.RetrievalModel.*;
 import SearchEngine.Assassin.Util.DataCenter;
 

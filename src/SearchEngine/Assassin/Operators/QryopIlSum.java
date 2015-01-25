@@ -1,7 +1,7 @@
 package SearchEngine.Assassin.Operators;
 
-import SearchEngine.Assassin.Util.DataCenter;
 import SearchEngine.Assassin.RetrievalModel.RetrievalModel;
+import SearchEngine.Assassin.Util.DataCenter;
 
 import java.io.IOException;
 import java.util.HashMap;
