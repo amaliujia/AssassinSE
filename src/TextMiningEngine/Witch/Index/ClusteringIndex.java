@@ -1,4 +1,4 @@
-package TextMingingEngine.Witch.Index;
+package TextMiningEngine.Witch.Index;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,15 +9,15 @@ import java.util.Map;
  * Created by amaliujia on 15-1-23.
  */
 public class ClusteringIndex {
-    List<Integer> docFreqList;
+    private List<Integer> docFreqList;
 
-    List<Double> idfList;
+    private List<Double> idfList;
 
-    Map<String, Integer> dict;
+    private Map<String, Integer> dict;
 
-    List<ClusteringInvList> invLists;
+    private List<ClusteringInvList> invLists;
 
-    ClusteringMatrix matrix;
+    public ClusteringMatrix matrix;
 
     int collectionLength = 0;
 

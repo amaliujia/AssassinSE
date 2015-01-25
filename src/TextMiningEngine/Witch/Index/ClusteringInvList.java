@@ -1,4 +1,4 @@
-package TextMingingEngine.Witch.Index;
+package TextMiningEngine.Witch.Index;
 
 import java.util.Vector;
 
@@ -82,5 +82,9 @@ public class ClusteringInvList {
             re += this.getID(i) + " ";
         }
         return re;
+    }
+
+    public void resetPoint(){
+        this.nextPos = 0;
     }
 }

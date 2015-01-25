@@ -1,16 +1,15 @@
-package TextMingingEngine.Witch.Clustering;
+package TextMiningEngine.Witch.Clustering;
 
 
 import SearchEngine.Assassin.Util.Util;
-import TextMingingEngine.Witch.Index.Cluster;
-import TextMingingEngine.Witch.Index.ClusteringIndex;
-import TextMingingEngine.Witch.Index.ClusteringInvList;
+import TextMiningEngine.Witch.Index.Cluster;
+import TextMiningEngine.Witch.Index.ClusteringIndex;
+import TextMiningEngine.Witch.Index.ClusteringInvList;
+import TextMiningEngine.Witch.Index.ClusteringVectorType;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Created by amaliujia on 15-1-23.
@@ -26,7 +25,7 @@ public class BipartiteClustering {
         readDict(params);
         index.beginIndexing();
 
-
+        KMeanIterations(index.matrix.getRowVectors(), 5);
     }
 
     /**
@@ -120,7 +119,23 @@ public class BipartiteClustering {
      * @return
      */
     private List<Cluster> KMeanIterations(List<ClusteringInvList> vectors, int k){
-        return null;
+
+        int len = vectors.size();
+        List<Cluster> clusters = new ArrayList<Cluster>();
+
+        for(int i = 0; i < k; i++){
+            int ran = randInt(0, len - 1);
+            clusters.add(new Cluster(ClusteringVectorType.DOCUMENT, vectors.get(ran)));
+        }
+
+        for(int i = 0; i < 20; i++){
+            clusters = KMean(vectors, clusters);
+            for(int j = 0; j < clusters.size(); j++){
+                updateCentroid(clusters.get(j));
+            }
+        }
+
+        return clusters;
     }
 
     /**
@@ -151,6 +166,15 @@ public class BipartiteClustering {
         return clusters;
     }
 
+    private void updateCentroid(Cluster cluster){
+        // initialize inverted list point
+        for(int i = 0; i < cluster.clusterSize(); i++){
+            cluster.getVec(i).resetPoint();
+        }
+
+
+    }
+
     /**
      * Compute similarity between two vectors.
      * @param vec1
@@ -176,5 +200,19 @@ public class BipartiteClustering {
         vec2.nextPos = 0;
 
         return result / (vec1.vectorNorm() * vec2.vectorNorm());
+    }
+
+
+    private static int randInt(int min, int max) {
+
+        // NOTE: Usually this should be a field rather than a method
+        // variable so that it is not re-seeded every call.
+        Random rand = new Random();
+
+        // nextInt is normally exclusive of the top value,
+        // so add 1 to make it inclusive
+        int randomNum = rand.nextInt((max - min) + 1) + min;
+
+        return randomNum;
     }
 }

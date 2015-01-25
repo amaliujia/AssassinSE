@@ -8,7 +8,7 @@ import SearchEngine.Assassin.PesudoFeedback.SDPesudoFeedBackEngine;
 import SearchEngine.Assassin.RetrievalModel.*;
 import SearchEngine.Assassin.Util.DataCenter;
 import SearchEngine.Assassin.Util.Util;
-import TextMingingEngine.Witch.Clustering.BipartiteClustering;
+import TextMiningEngine.Witch.Clustering.BipartiteClustering;
 import org.apache.lucene.analysis.Analyzer.TokenStreamComponents;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;

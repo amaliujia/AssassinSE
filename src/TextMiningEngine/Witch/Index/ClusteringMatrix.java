@@ -1,4 +1,4 @@
-package TextMingingEngine.Witch.Index;
+package TextMiningEngine.Witch.Index;
 
 import SearchEngine.Assassin.Util.Util;
 
@@ -104,4 +104,11 @@ public class ClusteringMatrix {
         writer.close();
     }
 
+    public List<ClusteringInvList> getRowVectors(){
+        return rowVectors;
+    }
+
+    public List<ClusteringInvList> getColumnVectors(){
+        return columnVectors;
+    }
 }

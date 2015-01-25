@@ -1,4 +1,4 @@
-package TextMingingEngine.Witch.Index;
+package TextMiningEngine.Witch.Index;
 
 /**
  * Created by amaliujia on 15-1-24.

@@ -1,4 +1,4 @@
-package TextMingingEngine.Witch.Index;
+package TextMiningEngine.Witch.Index;
 
 import java.util.List;
 
@@ -13,6 +13,12 @@ public class Cluster {
     public Cluster(ClusteringVectorType type){
         this.type = type;
     }
+
+    public Cluster(ClusteringVectorType type, ClusteringInvList cen){
+        this.type = type;
+        this.centroid = cen;
+    }
+
 
     public void setCentroid(ClusteringInvList centroid){
         this.centroid = centroid;
@@ -32,6 +38,14 @@ public class Cluster {
 
     public String toString(){
         return new String(centroid.toString() + "\t" + vectors.size());
+    }
+
+    public ClusteringInvList getVec(int i){
+        return vectors.get(i);
+    }
+
+    public int clusterSize(){
+        return vectors.size();
     }
 
 }
