@@ -111,4 +111,14 @@ public class ClusteringMatrix {
     public List<ClusteringInvList> getColumnVectors(){
         return columnVectors;
     }
+
+    public int getRowVecSpaceSize(){
+        return this.rowVectors.size();
+    }
+
+    public int getColumnVecSpaceSize(){
+        return this.columnVectors.size();
+    }
 }
+
+

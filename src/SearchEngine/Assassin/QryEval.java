@@ -317,7 +317,7 @@ public class QryEval {
             printRerankResult(rerankPool, predictionPath, keys);
 
         }else if(model instanceof  BipartiteClusteringModel){
-            BipartiteClustering bipartiteClustering = new BipartiteClustering(params);
+            BipartiteClustering bipartiteClustering = new BipartiteClustering(params, false);
 
         }else if(!params.containsKey("fb") || params.get("fb").equals("false")) { //normal search engine model
 
