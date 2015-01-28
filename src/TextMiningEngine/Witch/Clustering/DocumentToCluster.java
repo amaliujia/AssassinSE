@@ -10,7 +10,10 @@ import java.util.TreeMap;
 public class DocumentToCluster {
     Map<Integer, Double> Linkage;
 
-    public DocumentToCluster(){
+    public DocumentToCluster(int vectorSpaceSize){
         Linkage = new TreeMap<Integer, Double>();
+        for(int i = 0; i < vectorSpaceSize; i++){
+            Linkage.put(i, -1.0);
+        }
     }
 }

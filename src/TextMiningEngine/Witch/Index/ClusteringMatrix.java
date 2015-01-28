@@ -19,11 +19,49 @@ public class ClusteringMatrix {
         columnVectors = new ArrayList<ClusteringInvList>();
     }
 
+    public ClusteringMatrix(ClusteringMatrix matrix){
+        rowVectors = new ArrayList<ClusteringInvList>();
+        columnVectors = new ArrayList<ClusteringInvList>();
+        _copyFromMatrix(matrix);
+    }
+
+    public void copyFromMatrix(ClusteringMatrix matrix){
+        rowVectors.clear();
+        columnVectors.clear();
+        _copyFromMatrix(matrix);
+    }
+
+    private void _copyFromMatrix(ClusteringMatrix matrix){
+        int rowsize = matrix.getRowVecSpaceSize();
+        int columnsize = matrix.getColumnVecSpaceSize();
+
+        ClusteringInvList cur;
+        ClusteringInvList target;
+        for(int i = 0; i < rowsize; i++){
+            target = matrix.getRowVector(i);
+            cur = new ClusteringInvList(target.type(), target.getInvlistID());
+            for(ClusteringPosting posting : target.getPostings()){
+                cur.addPosting(posting.getId(), posting.getWeight());
+            }
+            rowVectors.add(cur);
+        }
+
+        for(int i = 0; i < columnsize; i++){
+            target = matrix.getColumnVector(i);
+            cur = new ClusteringInvList(target.type(), target.getInvlistID());
+            for(ClusteringPosting posting : target.getPostings()){
+                cur.addPosting(posting.getId(), posting.getWeight());
+            }
+            columnVectors.add(cur);
+        }
+    }
+
     public void createRowVectors(List<ClusteringInvList> invLists, List<Double> idfList){
         ClusteringInvList vec;
         for(int i = 0; i < invLists.size(); i++){
             vec = new ClusteringInvList(ClusteringVectorType.DOCUMENT, i);
             ClusteringInvList invList = invLists.get(i);
+
             for(int j = 0; j < invList.getPostingSize(); j++){
                 int id = invList.getID(j);
                 vec.addPosting(id, invList.getWeight(j) * idfList.get(id));
@@ -67,8 +105,9 @@ public class ClusteringMatrix {
 
         String line;
         ClusteringInvList vec;
+        int count = 0;
         while (scanner.hasNext()){
-            vec = new ClusteringInvList();
+            vec = new ClusteringInvList(ClusteringVectorType.WORD, count++);
             line = scanner.nextLine();
             String[] args = line.split(" ");
             for(int i = 0; i < args.length; i++){
@@ -112,12 +151,36 @@ public class ClusteringMatrix {
         return columnVectors;
     }
 
+    public ClusteringInvList getRowVector(int i){
+        return rowVectors.get(i);
+    }
+
+    public ClusteringInvList getColumnVector(int i){
+        return columnVectors.get(i);
+    }
+
     public int getRowVecSpaceSize(){
         return this.rowVectors.size();
     }
 
     public int getColumnVecSpaceSize(){
         return this.columnVectors.size();
+    }
+
+    public void copyColumnVectors(ClusteringMatrix matrix){
+        this.columnVectors.clear();
+        List<ClusteringInvList> columnVecs = matrix.getColumnVectors();
+        for(ClusteringInvList vec : columnVecs){
+            this.columnVectors.add(new ClusteringInvList(vec.type(), vec.getInvlistID()));
+        }
+    }
+
+    public void copyRowVectors(ClusteringMatrix matrix){
+        this.rowVectors.clear();
+        List<ClusteringInvList> rowVectors = matrix.getRowVectors();
+        for(ClusteringInvList vec : rowVectors){
+            this.rowVectors.add(new ClusteringInvList(vec.type(), vec.getInvlistID()));
+        }
     }
 }
 

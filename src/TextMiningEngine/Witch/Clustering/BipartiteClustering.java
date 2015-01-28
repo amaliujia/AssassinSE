@@ -25,7 +25,7 @@ public class BipartiteClustering {
         index.beginIndexing(creatable);
 
         //start bipartite clustering
-        BipartiteClusteringByKMean(index.matrix, 5, 5);
+        BipartiteClusteringByKMean(index.matrix, 5, 5, ClusteringVectorType.DOCUMENT ,ClusteringVectorType.WORD);
 
     }
 
@@ -40,16 +40,25 @@ public class BipartiteClustering {
      * @return
      *          List of clusters of row vectors and column vectors, respectively.
      */
-    private List<List<Cluster>> BipartiteClusteringByKMean(ClusteringMatrix matrix, int k1, int k2){
+    public List<List<Cluster>> BipartiteClusteringByKMean(ClusteringMatrix matrix, int k1, int k2,
+                                                          ClusteringVectorType type1, ClusteringVectorType type2){
         List<Cluster> wordClusters = new ArrayList<Cluster>();
         List<Cluster> documentClusters = new ArrayList<Cluster>();
 
+        WordToCluster word2cluster = new WordToCluster(matrix.getColumnVecSpaceSize());
+        DocumentToCluster document2cluster = new DocumentToCluster(matrix.getRowVecSpaceSize());
+
         for(int i = 0; i < k2; i++){
             int ran = randInt(0, matrix.getColumnVecSpaceSize()- 1);
-            wordClusters.add(new Cluster(ClusteringVectorType.DOCUMENT, matrix.getColumnVectors().get(ran)));
+            wordClusters.add(new Cluster(type2, matrix.getColumnVectors().get(ran)));
         }
-
+        // first word clustering
         wordClusters = KMean(matrix.getColumnVectors(), wordClusters);
+        // build word to cluster linkage
+        word2cluster.updateLinkage(matrix, wordClusters);
+
+        ClusteringMatrix intermediateMatrix = new ClusteringMatrix(matrix);
+
 
 
         return null;
@@ -78,13 +87,13 @@ public class BipartiteClustering {
      * @return
      *      clusters.
      */
-    private List<Cluster> KMeanIterations(List<ClusteringInvList> vectors, int k){
+    public List<Cluster> KMeanIterations(List<ClusteringInvList> vectors, int k, ClusteringVectorType type){
         int len = vectors.size();
         List<Cluster> clusters = new ArrayList<Cluster>();
 
         for(int i = 0; i < k; i++){
             int ran = randInt(0, len - 1);
-            clusters.add(new Cluster(ClusteringVectorType.DOCUMENT, vectors.get(ran)));
+            clusters.add(new Cluster(type, vectors.get(ran)));
         }
 
         double preInterval = Double.MAX_VALUE;
@@ -123,7 +132,7 @@ public class BipartiteClustering {
      * @return
      *          clusters.
      */
-    private List<Cluster> KMean(List<ClusteringInvList> vectors, List<Cluster> clusters){
+    public List<Cluster> KMean(List<ClusteringInvList> vectors, List<Cluster> clusters){
         for(int i = 0; i < clusters.size(); i++){
             Cluster cluster = clusters.get(i);
             cluster.clearVec();
@@ -183,7 +192,7 @@ public class BipartiteClustering {
      * @return
      *          cosine similarity between vector one and vector two.
      */
-    private double CosineSimilarity(ClusteringInvList vec1, ClusteringInvList vec2){
+    public static double CosineSimilarity(ClusteringInvList vec1, ClusteringInvList vec2){
         double result = 0;
         while(vec1.nextPos < vec1.getPostingSize() && vec2.nextPos < vec2.getPostingSize()){
             if(vec1.currentWord() == vec2.currentWord()){

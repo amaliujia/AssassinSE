@@ -11,7 +11,7 @@ public class ClusteringInvList {
     private Vector<ClusteringPosting> postings;
     public int nextPos = 0;
     private ClusteringVectorType type = ClusteringVectorType.NOTDEFINED;
-    private int invlistID;
+    private int invlistID = -1;
 
     public ClusteringInvList(){
         postings = new Vector<ClusteringPosting>();
@@ -26,6 +26,14 @@ public class ClusteringInvList {
         postings = new Vector<ClusteringPosting>();
         this.type = type;
         this.invlistID = invlistID;
+    }
+
+    public Vector<ClusteringPosting> getPostings(){
+        return postings;
+    }
+
+    public void setInvlistID(int id){
+        invlistID = id;
     }
 
     public void addPosting(int id, double tf){
@@ -92,5 +100,9 @@ public class ClusteringInvList {
 
     public void sortVec(){
         Collections.sort(postings);
+    }
+
+    public int getInvlistID(){
+        return invlistID;
     }
 }

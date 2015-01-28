@@ -7,8 +7,11 @@ import java.util.List;
  * Created by amaliujia on 15-1-24.
  */
 public class Cluster {
+
     public ClusteringVectorType type;
+
     private List<ClusteringInvList> vectors;
+
     private ClusteringInvList centroid;
 
     public Cluster(ClusteringVectorType type){
