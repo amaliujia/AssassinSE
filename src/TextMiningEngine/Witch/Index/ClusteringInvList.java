@@ -39,6 +39,9 @@ public class ClusteringInvList {
     public void addPosting(int id, double tf){
             postings.add(new ClusteringPosting(id, tf));
     }
+    public void updatePosting(int i, double w){
+        postings.get(i).updateWeight(w);
+    }
 
     public int getPostingSize(){
         return postings.size();

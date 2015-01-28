@@ -49,17 +49,41 @@ public class BipartiteClustering {
         DocumentToCluster document2cluster = new DocumentToCluster(matrix.getRowVecSpaceSize());
 
         for(int i = 0; i < k2; i++){
-            int ran = randInt(0, matrix.getColumnVecSpaceSize()- 1);
+            int ran = randInt(0, matrix.getColumnVecSpaceSize() - 1);
             wordClusters.add(new Cluster(type2, matrix.getColumnVectors().get(ran)));
         }
         // first word clustering
         wordClusters = KMean(matrix.getColumnVectors(), wordClusters);
         // build word to cluster linkage
         word2cluster.updateLinkage(matrix, wordClusters);
+        updateCentroids(wordClusters);
 
         ClusteringMatrix intermediateMatrix = new ClusteringMatrix(matrix);
+        intermediateMatrix.updateVectorSpace(word2cluster.getWeights(), ClusteringVectorType.DOCUMENT);
 
+        for(int i = 0; i < k1; i++){
+            int ran = randInt(0, matrix.getRowVecSpaceSize() - 1);
+            documentClusters.add(new Cluster(type1, matrix.getRowVectors().get(ran)));
+        }
+        documentClusters = KMean(intermediateMatrix.getRowVectors(), documentClusters);
+        document2cluster.updateLinkage(intermediateMatrix, documentClusters);
+        updateCentroids(documentClusters);
 
+        for(int j = 0; j < 20; j++){
+            intermediateMatrix.copyColumnVectors(matrix);
+            intermediateMatrix.updateVectorSpace(document2cluster.getWeights(), ClusteringVectorType.WORD);
+
+            wordClusters = KMean(intermediateMatrix.getColumnVectors(), wordClusters);
+            word2cluster.updateLinkage(intermediateMatrix, wordClusters);
+            updateCentroids(wordClusters);
+
+            intermediateMatrix.copyColumnVectors(matrix);
+            intermediateMatrix.updateVectorSpace(word2cluster.getWeights(), ClusteringVectorType.DOCUMENT);
+            documentClusters = KMean(intermediateMatrix.getRowVectors(), documentClusters);
+            document2cluster.updateLinkage(intermediateMatrix, documentClusters);
+            updateCentroids(documentClusters);
+
+        }
 
         return null;
     }
@@ -380,6 +404,12 @@ public class BipartiteClustering {
         }
 
         index.sortInvList();
+    }
+
+    private void updateCentroids(List<Cluster> clusters){
+        for (Cluster cluster : clusters){
+            updateCentroid(cluster);
+        }
     }
 }
 

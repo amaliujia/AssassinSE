@@ -21,6 +21,10 @@ public class WordToCluster {
         }
     }
 
+    public Map<Integer, Double>  getWeights(){
+        return linkage;
+    }
+
     public void updateLinkage(ClusteringMatrix matrix, List<Cluster> clusters){
         for (Cluster c : clusters){
             int size = c.clusterSize();
@@ -32,9 +36,9 @@ public class WordToCluster {
                     continue;
                 }
                 int invlistid = invList.getInvlistID();
-                double consin =  BipartiteClustering.CosineSimilarity(invList,
+                double cosine =  BipartiteClustering.CosineSimilarity(invList,
                         matrix.getColumnVector(invList.getInvlistID()));
-                linkage.put(invList.getInvlistID(), consin);
+                linkage.put(invList.getInvlistID(), cosine);
             }
         }
     }

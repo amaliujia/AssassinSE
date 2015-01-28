@@ -22,6 +22,10 @@ public class ClusteringPosting implements Comparable<ClusteringPosting> {
         return weight;
     }
 
+    public void updateWeight(double w) {
+        weight = w;
+    }
+
     @Override
     public int compareTo(ClusteringPosting o) {
         if(this.id < o.id){

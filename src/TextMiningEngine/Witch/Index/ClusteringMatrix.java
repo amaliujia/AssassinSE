@@ -5,6 +5,7 @@ import SearchEngine.Assassin.Util.Util;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -23,6 +24,55 @@ public class ClusteringMatrix {
         rowVectors = new ArrayList<ClusteringInvList>();
         columnVectors = new ArrayList<ClusteringInvList>();
         _copyFromMatrix(matrix);
+    }
+
+    public void updateVectorSpace(List<Double> vectors, ClusteringVectorType type){
+        if(type.equals(ClusteringVectorType.DOCUMENT)){
+           updateRowVectorSpace(vectors);
+        }else if(type.equals(ClusteringVectorType.WORD)){
+            updateColumnVectorSpace(vectors);
+        }
+    }
+
+    private void updateRowVectorSpace(List<Double> weights){
+        for(ClusteringInvList vec : rowVectors){
+            for(int i = 0; i < vec.getPostingSize(); i++){
+                vec.updatePosting(i, vec.getWeight(i) * weights.get(vec.getID(i)));
+            }
+        }
+    }
+
+    private void updateColumnVectorSpace(List<Double> weights){
+        for(ClusteringInvList vec : columnVectors){
+            for(int i = 0; i < vec.getPostingSize(); i++){
+                vec.updatePosting(i, vec.getWeight(i) * weights.get(vec.getID(i)));
+            }
+        }
+    }
+
+
+    public void updateVectorSpace(Map<Integer, Double> linkage, ClusteringVectorType type){
+        if(type.equals(ClusteringVectorType.DOCUMENT)){
+            updateRowVectorSpace(linkage);
+        }else if(type.equals(ClusteringVectorType.WORD)){
+            updateColumnVectorSpace(linkage);
+        }
+    }
+
+    private void updateRowVectorSpace(Map<Integer, Double> linkage){
+        for(ClusteringInvList vec : rowVectors){
+            for(int i = 0; i < vec.getPostingSize(); i++){
+                vec.updatePosting(i, vec.getWeight(i) * linkage.get(vec.getID(i)));
+            }
+        }
+    }
+
+    private void updateColumnVectorSpace(Map<Integer, Double> linkage){
+        for(ClusteringInvList vec : columnVectors){
+            for(int i = 0; i < vec.getPostingSize(); i++){
+                vec.updatePosting(i, vec.getWeight(i) * linkage.get(vec.getID(i)));
+            }
+        }
     }
 
     public void copyFromMatrix(ClusteringMatrix matrix){
