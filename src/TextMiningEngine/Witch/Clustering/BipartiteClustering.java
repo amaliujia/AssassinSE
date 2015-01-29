@@ -25,7 +25,7 @@ public class BipartiteClustering {
         index.beginIndexing(creatable);
 
         //start bipartite clustering
-        BipartiteClusteringByKMean(index.matrix, 5, 5, ClusteringVectorType.DOCUMENT ,ClusteringVectorType.WORD);
+        BipartiteClusteringByKMean_version2(index.matrix, 5, 5, ClusteringVectorType.DOCUMENT ,ClusteringVectorType.WORD);
 
     }
 
@@ -40,7 +40,7 @@ public class BipartiteClustering {
      * @return
      *          List of clusters of row vectors and column vectors, respectively.
      */
-    public List<List<Cluster>> BipartiteClusteringByKMean(ClusteringMatrix matrix, int k1, int k2,
+    public List<List<Cluster>> BipartiteClusteringByKMean_version2(ClusteringMatrix matrix, int k1, int k2,
                                                           ClusteringVectorType type1, ClusteringVectorType type2){
         List<Cluster> wordClusters = new ArrayList<Cluster>();
         List<Cluster> documentClusters = new ArrayList<Cluster>();
@@ -82,10 +82,12 @@ public class BipartiteClustering {
             documentClusters = KMean(intermediateMatrix.getRowVectors(), documentClusters);
             document2cluster.updateLinkage(intermediateMatrix, documentClusters);
             updateCentroids(documentClusters);
-
         }
 
-        return null;
+        List<List<Cluster>> result = new ArrayList<List<Cluster>>();
+        result.add(wordClusters);
+        result.add(documentClusters);
+        return result;
     }
 
 
@@ -162,9 +164,11 @@ public class BipartiteClustering {
             cluster.clearVec();
         }
 
+
         for(int i = 0; i < vectors.size(); i++){
             int cur = -1;
             double min = Double.MAX_VALUE;
+
             for(int j = 0; j < clusters.size(); j++){
                double cos = CosineSimilarity(vectors.get(i), clusters.get(j).centroid());
                 if(cos < min){
@@ -233,7 +237,13 @@ public class BipartiteClustering {
         vec1.nextPos = 0;
         vec2.nextPos = 0;
 
-        return result / (vec1.vectorNorm() * vec2.vectorNorm());
+        double t = vec1.vectorNorm() * vec2.vectorNorm();
+
+        if(t == 0){
+            return result;
+        }
+
+        return result / t;
     }
 
     /**
@@ -406,11 +416,19 @@ public class BipartiteClustering {
         index.sortInvList();
     }
 
+    /**
+     *
+     * @param clusters
+     */
     private void updateCentroids(List<Cluster> clusters){
         for (Cluster cluster : clusters){
             updateCentroid(cluster);
         }
     }
+
+//    private void printResult(List<>){
+//
+//    }
 }
 
 
