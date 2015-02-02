@@ -17,4 +17,8 @@ public abstract class ObjectToCluster {
     public Map<Integer, Double>  getWeights(){
         return linkage;
     }
+
+    public double getWeight(int i){
+        return linkage.get(i);
+    }
 }

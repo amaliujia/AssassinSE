@@ -470,6 +470,20 @@ public class BipartiteClustering {
     public List<ClusteringInvList> reduceDocumentSpaceDimension(ClusteringMatrix matrix, ObjectToCluster objectToCluster,
                                                                                             ClusteringVectorType type){
 
+        ClusteringMatrix newMatrix = new ClusteringMatrix();
+        if(type == ClusteringVectorType.DOCUMENT){
+            newMatrix.copyRowVectors(matrix);
+        }else {
+            newMatrix.copyColumnVectors(matrix);
+        }
+
+        for(int i = 0; i < newMatrix.getRowVecSpaceSize(); i++){
+            ClusteringInvList row = newMatrix.getRowVector(i);
+            for(int j = 0; j < row.getPostingSize(); j++){
+              //  row.updatePosting(j, );
+            }
+        }
+
         return null;
     }
 }

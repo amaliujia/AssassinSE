@@ -133,7 +133,6 @@ public class ClusteringMatrix {
             //System.err.println(j + " word finish");
             columnVectors.add(vec);
         }
-        System.err.println("This part finished!!!!!! ------_____________---------");
         try {
             vectorWriter();
         } catch (IOException e) {
