@@ -12,8 +12,7 @@ import java.util.TreeMap;
 /**
  * Created by amaliujia on 15-1-27.
  */
-public class DocumentToCluster {
-    Map<Integer, Double> linkage;
+public class DocumentToCluster extends ObjectToCluster{
 
     public DocumentToCluster(int vectorSpaceSize){
         linkage = new TreeMap<Integer, Double>();
@@ -22,9 +21,6 @@ public class DocumentToCluster {
         }
     }
 
-    public Map<Integer, Double>  getWeights(){
-        return linkage;
-    }
 
     public void updateLinkage(ClusteringMatrix matrix, List<Cluster> clusters){
         for (Cluster c : clusters){

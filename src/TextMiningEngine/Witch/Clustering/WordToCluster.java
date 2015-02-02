@@ -11,18 +11,13 @@ import java.util.TreeMap;
 /**
  * Created by amaliujia on 15-1-27.
  */
-public class WordToCluster {
-    Map<Integer, Double> linkage;
+public class WordToCluster extends ObjectToCluster {
 
     public WordToCluster(int vectorSpaceSize){
         linkage = new TreeMap<Integer, Double>();
         for(int i = 0; i < vectorSpaceSize; i++){
             linkage.put(i, -1.0);
         }
-    }
-
-    public Map<Integer, Double>  getWeights(){
-        return linkage;
     }
 
     public void updateLinkage(ClusteringMatrix matrix, List<Cluster> clusters){

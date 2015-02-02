@@ -15,7 +15,7 @@ public class BipartiteClustering {
 
     private ClusteringIndex index;
 
-    private static final double threshold = 0.00001;
+    private static final double threshold = 0.001;
 
     public BipartiteClustering(Map<String, String> params, boolean creatable){
         index = new ClusteringIndex();
@@ -25,7 +25,44 @@ public class BipartiteClustering {
         index.beginIndexing(creatable);
 
         //start bipartite clustering
-        BipartiteClusteringByKMean_version2(index.matrix, 5, 5, ClusteringVectorType.DOCUMENT ,ClusteringVectorType.WORD);
+        BipartiteClusteringByKMeanReducedDimension(index.matrix, 10, 10, ClusteringVectorType.DOCUMENT, ClusteringVectorType.WORD);
+
+    }
+
+    /**
+     *
+     * @param matrix
+     *          Source matrix.
+     * @param k1
+     *          Number of clusters for row vectors.
+     * @param k2
+     *          Number of clusters for column vectors.
+     * @param type1
+     * @param type2
+     * @return
+     */
+    public List<List<Cluster>> BipartiteClusteringByKMeanReducedDimension(ClusteringMatrix matrix, int k1, int k2,
+                                                                         ClusteringVectorType type1, ClusteringVectorType type2){
+        List<Cluster> wordClusters = new ArrayList<Cluster>();
+        List<Cluster> documentClusters = new ArrayList<Cluster>();
+
+        WordToCluster word2cluster = new WordToCluster(matrix.getColumnVecSpaceSize());
+        DocumentToCluster document2cluster = new DocumentToCluster(matrix.getRowVecSpaceSize());
+
+
+        //first round
+        for(int i = 0; i < k2; i++){
+            int ran = randInt(0, matrix.getColumnVecSpaceSize() - 1);
+            wordClusters.add(new Cluster(type2, matrix.getColumnVectors().get(ran)));
+        }
+
+        wordClusters = KMeanIterations(matrix.getColumnVectors(), k2, ClusteringVectorType.WORD);
+        word2cluster.updateLinkage(matrix, wordClusters);
+
+
+
+        List<List<Cluster>> result = new ArrayList<List<Cluster>>();
+        return null;
 
     }
 
@@ -37,6 +74,10 @@ public class BipartiteClustering {
      *          Number of clusters for row vectors.
      * @param k2
      *          Number of clusters for column vectors.
+     * @param type1
+     *
+     * @param type2
+     *
      * @return
      *          List of clusters of row vectors and column vectors, respectively.
      */
@@ -123,8 +164,8 @@ public class BipartiteClustering {
         }
 
         double preInterval = Double.MAX_VALUE;
-
-        for(int i = 0; i < 1000000000; i++){
+        int i;
+        for(i = 0; i < 1000000000; i++){
             ArrayList<ClusteringInvList> preCentroids = new ArrayList<ClusteringInvList>();
             for(Cluster c : clusters){
                 preCentroids.add(c.centroid());
@@ -139,12 +180,11 @@ public class BipartiteClustering {
                 curCentroids.add(c.centroid());
             }
             if ((preInterval = isStable(preCentroids, curCentroids, preInterval)) == 0){
-                System.err.println(i);
+                //System.err.println(i);
                 break;
             }
-            if(i % 10 == 0)
-                 System.err.println(i);
         }
+        System.err.println("Iteration:  " + i);
 
         return clusters;
     }
@@ -288,7 +328,7 @@ public class BipartiteClustering {
         }
 
        // interval = interval / preCentroid.size();
-        System.out.println(interval);
+       // System.out.println(interval);
 
         if(Math.abs(interval - preInternal) < threshold){
             return 0;
@@ -426,9 +466,12 @@ public class BipartiteClustering {
         }
     }
 
-//    private void printResult(List<>){
-//
-//    }
+
+    public List<ClusteringInvList> reduceDocumentSpaceDimension(ClusteringMatrix matrix, ObjectToCluster objectToCluster,
+                                                                                            ClusteringVectorType type){
+
+        return null;
+    }
 }
 
 
