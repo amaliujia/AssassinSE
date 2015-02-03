@@ -105,7 +105,7 @@ public class QryEval {
             model = new RetrievalModelIndri();
         } else if(modelType.equals("letor")) {
             model = new RetrievalModelLearningToRank();
-        } else if(modelType.equals("Bipartite")){
+        } else if(modelType.equals("Bipart")){
            model = new BipartiteClusteringModel();
         } else {
             return;

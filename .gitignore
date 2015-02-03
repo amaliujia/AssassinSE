@@ -107,3 +107,7 @@ query/experiement2
 *.orig
 
 data/*
+
+index2/*
+
+query/e1

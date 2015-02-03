@@ -4,8 +4,7 @@ package TextMiningEngine.Witch.Clustering;
 import SearchEngine.Assassin.Util.Util;
 import TextMiningEngine.Witch.Index.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -17,6 +16,12 @@ public class BipartiteClustering {
 
     private static final double threshold = 0.001;
 
+
+    /**
+     *
+     * @param params
+     * @param creatable
+     */
     public BipartiteClustering(Map<String, String> params, boolean creatable){
         index = new ClusteringIndex();
         readInvLists(params);
@@ -25,8 +30,13 @@ public class BipartiteClustering {
         index.beginIndexing(creatable);
 
         //start bipartite clustering
-        BipartiteClusteringByKMeanReducedDimension(index.matrix, 10, 10, ClusteringVectorType.DOCUMENT, ClusteringVectorType.WORD);
-
+       List<List<Cluster>> result = BipartiteClusteringByKMean_version2(index.matrix, 5, 5,
+                                                            ClusteringVectorType.DOCUMENT, ClusteringVectorType.WORD);
+        try {
+            printResult(result.get(0), params);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -110,20 +120,20 @@ public class BipartiteClustering {
         document2cluster.updateLinkage(intermediateMatrix, documentClusters);
         updateCentroids(documentClusters);
 
-        for(int j = 0; j < 20; j++){
-            intermediateMatrix.copyColumnVectors(matrix);
-            intermediateMatrix.updateVectorSpace(document2cluster.getWeights(), ClusteringVectorType.WORD);
-
-            wordClusters = KMean(intermediateMatrix.getColumnVectors(), wordClusters);
-            word2cluster.updateLinkage(intermediateMatrix, wordClusters);
-            updateCentroids(wordClusters);
-
-            intermediateMatrix.copyColumnVectors(matrix);
-            intermediateMatrix.updateVectorSpace(word2cluster.getWeights(), ClusteringVectorType.DOCUMENT);
-            documentClusters = KMean(intermediateMatrix.getRowVectors(), documentClusters);
-            document2cluster.updateLinkage(intermediateMatrix, documentClusters);
-            updateCentroids(documentClusters);
-        }
+//        for(int j = 0; j < 4; j++){
+//            intermediateMatrix.copyColumnVectors(matrix);
+//            intermediateMatrix.updateVectorSpace(document2cluster.getWeights(), ClusteringVectorType.WORD);
+//
+//            wordClusters = KMean(intermediateMatrix.getColumnVectors(), wordClusters);
+//            word2cluster.updateLinkage(intermediateMatrix, wordClusters);
+//            updateCentroids(wordClusters);
+//
+//            intermediateMatrix.copyColumnVectors(matrix);
+//            intermediateMatrix.updateVectorSpace(word2cluster.getWeights(), ClusteringVectorType.DOCUMENT);
+//            documentClusters = KMean(intermediateMatrix.getRowVectors(), documentClusters);
+//            document2cluster.updateLinkage(intermediateMatrix, documentClusters);
+//            updateCentroids(documentClusters);
+//        }
 
         List<List<Cluster>> result = new ArrayList<List<Cluster>>();
         result.add(wordClusters);
@@ -467,6 +477,7 @@ public class BipartiteClustering {
     }
 
 
+
     public List<ClusteringInvList> reduceDocumentSpaceDimension(ClusteringMatrix matrix, ObjectToCluster objectToCluster,
                                                                                             ClusteringVectorType type){
 
@@ -485,6 +496,26 @@ public class BipartiteClustering {
         }
 
         return null;
+    }
+
+
+    private void printResult(List<Cluster> clusters, Map<String, String> params) throws IOException {
+        BufferedWriter writer = null;
+
+        try {
+           writer = new BufferedWriter(new FileWriter(new File(params.get("bi:OutputPath"))));
+        } catch (IOException e) {
+            System.err.println("No Clustering output");
+            return;
+        }
+        for(int j = 0; j < clusters.size(); j++){
+            Cluster c = clusters.get(j);
+            for(int i = 0; i < c.clusterSize(); i++){
+                writer.write(c.getVec(i).getInvlistID() + " " + j + "\n");
+            }
+        }
+
+        writer.flush();
     }
 }
 

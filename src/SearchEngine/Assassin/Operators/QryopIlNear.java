@@ -131,8 +131,13 @@ public class QryopIlNear extends QryopIl {
             }
             DaaTPtr ptr0 = this.daatPtrs.get(0);
             DocPosting post = ptr0.invList.postings.get(ptr0.nextDoc);
-//            int isFirst = 0;
+            int isFirst = 0;
             DocPosting returnPosting = null;
+
+
+            if(ptr0.invList.getDocid(ptr0.nextDoc) ==  530178){
+                System.err.println();
+            }
 
             OK:
             for(; post.nextPostion < post.positions.size(); post.nextPostion++) {
@@ -154,13 +159,13 @@ public class QryopIlNear extends QryopIl {
                         }
                     }
                 }
-//                if(isFirst == 0) {
-//                    returnPosting = new DocPosting(ptr0.invList.getDocid(ptr0.nextDoc));
-//                    isFirst = 1;
-//                }
-                if(returnPosting == null){
+                if(isFirst == 0) {
                     returnPosting = new DocPosting(ptr0.invList.getDocid(ptr0.nextDoc));
+                    isFirst = 1;
                 }
+//                if(returnPosting == null){
+//                    returnPosting = new DocPosting(ptr0.invList.getDocid(ptr0.nextDoc));
+//                }
                 returnPosting.tf++;
                 returnPosting.positions.add(this.daatPtrs.get(this.daatPtrs.size() - 1).invList.postings.
                                             get(this.daatPtrs.get(this.daatPtrs.size() - 1).nextDoc).positions.
@@ -172,14 +177,14 @@ public class QryopIlNear extends QryopIl {
                 }
             }
 
-//            if(isFirst == 1) {
-//                result.invertedList.appendPosting(ptr0.invList.getDocid(ptr0.nextDoc), returnPosting.positions);
-//                //result.invertedList.df++;
-//                // result.invertedList.postings.add(returnPosting);
-//            }
-                if (returnPosting != null){
-                    result.invertedList.appendPosting(ptr0.invList.getDocid(ptr0.nextDoc), returnPosting.positions);
-                }
+            if(isFirst == 1) {
+                result.invertedList.appendPosting(ptr0.invList.getDocid(ptr0.nextDoc), returnPosting.positions);
+                //result.invertedList.df++;
+                // result.invertedList.postings.add(returnPosting);
+            }
+//                if (returnPosting != null){
+//                    result.invertedList.appendPosting(ptr0.invList.getDocid(ptr0.nextDoc), returnPosting.positions);
+//                }
         }
 
         freeDaaTPtrs();
