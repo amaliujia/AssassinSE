@@ -111,3 +111,5 @@ data/*
 index2/*
 
 query/e1
+
+output/bipartiteoutput

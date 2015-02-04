@@ -14,7 +14,7 @@ public class BipartiteClustering {
 
     private ClusteringIndex index;
 
-    private static final double threshold = 0.001;
+    private static final double threshold = 0.0001;
 
 
     /**
@@ -30,10 +30,10 @@ public class BipartiteClustering {
         index.beginIndexing(creatable);
 
         //start bipartite clustering
-       List<List<Cluster>> result = BipartiteClusteringByKMean_version2(index.matrix, 5, 5,
+       List<List<Cluster>> result = BipartiteClusteringByKMean_version2(index.matrix, 50, 50,
                                                             ClusteringVectorType.DOCUMENT, ClusteringVectorType.WORD);
         try {
-            printResult(result.get(0), params);
+            printResult(result.get(1), params);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -99,12 +99,9 @@ public class BipartiteClustering {
         WordToCluster word2cluster = new WordToCluster(matrix.getColumnVecSpaceSize());
         DocumentToCluster document2cluster = new DocumentToCluster(matrix.getRowVecSpaceSize());
 
-        for(int i = 0; i < k2; i++){
-            int ran = randInt(0, matrix.getColumnVecSpaceSize() - 1);
-            wordClusters.add(new Cluster(type2, matrix.getColumnVectors().get(ran)));
-        }
+
         // first word clustering
-        wordClusters = KMean(matrix.getColumnVectors(), wordClusters);
+        wordClusters = KMeanIterations(matrix.getColumnVectors(), k2,  ClusteringVectorType.WORD);
         // build word to cluster linkage
         word2cluster.updateLinkage(matrix, wordClusters);
         updateCentroids(wordClusters);
@@ -112,28 +109,28 @@ public class BipartiteClustering {
         ClusteringMatrix intermediateMatrix = new ClusteringMatrix(matrix);
         intermediateMatrix.updateVectorSpace(word2cluster.getWeights(), ClusteringVectorType.DOCUMENT);
 
-        for(int i = 0; i < k1; i++){
-            int ran = randInt(0, matrix.getRowVecSpaceSize() - 1);
-            documentClusters.add(new Cluster(type1, matrix.getRowVectors().get(ran)));
-        }
-        documentClusters = KMean(intermediateMatrix.getRowVectors(), documentClusters);
+
+        documentClusters = KMeanIterations(matrix.getRowVectors(), k1, ClusteringVectorType.DOCUMENT);
+        //documentClusters = KMean(intermediateMatrix.getRowVectors(), documentClusters);
         document2cluster.updateLinkage(intermediateMatrix, documentClusters);
         updateCentroids(documentClusters);
 
-//        for(int j = 0; j < 4; j++){
-//            intermediateMatrix.copyColumnVectors(matrix);
-//            intermediateMatrix.updateVectorSpace(document2cluster.getWeights(), ClusteringVectorType.WORD);
-//
-//            wordClusters = KMean(intermediateMatrix.getColumnVectors(), wordClusters);
-//            word2cluster.updateLinkage(intermediateMatrix, wordClusters);
-//            updateCentroids(wordClusters);
-//
-//            intermediateMatrix.copyColumnVectors(matrix);
-//            intermediateMatrix.updateVectorSpace(word2cluster.getWeights(), ClusteringVectorType.DOCUMENT);
-//            documentClusters = KMean(intermediateMatrix.getRowVectors(), documentClusters);
-//            document2cluster.updateLinkage(intermediateMatrix, documentClusters);
-//            updateCentroids(documentClusters);
-//        }
+        for(int j = 0; j < 20; j++){
+            intermediateMatrix.copyColumnVectors(matrix);
+            intermediateMatrix.updateVectorSpace(document2cluster.getWeights(), ClusteringVectorType.WORD);
+
+            wordClusters = KMeanIterations(matrix.getColumnVectors(), k2,  ClusteringVectorType.WORD);
+            //wordClusters = KMean(intermediateMatrix.getColumnVectors(), wordClusters);
+            word2cluster.updateLinkage(intermediateMatrix, wordClusters);
+            updateCentroids(wordClusters);
+
+            intermediateMatrix.copyColumnVectors(matrix);
+            intermediateMatrix.updateVectorSpace(word2cluster.getWeights(), ClusteringVectorType.DOCUMENT);
+            documentClusters = KMeanIterations(matrix.getRowVectors(), k1, ClusteringVectorType.DOCUMENT);
+            //documentClusters = KMean(intermediateMatrix.getRowVectors(), documentClusters);
+            document2cluster.updateLinkage(intermediateMatrix, documentClusters);
+            updateCentroids(documentClusters);
+        }
 
         List<List<Cluster>> result = new ArrayList<List<Cluster>>();
         result.add(wordClusters);
@@ -175,7 +172,7 @@ public class BipartiteClustering {
 
         double preInterval = Double.MAX_VALUE;
         int i;
-        for(i = 0; i < 1000000000; i++){
+        for(i = 0; i < 20; i++){
             ArrayList<ClusteringInvList> preCentroids = new ArrayList<ClusteringInvList>();
             for(Cluster c : clusters){
                 preCentroids.add(c.centroid());
@@ -189,10 +186,10 @@ public class BipartiteClustering {
             for(Cluster c : clusters){
                 curCentroids.add(c.centroid());
             }
-            if ((preInterval = isStable(preCentroids, curCentroids, preInterval)) == 0){
-                //System.err.println(i);
-                break;
-            }
+//            if ((preInterval = isStable(preCentroids, curCentroids, preInterval)) == 0){
+//                //System.err.println(i);
+//                break;
+//            }
         }
         System.err.println("Iteration:  " + i);
 
