@@ -14,7 +14,7 @@ public class BipartiteClustering {
 
     private ClusteringIndex index;
 
-    private static final double threshold = 0.0001;
+    private static final double threshold = 0.01;
 
 
     /**
@@ -30,8 +30,10 @@ public class BipartiteClustering {
         index.beginIndexing(creatable);
 
         //start bipartite clustering
-       List<List<Cluster>> result = BipartiteClusteringByKMean_version2(index.matrix, 50, 50,
-                                                            ClusteringVectorType.DOCUMENT, ClusteringVectorType.WORD);
+       List<List<Cluster>> result = BipartiteClusteringByKMean_version2(index.matrix, 20, 50,ClusteringVectorType.DOCUMENT, ClusteringVectorType.WORD);
+
+        //List<Cluster> result = KMeanIterations(index.matrix.getRowVectors(), 76, ClusteringVectorType.DOCUMENT);
+
         try {
             printResult(result.get(1), params);
         } catch (IOException e) {
@@ -59,12 +61,6 @@ public class BipartiteClustering {
         WordToCluster word2cluster = new WordToCluster(matrix.getColumnVecSpaceSize());
         DocumentToCluster document2cluster = new DocumentToCluster(matrix.getRowVecSpaceSize());
 
-
-        //first round
-        for(int i = 0; i < k2; i++){
-            int ran = randInt(0, matrix.getColumnVecSpaceSize() - 1);
-            wordClusters.add(new Cluster(type2, matrix.getColumnVectors().get(ran)));
-        }
 
         wordClusters = KMeanIterations(matrix.getColumnVectors(), k2, ClusteringVectorType.WORD);
         word2cluster.updateLinkage(matrix, wordClusters);
@@ -115,7 +111,7 @@ public class BipartiteClustering {
         document2cluster.updateLinkage(intermediateMatrix, documentClusters);
         updateCentroids(documentClusters);
 
-        for(int j = 0; j < 20; j++){
+        for(int j = 0; j < 2; j++){
             intermediateMatrix.copyColumnVectors(matrix);
             intermediateMatrix.updateVectorSpace(document2cluster.getWeights(), ClusteringVectorType.WORD);
 
@@ -138,20 +134,6 @@ public class BipartiteClustering {
         return result;
     }
 
-
-
-    /**
-     * Compute word2cluster or doc2cluster weight.
-     * @param cluster
-     *          cluster to which vec is belong.
-     * @param vec
-     *          vector occurs in one cluster.
-     * @return
-     */
-    private double clusterRelationship(Cluster cluster, ClusteringInvList vec){
-        return 0;
-    }
-
     /**
      * Multi-iteration KMean.
      * @param vectors
@@ -172,7 +154,7 @@ public class BipartiteClustering {
 
         double preInterval = Double.MAX_VALUE;
         int i;
-        for(i = 0; i < 20; i++){
+        for(i = 0; i < 1000000; i++){
             ArrayList<ClusteringInvList> preCentroids = new ArrayList<ClusteringInvList>();
             for(Cluster c : clusters){
                 preCentroids.add(c.centroid());
@@ -186,10 +168,10 @@ public class BipartiteClustering {
             for(Cluster c : clusters){
                 curCentroids.add(c.centroid());
             }
-//            if ((preInterval = isStable(preCentroids, curCentroids, preInterval)) == 0){
-//                //System.err.println(i);
-//                break;
-//            }
+            if ((preInterval = isStable(preCentroids, curCentroids, preInterval)) == 0){
+                System.err.println(i);
+                break;
+            }
         }
         System.err.println("Iteration:  " + i);
 
@@ -496,6 +478,12 @@ public class BipartiteClustering {
     }
 
 
+    /**
+     *
+     * @param clusters
+     * @param params
+     * @throws IOException
+     */
     private void printResult(List<Cluster> clusters, Map<String, String> params) throws IOException {
         BufferedWriter writer = null;
 
