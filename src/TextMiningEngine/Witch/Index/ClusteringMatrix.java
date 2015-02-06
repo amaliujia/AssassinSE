@@ -231,6 +231,14 @@ public class ClusteringMatrix {
             this.rowVectors.add(new ClusteringInvList(vec.type(), vec.getInvlistID()));
         }
     }
+
+    public void setRowVectors(List<ClusteringInvList> rowVectors){
+        this.rowVectors = rowVectors;
+    }
+
+    public void setColVectors(List<ClusteringInvList> colVectors){
+        this.columnVectors = colVectors;
+    }
 }
 
 

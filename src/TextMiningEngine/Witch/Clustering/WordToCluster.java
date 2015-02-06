@@ -4,6 +4,7 @@ import TextMiningEngine.Witch.Index.Cluster;
 import TextMiningEngine.Witch.Index.ClusteringInvList;
 import TextMiningEngine.Witch.Index.ClusteringMatrix;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -18,10 +19,15 @@ public class WordToCluster extends ObjectToCluster {
         for(int i = 0; i < vectorSpaceSize; i++){
             linkage.put(i, -1.0);
         }
+
+        clusterID = new HashMap<Integer, Integer>();
+        clusterSize = new HashMap<Integer, Integer>();
     }
 
     public void updateLinkage(ClusteringMatrix matrix, List<Cluster> clusters){
-        for (Cluster c : clusters){
+        System.err.println("word clusters size = " + clusters.size());
+        for(int j = 0; j < clusters.size(); j++){
+            Cluster c = clusters.get(j);
             int size = c.clusterSize();
             ClusteringInvList invList;
             for(int i = 0; i < size; i++){
@@ -34,6 +40,16 @@ public class WordToCluster extends ObjectToCluster {
                 double cosine =  BipartiteClustering.CosineSimilarity(invList,
                         matrix.getColumnVector(invList.getInvlistID()));
                 linkage.put(invList.getInvlistID(), cosine);
+
+                if(!clusterID.containsKey(invlistid)){
+                    clusterID.put(invlistid, j);
+                }
+
+                if(!clusterSize.containsKey(j)){
+                    clusterSize.put(j, 1);
+                } else{
+                    clusterSize.put(j, clusterSize.get(j) + 1);
+                }
             }
         }
     }

@@ -12,6 +12,10 @@ import java.util.Map;
 public abstract class ObjectToCluster {
     protected Map<Integer, Double> linkage;
 
+    protected Map<Integer, Integer> clusterID;
+
+    protected Map<Integer, Integer> clusterSize;
+
     public abstract void updateLinkage(ClusteringMatrix matrix, List<Cluster> clusters);
 
     public Map<Integer, Double>  getWeights(){
@@ -20,5 +24,17 @@ public abstract class ObjectToCluster {
 
     public double getWeight(int i){
         return linkage.get(i);
+    }
+
+    public int getClustersSize(){
+        return clusterSize.size();
+    }
+
+    public int getClusterID(int i){
+        return clusterID.get(i);
+    }
+
+    public int getClusterSize(int i){
+        return clusterSize.get(i);
     }
 }

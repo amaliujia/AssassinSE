@@ -14,7 +14,7 @@ public class BipartiteClustering {
 
     private ClusteringIndex index;
 
-    private static final double threshold = 0.01;
+    private static final double threshold = 0.000000001;
 
 
     /**
@@ -30,8 +30,8 @@ public class BipartiteClustering {
         index.beginIndexing(creatable);
 
         //start bipartite clustering
-       List<List<Cluster>> result = BipartiteClusteringByKMean_version2(index.matrix, 20, 50,ClusteringVectorType.DOCUMENT, ClusteringVectorType.WORD);
-
+       //List<List<Cluster>> result = BipartiteClusteringByKMean_version2(index.matrix, 20, 50,ClusteringVectorType.DOCUMENT, ClusteringVectorType.WORD);
+        List<List<Cluster>> result = BipartiteClusteringByKMeanReducedDimension(index.matrix, 963, 50, ClusteringVectorType.DOCUMENT, ClusteringVectorType.WORD);
         //List<Cluster> result = KMeanIterations(index.matrix.getRowVectors(), 76, ClusteringVectorType.DOCUMENT);
 
         try {
@@ -61,14 +61,28 @@ public class BipartiteClustering {
         WordToCluster word2cluster = new WordToCluster(matrix.getColumnVecSpaceSize());
         DocumentToCluster document2cluster = new DocumentToCluster(matrix.getRowVecSpaceSize());
 
+        ClusteringMatrix newMatrix = new ClusteringMatrix(matrix);
 
-        wordClusters = KMeanIterations(matrix.getColumnVectors(), k2, ClusteringVectorType.WORD);
-        word2cluster.updateLinkage(matrix, wordClusters);
+        for(int i = 0; i < 1; i++){
+            // cluster words
+            wordClusters = KMeanIterations(newMatrix.getColumnVectors(), k2, ClusteringVectorType.WORD);
+            // compute words linkage
+            word2cluster.updateLinkage(newMatrix, wordClusters);
+            //reduce document vector space dimension
+            newMatrix = reduceDocumentSpaceDimension(matrix, word2cluster);
 
-
+            //cluster documents
+            documentClusters = KMeanIterations(newMatrix.getRowVectors(), k1, ClusteringVectorType.DOCUMENT);
+            //compute document linkage
+            document2cluster.updateLinkage(newMatrix, documentClusters);
+            //reduce row vector spave dimension
+            newMatrix = reduceWordSpaceDimension(matrix, document2cluster);
+        }
 
         List<List<Cluster>> result = new ArrayList<List<Cluster>>();
-        return null;
+        result.add(wordClusters);
+        result.add(documentClusters);
+        return result;
 
     }
 
@@ -154,7 +168,7 @@ public class BipartiteClustering {
 
         double preInterval = Double.MAX_VALUE;
         int i;
-        for(i = 0; i < 1000000; i++){
+        for(i = 0; i < 5; i++){
             ArrayList<ClusteringInvList> preCentroids = new ArrayList<ClusteringInvList>();
             for(Cluster c : clusters){
                 preCentroids.add(c.centroid());
@@ -168,10 +182,10 @@ public class BipartiteClustering {
             for(Cluster c : clusters){
                 curCentroids.add(c.centroid());
             }
-            if ((preInterval = isStable(preCentroids, curCentroids, preInterval)) == 0){
-                System.err.println(i);
-                break;
-            }
+//            if ((preInterval = isStable(preCentroids, curCentroids, preInterval)) == 0){
+//                System.err.println(i);
+//                break;
+//            }
         }
         System.err.println("Iteration:  " + i);
 
@@ -193,17 +207,19 @@ public class BipartiteClustering {
             cluster.clearVec();
         }
 
-
         for(int i = 0; i < vectors.size(); i++){
             int cur = -1;
-            double min = Double.MAX_VALUE;
+            double max = -1;
 
             for(int j = 0; j < clusters.size(); j++){
                double cos = CosineSimilarity(vectors.get(i), clusters.get(j).centroid());
-                if(cos < min){
+                if(cos > max){
                     cur = j;
-                    min = cos;
+                    max = cos;
                 }
+            }
+            if(cur == -1){
+                System.err.println();
             }
             clusters.get(cur).addVec(vectors.get(i));
         }
@@ -457,24 +473,80 @@ public class BipartiteClustering {
 
 
 
-    public List<ClusteringInvList> reduceDocumentSpaceDimension(ClusteringMatrix matrix, ObjectToCluster objectToCluster,
-                                                                                            ClusteringVectorType type){
+    public ClusteringMatrix reduceDocumentSpaceDimension(ClusteringMatrix matrix, ObjectToCluster objectToCluster){
 
         ClusteringMatrix newMatrix = new ClusteringMatrix();
-        if(type == ClusteringVectorType.DOCUMENT){
             newMatrix.copyRowVectors(matrix);
-        }else {
-            newMatrix.copyColumnVectors(matrix);
-        }
+
+        List<ClusteringInvList> newRowVectors = new ArrayList<ClusteringInvList>();
 
         for(int i = 0; i < newMatrix.getRowVecSpaceSize(); i++){
-            ClusteringInvList row = newMatrix.getRowVector(i);
+            ClusteringInvList row = matrix.getRowVector(i);
+            ClusteringInvList newRow = new ClusteringInvList(row.type(), row.getInvlistID());
+
+            HashMap<Integer, Double> cal = new HashMap<Integer, Double>();
+
             for(int j = 0; j < row.getPostingSize(); j++){
-              //  row.updatePosting(j, );
+                 int id = row.getID(j);
+                 double weight = row.getWeight(j);
+                 int clusterID = objectToCluster.getClusterID(id);
+                try {
+                    if(!cal.containsKey(clusterID)){
+                        cal.put(clusterID, weight * objectToCluster.getWeight(clusterID));
+                    }else{
+                        cal.put(clusterID, cal.get(clusterID) +  weight * objectToCluster.getWeight(clusterID));
+                    }
+                } catch (NullPointerException e){
+                    if(objectToCluster instanceof WordToCluster){
+                        System.err.println("it is word cluster witt id" + clusterID);
+                    }else{
+                        System.err.println("it dare not be a word cluster, id " + clusterID);
+                    }
+                    e.printStackTrace();
+                }
+
             }
+
+            for(Integer id : cal.keySet()){
+                newRow.addPosting(id, cal.get(id) / objectToCluster.getClusterSize(id));
+            }
+            newRowVectors.add(newRow);
         }
 
-        return null;
+        newMatrix.setRowVectors(newRowVectors);
+        return newMatrix;
+    }
+
+    public ClusteringMatrix reduceWordSpaceDimension(ClusteringMatrix matrix, ObjectToCluster objectToCluster){
+
+        ClusteringMatrix newMatrix = new ClusteringMatrix();
+        newMatrix.copyColumnVectors(matrix);
+
+        List<ClusteringInvList> newColVectors = new ArrayList<ClusteringInvList>();
+
+        for(int i = 0; i < newMatrix.getColumnVecSpaceSize(); i++){
+            ClusteringInvList col = newMatrix.getColumnVector(i);
+            ClusteringInvList newCol = new ClusteringInvList(col.type(), col.getInvlistID());
+            HashMap<Integer, Double> cal = new HashMap<Integer, Double>();
+            for(int j = 0; j < col.getPostingSize(); j++){
+                int id = col.getID(j);
+                double weight = col.getWeight(j);
+                int clusterID = objectToCluster.getClusterID(id);
+                if(!cal.containsKey(clusterID)){
+                    cal.put(clusterID, weight * objectToCluster.getWeight(clusterID));
+                }else{
+                    cal.put(clusterID, cal.get(clusterID) +  weight * objectToCluster.getWeight(clusterID));
+                }
+            }
+
+            for(Integer id : cal.keySet()){
+                newCol.addPosting(id, cal.get(id) / objectToCluster.getClusterSize(id));
+            }
+            newColVectors.add(newCol);
+        }
+
+        newMatrix.setColVectors(newColVectors);
+        return newMatrix;
     }
 
 
