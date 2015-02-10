@@ -30,8 +30,8 @@ public class BipartiteClustering {
         index.beginIndexing(creatable);
 
         //start bipartite clustering
-       //List<List<Cluster>> result = BipartiteClusteringByKMean_version2(index.matrix, 20, 50,ClusteringVectorType.DOCUMENT, ClusteringVectorType.WORD);
-        List<List<Cluster>> result = BipartiteClusteringByKMeanReducedDimension(index.matrix, 963, 50, ClusteringVectorType.DOCUMENT, ClusteringVectorType.WORD);
+       //List<List<Cluster>> result = BipartiteClusteringByKMean_version2(index.matrix, 900, 1000,ClusteringVectorType.DOCUMENT, ClusteringVectorType.WORD);
+        List<List<Cluster>> result = BipartiteClusteringByKMeanReducedDimension(index.matrix, 900, 1000, ClusteringVectorType.DOCUMENT, ClusteringVectorType.WORD);
         //List<Cluster> result = KMeanIterations(index.matrix.getRowVectors(), 76, ClusteringVectorType.DOCUMENT);
 
         try {

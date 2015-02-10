@@ -54,7 +54,8 @@ public class ClusteringIndex {
         double idf = -1.0;
         for(int i = 0; i < docFreqList.size(); i++){
             idf =  Math.log(collectionLength / (double)docFreqList.get(i) + 1);
-            idfList.add(idf);
+            //not idf here
+            idfList.add(1.0);
         }
     }
 
