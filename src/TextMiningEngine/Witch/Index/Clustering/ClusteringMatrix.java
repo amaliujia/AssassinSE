@@ -1,6 +1,7 @@
 package TextMiningEngine.Witch.Index.Clustering;
 
 import SearchEngine.Assassin.Util.Util;
+import TextMiningEngine.Witch.Index.Matrix.Matrix;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.Scanner;
 /**
  * Created by amaliujia on 15-1-24.
  */
-public class ClusteringMatrix {
+public class ClusteringMatrix{
     List<ClusteringInvList> rowVectors;
     List<ClusteringInvList> columnVectors;
 
