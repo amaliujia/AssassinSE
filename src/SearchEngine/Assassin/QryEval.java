@@ -107,7 +107,9 @@ public class QryEval {
             model = new RetrievalModelLearningToRank();
         } else if(modelType.equals("Bipart")){
            model = new BipartiteClusteringModel();
-        } else {
+        } else if(modelType.equals("PR")){
+            model = new PageRankModel();
+        }else {
             return;
         }
 
@@ -318,6 +320,8 @@ public class QryEval {
 
         }else if(model instanceof  BipartiteClusteringModel){
             BipartiteClustering bipartiteClustering = new BipartiteClustering(params, false);
+
+        }else if(model instanceof PageRankModel){
 
         }else if(!params.containsKey("fb") || params.get("fb").equals("false")) { //normal search engine model
 
