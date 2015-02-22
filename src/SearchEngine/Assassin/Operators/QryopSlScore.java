@@ -122,7 +122,7 @@ public class QryopSlScore extends QryopSl {
             int docid = result.invertedList.getDocid(i);
             double tf = result.invertedList.getTf(i);
             double docLen = dataCenter.docLengthStore.getDocLength(field, docid);
-            double a = Math.log((N - df + 0.5)/(df + 0.5));
+            double a = Math.max(Math.log((N - df + 0.5)/(df + 0.5)), 0);
             double c =  (tf / (tf + k1 * ((1.0 - b) + b * (docLen / avgLen))));
             double d =  ((k3 + 1.0) * 1.0) / (k3 + 1.0);
             double docScore =  a * c  * d ;

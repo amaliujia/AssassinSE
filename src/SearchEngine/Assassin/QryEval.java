@@ -118,7 +118,7 @@ public class QryEval {
             System.out.println("BM25 parameters  " + DataCenter.k1 + "  " + DataCenter.b + "  " + DataCenter.k3);
         } else if(model instanceof RetrievalModelIndri) {
             model.setParameter("mu", Double.parseDouble(params.get("Indri:mu")));
-            model.setParameter("lambda",Double.parseDouble(params.get("Indri:lambda")));
+            model.setParameter("lambda",1 - Double.parseDouble(params.get("Indri:lambda")));
             model.setParameter("smoothing", params.get("Indri:smoothing"));
         } else if(model instanceof RetrievalModelLearningToRank) {
             model.setParameter("mu", Double.parseDouble(params.get("Indri:mu")));

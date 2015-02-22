@@ -135,7 +135,7 @@ public class QryopIlNear extends QryopIl {
             DocPosting returnPosting = null;
 
 
-            if(ptr0.invList.getDocid(ptr0.nextDoc) ==  530178){
+            if(ptr0.invList.getDocid(ptr0.nextDoc) ==  118484){
                 System.err.println();
             }
 
