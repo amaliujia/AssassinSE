@@ -1,4 +1,4 @@
-package TextMiningEngine.Witch.Index;
+package TextMiningEngine.Witch.Index.Clustering;
 
 import SearchEngine.Assassin.Util.Util;
 

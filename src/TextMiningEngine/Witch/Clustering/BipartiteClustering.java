@@ -2,7 +2,7 @@ package TextMiningEngine.Witch.Clustering;
 
 
 import SearchEngine.Assassin.Util.Util;
-import TextMiningEngine.Witch.Index.*;
+import TextMiningEngine.Witch.Index.Clustering.*;
 
 import java.io.*;
 import java.util.*;

@@ -1,6 +1,5 @@
-package TextMiningEngine.Witch.Index;
+package TextMiningEngine.Witch.Index.Clustering;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Vector;
 

@@ -1,6 +1,4 @@
-package TextMiningEngine.Witch.Index;
-
-import java.util.Comparator;
+package TextMiningEngine.Witch.Index.Clustering;
 
 /**
  * Created by amaliujia on 15-1-23.

@@ -1,7 +1,7 @@
 package TextMiningEngine.Witch.Clustering;
 
-import TextMiningEngine.Witch.Index.Cluster;
-import TextMiningEngine.Witch.Index.ClusteringMatrix;
+import TextMiningEngine.Witch.Index.Clustering.Cluster;
+import TextMiningEngine.Witch.Index.Clustering.ClusteringMatrix;
 
 import java.util.List;
 import java.util.Map;

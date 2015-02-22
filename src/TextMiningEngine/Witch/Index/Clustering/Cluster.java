@@ -1,4 +1,4 @@
-package TextMiningEngine.Witch.Index;
+package TextMiningEngine.Witch.Index.Clustering;
 
 import java.util.ArrayList;
 import java.util.List;
