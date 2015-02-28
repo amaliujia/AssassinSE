@@ -115,3 +115,9 @@ query/e1
 output/bipartiteoutput
 
 commons-math3/*
+
+query/*
+
+output/*
+
+SVM/*

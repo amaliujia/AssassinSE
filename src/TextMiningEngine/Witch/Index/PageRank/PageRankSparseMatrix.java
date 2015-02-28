@@ -1,6 +1,6 @@
 package TextMiningEngine.Witch.Index.PageRank;
 
-import TextMiningEngine.Witch.Index.Matrix.SparseMatrix;
+import TextMiningEngine.Witch.LinearAlgebra.Matrix.SparseMatrix;
 
 import java.io.File;
 import java.io.FileNotFoundException;

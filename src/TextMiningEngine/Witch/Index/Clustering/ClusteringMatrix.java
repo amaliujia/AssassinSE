@@ -1,7 +1,6 @@
 package TextMiningEngine.Witch.Index.Clustering;
 
 import SearchEngine.Assassin.Util.Util;
-import TextMiningEngine.Witch.Index.Matrix.Matrix;
 
 import java.io.*;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package TextMiningEngine.Witch.Index.Matrix;
+package TextMiningEngine.Witch.LinearAlgebra.Matrix;
 
 import com.sun.tools.javac.util.Pair;
 
