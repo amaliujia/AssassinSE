@@ -10,6 +10,10 @@ import java.util.Scanner;
  * Created by amaliujia on 15-2-22.
  */
 public class PageRankSparseMatrix extends SparseMatrix {
+    private int rows;
+
+    private int columns;
+
     public PageRankSparseMatrix(int rows, int columns, String path){
         super();
         this.rows = rows;

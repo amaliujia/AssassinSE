@@ -9,6 +9,7 @@ import SearchEngine.Assassin.RetrievalModel.*;
 import SearchEngine.Assassin.Util.DataCenter;
 import SearchEngine.Assassin.Util.Util;
 import TextMiningEngine.Witch.Clustering.BipartiteClustering;
+import TextMiningEngine.Witch.PageRank.LinkAnalysisEngine;
 import org.apache.lucene.analysis.Analyzer.TokenStreamComponents;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -109,6 +110,8 @@ public class QryEval {
            model = new BipartiteClusteringModel();
         } else if(modelType.equals("PR")){
             model = new PageRankModel();
+        }else if(modelType.equals("Link")){
+            model = new LinkAnalysisModel();
         }else {
             return;
         }
@@ -131,6 +134,12 @@ public class QryEval {
             model.setParameter("b", Double.parseDouble(params.get("BM25:b")));
             model.setParameter("numDocs", READER.numDocs());
             ((RetrievalModelLearningToRank)model).docLengthStore = docLengthStore;
+        }else if(model instanceof LinkAnalysisModel){
+            model.setParameter(params.get("lk:funname"), params.get("lk:funname"));
+            if (params.get("lk:funname").equals("PageRank")) {
+               model.setParameter("teleporation", Double.parseDouble(params.get("lk:pr:teleporation")));
+                model.setParameter("smatrixPath", params.get("lk:pr:sparseMatrixInput"));
+            }
         }
 
         if(model == null) {
@@ -321,7 +330,9 @@ public class QryEval {
         }else if(model instanceof  BipartiteClusteringModel){
             BipartiteClustering bipartiteClustering = new BipartiteClustering(params, false);
 
-        }else if(model instanceof PageRankModel){
+        }else if(model instanceof LinkAnalysisModel){
+            LinkAnalysisEngine linkAnalysisEngine = new LinkAnalysisEngine((LinkAnalysisModel)model);
+            linkAnalysisEngine.run();
 
         }else if(!params.containsKey("fb") || params.get("fb").equals("false")) { //normal search engine model
 
