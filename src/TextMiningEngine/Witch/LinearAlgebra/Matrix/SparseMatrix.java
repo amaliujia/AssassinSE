@@ -55,7 +55,7 @@ public class SparseMatrix implements Matrix {
 
     @Override
     public long getRowDimension() {
-        return rowVectors.size();
+        return rows;
     }
 
     @Override

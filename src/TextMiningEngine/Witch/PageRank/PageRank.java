@@ -21,7 +21,7 @@ public class PageRank implements LinkBase{
 
     public PageRank(int row, int col){
         sparseMatrix = new SparseMatrix(row, col);
-        N = sparseMatrix.getRowDimension();
+        N = Math.max(sparseMatrix.rows, sparseMatrix.columns);
 
     }
 
@@ -37,9 +37,11 @@ public class PageRank implements LinkBase{
     @Override
     public void run() {
         SparseVector r = new SparseVector();
+        //TODO: how big should this N be?
         for(int i = 0; i < N; i++){
             r.addEntry(i + 1, 1.0 / N);
         }
+        //TODO: not normalization of values in vector r
         for(int i = 0; i < iteration; i++){
             r = oneIteration(sparseMatrix, r);
         }
@@ -50,10 +52,12 @@ public class PageRank implements LinkBase{
 
             for(int i = 0; i < N; i++){
                 double temp = 0;
-                Vector c = matrix.getRowVector(i);
-                for(int j = 0; j < c.getNumElement(); j++){
-                    SparseEntry e = (SparseEntry) c.getEntry(j);
-                    temp += e.value * ((SparseEntry)r.getEntry(e.id - 1)).value * beta;
+                if(i < matrix.columns) {
+                    Vector c = matrix.getRowVector(i);
+                    for (int j = 0; j < c.getNumElement(); j++) {
+                        SparseEntry e = (SparseEntry) c.getEntry(j);
+                        temp += e.value * ((SparseEntry) r.getEntry(e.id - 1)).value * beta;
+                    }
                 }
                 temp += ((1 - beta) * 1.0) / (N * 1.0);
                 returnVector.addEntry(i, temp);
