@@ -41,6 +41,8 @@ Milestones
 
 14. Implement bipartite clustering algorithm
 
+15. PageRank Computation
+
 Copyright
 =======
 
