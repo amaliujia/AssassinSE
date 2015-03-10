@@ -16,4 +16,19 @@ public class SparseVector implements Vector {
     public void addEntry(int col, double value){
         v.add(new SparseEntry(col, value));
     }
+
+    @Override
+    public Entry getEntry(int i) {
+        return v.get(i);
+    }
+
+    @Override
+    public int getNumElement() {
+        return v.size();
+    }
+
+    @Override
+    public void clear() {
+        v.clear();
+    }
 }

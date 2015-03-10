@@ -16,6 +16,7 @@ public class LinkAnalysisEngine {
         if(model.exectuionName.equals("PageRank")){
             linkBase = PageRankBuilder.createPageRank(this.model);
         }
+        System.out.println("11");
     }
 
     public void run(){

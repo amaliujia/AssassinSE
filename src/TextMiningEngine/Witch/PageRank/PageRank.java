@@ -1,20 +1,28 @@
 package TextMiningEngine.Witch.PageRank;
 
-import TextMiningEngine.Witch.LinearAlgebra.Matrix.SparseMatrix;
+import TextMiningEngine.Witch.LinearAlgebra.Matrix.*;
+
+import java.util.HashMap;
 
 
 public class PageRank implements LinkBase{
 
     private SparseMatrix sparseMatrix;
 
+    public HashMap<Integer, Integer> outlinks;
+
     private double alpha;
 
     private double beta;
 
-    public static int iteration = 20;
+    private long N;
+
+    public final static int iteration = 20;
 
     public PageRank(int row, int col){
         sparseMatrix = new SparseMatrix(row, col);
+        N = sparseMatrix.getRowDimension();
+
     }
 
     public void setArguments(double alpha, double beta){
@@ -28,6 +36,29 @@ public class PageRank implements LinkBase{
 
     @Override
     public void run() {
+        SparseVector r = new SparseVector();
+        for(int i = 0; i < N; i++){
+            r.addEntry(i + 1, 1.0 / N);
+        }
+        for(int i = 0; i < iteration; i++){
+            r = oneIteration(sparseMatrix, r);
+        }
+    }
 
+    private SparseVector oneIteration(SparseMatrix matrix, SparseVector r){
+        SparseVector returnVector = new SparseVector();
+
+            for(int i = 0; i < N; i++){
+                double temp = 0;
+                Vector c = matrix.getRowVector(i);
+                for(int j = 0; j < c.getNumElement(); j++){
+                    SparseEntry e = (SparseEntry) c.getEntry(j);
+                    temp += e.value * ((SparseEntry)r.getEntry(e.id - 1)).value * beta;
+                }
+                temp += ((1 - beta) * 1.0) / (N * 1.0);
+                returnVector.addEntry(i, temp);
+            }
+
+        return returnVector;
     }
 }

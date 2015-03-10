@@ -26,16 +26,16 @@ public class SparseMatrix implements Matrix {
     }
 
     public SparseMatrix(int row, int col){
-        rows = row + 1;
-        columns = col + 1;
+        rows = row;
+        columns = col;
         rowVectors = new ArrayList<SparseVector>();
-        for(int i = 0; i < rows; i++){
+        for(int i = 0; i < columns; i++){
             rowVectors.add(new SparseVector());
         }
     }
 
     public void addEntry(int row, int col, double value){
-        rowVectors.get(row).addEntry(col, value);
+        rowVectors.get(row - 1).addEntry(col, value);
     }
 
     @Override
@@ -51,6 +51,21 @@ public class SparseMatrix implements Matrix {
     @Override
     public Matrix Vecotrmul(Vector vector) {
         return null;
+    }
+
+    @Override
+    public long getRowDimension() {
+        return rowVectors.size();
+    }
+
+    @Override
+    public long getColDimension() {
+        return 0;
+    }
+
+    @Override
+    public Vector getRowVector(int i) {
+        return rowVectors.get(i);
     }
 }
 

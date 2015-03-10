@@ -9,4 +9,10 @@ public interface Matrix {
     public  Vector mulVector(Vector vector);
 
     public  Matrix Vecotrmul(Vector vector);
+
+    public long getRowDimension();
+
+    public long getColDimension();
+
+    public Vector getRowVector(int i);
 }

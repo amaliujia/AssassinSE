@@ -4,6 +4,7 @@ import SearchEngine.Assassin.RetrievalModel.LinkAnalysisModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.Scanner;
 
 /**
@@ -11,6 +12,7 @@ import java.util.Scanner;
  */
 public class PageRankBuilder {
     public static PageRank createPageRank(LinkAnalysisModel model){
+        HashMap<Integer, Integer> outlinks = new HashMap<Integer, Integer>();
         String path = model.path;
 
         Scanner scanner = null;
@@ -30,6 +32,8 @@ public class PageRankBuilder {
         while (scanner.hasNext()){
             line = scanner.nextLine();
             String[] cell = line.split(" ");
+            int outId = Integer.parseInt(cell[0]);
+
             if(Integer.parseInt(cell[0]) > row){
                 row = Integer.parseInt(cell[0]);
             }
@@ -37,9 +41,18 @@ public class PageRankBuilder {
             if(Integer.parseInt(cell[1]) > col){
                 col = Integer.parseInt(cell[1]);
             }
+
+            if(outlinks.containsKey(outId)){
+                int g = outlinks.get(outId);
+                g += 1;
+                outlinks.put(outId, g);
+            } else{
+                outlinks.put(outId, 1);
+            }
         }
 
         PageRank pageRank = new PageRank(row, col);
+        pageRank.outlinks = outlinks;
 
         try {
             scanner = new Scanner(new File(path));
@@ -50,7 +63,7 @@ public class PageRankBuilder {
         while (scanner.hasNext()){
             line = scanner.nextLine();
             String[] cell = line.split(" ");
-            pageRank.setEntry(Integer.parseInt(cell[0]), Integer.parseInt(cell[1]), Double.parseDouble(cell[2]));
+            pageRank.setEntry( Integer.parseInt(cell[1]), Integer.parseInt(cell[0]), 1.0 / outlinks.get(Integer.parseInt(cell[0])));
         }
 
         pageRank.setArguments(0.1, model.beta);
