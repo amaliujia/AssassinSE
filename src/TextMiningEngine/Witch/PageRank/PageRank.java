@@ -52,13 +52,11 @@ public class PageRank implements LinkBase{
 
             for(int i = 0; i < N; i++){
                 double temp = 0;
-                if(i < matrix.columns) {
                     Vector c = matrix.getRowVector(i);
                     for (int j = 0; j < c.getNumElement(); j++) {
                         SparseEntry e = (SparseEntry) c.getEntry(j);
                         temp += e.value * ((SparseEntry) r.getEntry(e.id - 1)).value * beta;
                     }
-                }
                 temp += ((1 - beta) * 1.0) / (N * 1.0);
                 returnVector.addEntry(i, temp);
             }

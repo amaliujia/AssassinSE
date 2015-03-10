@@ -19,6 +19,8 @@ public class SparseMatrix implements Matrix {
 
     public int columns;
 
+    private int N;
+
     public SparseMatrix(){
         rowVectors = new ArrayList<SparseVector>();
         rows = 0;
@@ -28,8 +30,9 @@ public class SparseMatrix implements Matrix {
     public SparseMatrix(int row, int col){
         rows = row;
         columns = col;
+        N = Math.max(rows, columns);
         rowVectors = new ArrayList<SparseVector>();
-        for(int i = 0; i < columns; i++){
+        for(int i = 0; i < N; i++){
             rowVectors.add(new SparseVector());
         }
     }
