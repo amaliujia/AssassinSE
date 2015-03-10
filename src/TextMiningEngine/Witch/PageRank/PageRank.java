@@ -1,23 +1,29 @@
 package TextMiningEngine.Witch.PageRank;
 
 import TextMiningEngine.Witch.LinearAlgebra.Matrix.SparseMatrix;
-import org.apache.commons.math3.linear.OpenMapRealMatrix;
 
-import java.security.PublicKey;
 
-/**
- * Created by amaliujia on 15-2-22.
- */
 public class PageRank implements LinkBase{
 
-    private OpenMapRealMatrix sparseMatrix;
+    private SparseMatrix sparseMatrix;
+
+    private double alpha;
+
+    private double beta;
+
+    public static int iteration = 20;
 
     public PageRank(int row, int col){
-        sparseMatrix = new OpenMapRealMatrix(81433, 81260);
+        sparseMatrix = new SparseMatrix(row, col);
+    }
+
+    public void setArguments(double alpha, double beta){
+        this.alpha = alpha;
+        this.beta = beta;
     }
 
     public void setEntry(int row, int col, double value){
-        sparseMatrix.addToEntry(row, col, value);
+        sparseMatrix.addEntry(row, col, value);
     }
 
     @Override

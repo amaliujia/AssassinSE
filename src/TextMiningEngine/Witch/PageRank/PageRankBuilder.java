@@ -41,11 +41,19 @@ public class PageRankBuilder {
 
         PageRank pageRank = new PageRank(row, col);
 
-        scanner = new Scanner(path);
+        try {
+            scanner = new Scanner(new File(path));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
         while (scanner.hasNext()){
-            String[] cell = scanner.next().split(" ");
+            line = scanner.nextLine();
+            String[] cell = line.split(" ");
             pageRank.setEntry(Integer.parseInt(cell[0]), Integer.parseInt(cell[1]), Double.parseDouble(cell[2]));
         }
+
+        pageRank.setArguments(0.1, model.beta);
 
         return pageRank;
     }

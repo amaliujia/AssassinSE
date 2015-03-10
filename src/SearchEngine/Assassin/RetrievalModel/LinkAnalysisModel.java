@@ -9,14 +9,14 @@ public class LinkAnalysisModel extends RetrievalModel {
 
     public String exectuionName;
 
-    public double alpha;
+    public double beta;
 
     public String path;
 
     @Override
     public boolean setParameter(String parameterName, double value) {
         if(parameterName.equals("teleporation")){
-            alpha = value;
+            beta = value;
         } else{
            return false;
         }
