@@ -5,6 +5,11 @@ This is a distributed, large scale Search Engine.
 
 This is a assassin, graceful and fatal.
 
+This is a text mining framework.
+
+This is a witch who can do magic and fantastic thing.
+
+
 Description
 ==========
 
@@ -41,7 +46,7 @@ Milestones
 
 14. Implement bipartite clustering algorithm
 
-15. PageRank Computation
+15. PageRank 
 
 Copyright
 =======
