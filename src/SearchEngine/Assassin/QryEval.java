@@ -9,7 +9,9 @@ import SearchEngine.Assassin.RetrievalModel.*;
 import SearchEngine.Assassin.Util.DataCenter;
 import SearchEngine.Assassin.Util.Util;
 import TextMiningEngine.Witch.Clustering.BipartiteClustering;
-import TextMiningEngine.Witch.PageRank.LinkAnalysisEngine;
+import TextMiningEngine.Witch.PageRank.PageRank.LinkAnalysisEngine;
+import TextMiningEngine.Witch.PageRank.TopicSensitivePageRank.TopicSensitivePageRank;
+import TextMiningEngine.Witch.PageRank.TopicSensitivePageRank.TopicSensitivePageRankBuilder;
 import org.apache.lucene.analysis.Analyzer.TokenStreamComponents;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -112,6 +114,8 @@ public class QryEval {
             model = new PageRankModel();
         }else if(modelType.equals("Link")){
             model = new LinkAnalysisModel();
+        }else if(modelType.equals("QTSPR")){
+            model = new TopicSensitivePRModel();
         }else {
             return;
         }
@@ -140,6 +144,13 @@ public class QryEval {
                model.setParameter("teleporation", Double.parseDouble(params.get("lk:pr:teleporation")));
                 model.setParameter("smatrixPath", params.get("lk:pr:sparseMatrixInput"));
             }
+        }else if(model instanceof TopicSensitivePRModel){
+            model.setParameter("matrix", params.get("TSPR:sparseMatrixInput"));
+            model.setParameter("doc_top", params.get("TSPR:doc_topics"));
+            model.setParameter("query-topic-dis", params.get("SPR:query_topic_dis"));
+            model.setParameter("alpha",Double.parseDouble(params.get("TSPR:alpha")));
+            model.setParameter("beta",Double.parseDouble(params.get("TSPR:beta")));
+            model.setParameter("gama",Double.parseDouble(params.get("TSPR:gama")));
         }
 
         if(model == null) {
@@ -334,6 +345,9 @@ public class QryEval {
             LinkAnalysisEngine linkAnalysisEngine = new LinkAnalysisEngine((LinkAnalysisModel)model);
             linkAnalysisEngine.run();
 
+        }else if(model instanceof TopicSensitivePRModel){
+            TopicSensitivePageRank tspr = TopicSensitivePageRankBuilder.createTSPageRank((TopicSensitivePRModel)model);
+            tspr.run();
         }else if(!params.containsKey("fb") || params.get("fb").equals("false")) { //normal search engine model
 
             for (int i = 0; i < keys.size(); i++) {

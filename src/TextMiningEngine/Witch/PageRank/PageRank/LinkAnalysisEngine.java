@@ -1,4 +1,4 @@
-package TextMiningEngine.Witch.PageRank;
+package TextMiningEngine.Witch.PageRank.PageRank;
 
 import SearchEngine.Assassin.RetrievalModel.LinkAnalysisModel;
 

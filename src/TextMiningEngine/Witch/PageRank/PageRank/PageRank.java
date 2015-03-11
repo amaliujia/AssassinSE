@@ -1,4 +1,4 @@
-package TextMiningEngine.Witch.PageRank;
+package TextMiningEngine.Witch.PageRank.PageRank;
 
 import TextMiningEngine.Witch.LinearAlgebra.Matrix.*;
 
@@ -37,7 +37,7 @@ public class PageRank implements LinkBase{
     @Override
     public void run() {
         SparseVector r = new SparseVector();
-        //TODO: how big should this N be?
+        //TODO: how big should this N be? Should it form a square matrix?
         for(int i = 0; i < N; i++){
             r.addEntry(i + 1, 1.0 / (N * 1.0));
         }

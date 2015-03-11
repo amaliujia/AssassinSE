@@ -1,7 +1,5 @@
 package SearchEngine.Assassin.RetrievalModel;
 
-import TextMiningEngine.Witch.PageRank.PageRank;
-
 /**
  * Created by amaliujia on 15-3-4.
  */

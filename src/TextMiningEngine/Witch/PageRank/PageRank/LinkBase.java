@@ -1,4 +1,4 @@
-package TextMiningEngine.Witch.PageRank;
+package TextMiningEngine.Witch.PageRank.PageRank;
 
 /**
  * Created by amaliujia on 15-3-4.
