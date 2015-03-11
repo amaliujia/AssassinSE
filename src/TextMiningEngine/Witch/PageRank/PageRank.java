@@ -39,9 +39,8 @@ public class PageRank implements LinkBase{
         SparseVector r = new SparseVector();
         //TODO: how big should this N be?
         for(int i = 0; i < N; i++){
-            r.addEntry(i + 1, 1.0 / N);
+            r.addEntry(i + 1, 1.0 / (N * 1.0));
         }
-        //TODO: not normalization of values in vector r
         for(int i = 0; i < iteration; i++){
             r = oneIteration(sparseMatrix, r);
         }
@@ -56,9 +55,17 @@ public class PageRank implements LinkBase{
                     for (int j = 0; j < c.getNumElement(); j++) {
                         SparseEntry e = (SparseEntry) c.getEntry(j);
                         temp += e.value * ((SparseEntry) r.getEntry(e.id - 1)).value * beta;
+                        temp += ((1 - beta) * 1.0) / (N * 1.0);
                     }
-                temp += ((1 - beta) * 1.0) / (N * 1.0);
-                returnVector.addEntry(i, temp);
+                    returnVector.addEntry(i, temp);
+            }
+            //renormalize
+            double s = 0;
+            for(int i = 0; i < returnVector.getNumElement(); i++){
+                 s += returnVector.getEntry(i).getValue();
+            }
+            for(int i = 0; i < returnVector.getNumElement(); i++) {
+                returnVector.getEntry(i).setValue(returnVector.getEntry(i).getValue() + ((1.0 - s) / (N * 1.0)));
             }
 
         return returnVector;

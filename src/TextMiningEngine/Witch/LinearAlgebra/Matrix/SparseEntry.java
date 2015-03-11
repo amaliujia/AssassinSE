@@ -8,9 +8,18 @@ public class SparseEntry implements Entry {
 
     public double value;
 
-
     public SparseEntry(int id, double value){
         this.id = id;
         this.value = value;
+    }
+
+    @Override
+    public double getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(double v) {
+        value = v;
     }
 }
