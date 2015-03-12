@@ -1,4 +1,6 @@
-package TextMiningEngine.Witch.LinearAlgebra.Matrix;
+package TextMiningEngine.Witch.LinearAlgebra.Matrix.PageRank;
+
+import TextMiningEngine.Witch.LinearAlgebra.Matrix.Interface.Entry;
 
 /**
  * Created by amaliujia on 15-3-9.

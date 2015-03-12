@@ -1,4 +1,4 @@
-package TextMiningEngine.Witch.LinearAlgebra.Matrix;
+package TextMiningEngine.Witch.LinearAlgebra.Matrix.Interface;
 
 /**
  * Created by amaliujia on 15-3-9.

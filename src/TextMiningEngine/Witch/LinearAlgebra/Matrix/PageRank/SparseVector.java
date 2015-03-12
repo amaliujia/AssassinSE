@@ -1,4 +1,7 @@
-package TextMiningEngine.Witch.LinearAlgebra.Matrix;
+package TextMiningEngine.Witch.LinearAlgebra.Matrix.PageRank;
+
+import TextMiningEngine.Witch.LinearAlgebra.Matrix.Interface.Entry;
+import TextMiningEngine.Witch.LinearAlgebra.Matrix.Interface.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
