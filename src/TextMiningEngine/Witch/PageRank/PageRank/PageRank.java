@@ -1,19 +1,12 @@
 package TextMiningEngine.Witch.PageRank.PageRank;
 
-import TextMiningEngine.Witch.LinearAlgebra.Matrix.*;
+import TextMiningEngine.Witch.LinearAlgebra.Matrix.SparseEntry;
+import TextMiningEngine.Witch.LinearAlgebra.Matrix.SparseMatrix;
+import TextMiningEngine.Witch.LinearAlgebra.Matrix.SparseVector;
+import TextMiningEngine.Witch.LinearAlgebra.Matrix.Vector;
 
-import java.util.HashMap;
 
-
-public class PageRank implements LinkBase{
-
-    private SparseMatrix sparseMatrix;
-
-    public HashMap<Integer, Integer> outlinks;
-
-    private double alpha;
-
-    private double beta;
+public class PageRank extends LinkParentBase implements LinkBase{
 
     private long N;
 
@@ -23,15 +16,6 @@ public class PageRank implements LinkBase{
         sparseMatrix = new SparseMatrix(row, col);
         N = Math.max(sparseMatrix.rows, sparseMatrix.columns);
 
-    }
-
-    public void setArguments(double alpha, double beta){
-        this.alpha = alpha;
-        this.beta = beta;
-    }
-
-    public void setEntry(int row, int col, double value){
-        sparseMatrix.addEntry(row, col, value);
     }
 
     @Override
@@ -46,6 +30,12 @@ public class PageRank implements LinkBase{
         }
     }
 
+    /**
+     *
+     * @param matrix
+     * @param r
+     * @return
+     */
     private SparseVector oneIteration(SparseMatrix matrix, SparseVector r){
         SparseVector returnVector = new SparseVector();
 

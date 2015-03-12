@@ -1,6 +1,9 @@
 package TextMiningEngine.Witch.Index.Clustering;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by amaliujia on 15-1-23.

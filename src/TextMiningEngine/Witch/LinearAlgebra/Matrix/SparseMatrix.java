@@ -1,11 +1,6 @@
 package TextMiningEngine.Witch.LinearAlgebra.Matrix;
 
-import com.sun.tools.javac.util.Pair;
-import org.apache.commons.math3.exception.*;
-import org.apache.commons.math3.linear.*;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
