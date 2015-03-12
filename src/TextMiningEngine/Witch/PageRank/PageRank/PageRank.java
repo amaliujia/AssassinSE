@@ -1,9 +1,9 @@
 package TextMiningEngine.Witch.PageRank.PageRank;
 
-import TextMiningEngine.Witch.LinearAlgebra.Matrix.SparseEntry;
-import TextMiningEngine.Witch.LinearAlgebra.Matrix.SparseMatrix;
-import TextMiningEngine.Witch.LinearAlgebra.Matrix.SparseVector;
-import TextMiningEngine.Witch.LinearAlgebra.Matrix.Vector;
+import TextMiningEngine.Witch.LinearAlgebra.Matrix.PageRank.SparseEntry;
+import TextMiningEngine.Witch.LinearAlgebra.Matrix.PageRank.SparseMatrix;
+import TextMiningEngine.Witch.LinearAlgebra.Matrix.PageRank.SparseVector;
+import TextMiningEngine.Witch.LinearAlgebra.Matrix.Interface.Vector;
 
 
 public class PageRank extends LinkParentBase implements LinkBase{

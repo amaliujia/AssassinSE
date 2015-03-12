@@ -1,6 +1,6 @@
 package TextMiningEngine.Witch.PageRank.PageRank;
 
-import TextMiningEngine.Witch.LinearAlgebra.Matrix.SparseMatrix;
+import TextMiningEngine.Witch.LinearAlgebra.Matrix.PageRank.SparseMatrix;
 
 import java.util.HashMap;
 
