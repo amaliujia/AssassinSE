@@ -121,3 +121,7 @@ query/*
 output/*
 
 SVM/*
+
+output/standard.txt
+
+query/BM25

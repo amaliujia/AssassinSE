@@ -49,7 +49,7 @@ public class Evaluator {
             if(t1[2].equals(t2[2])) {
                 hit++;
             } else {
-                System.out.println(t1[0]);
+                //System.out.println(t1[0]);
             }
         }
         System.out.println(hit);
