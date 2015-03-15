@@ -17,6 +17,8 @@ public class TopicSensitivePRModel extends RetrievalModel {
 
     public double gama;
 
+    public int curTop;
+
     @Override
     public boolean setParameter(String parameterName, double value) {
         if(parameterName.equals("alpha")){
@@ -25,6 +27,8 @@ public class TopicSensitivePRModel extends RetrievalModel {
             beta = value;
         }else if(parameterName.equals("gama")){
             gama = value;
+        }else if(parameterName.equals("top")){
+            curTop = (int)value;
         }else{
             return false;
         }

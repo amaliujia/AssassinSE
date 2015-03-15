@@ -151,6 +151,7 @@ public class QryEval {
             model.setParameter("alpha",Double.parseDouble(params.get("TSPR:alpha")));
             model.setParameter("beta",Double.parseDouble(params.get("TSPR:beta")));
             model.setParameter("gama",Double.parseDouble(params.get("TSPR:gama")));
+            model.setParameter("top", (double)Integer.parseInt(params.get("TSPR:curTop")));
         }
 
         if(model == null) {

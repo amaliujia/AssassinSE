@@ -7,6 +7,7 @@ import TextMiningEngine.Witch.LinearAlgebra.Matrix.Interface.Vector;
 import TextMiningEngine.Witch.PageRank.PageRank.LinkBase;
 import TextMiningEngine.Witch.PageRank.PageRank.LinkParentBase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -14,18 +15,24 @@ import java.util.HashMap;
  */
 public class TopicSensitivePageRank extends LinkParentBase implements LinkBase {
 
-    public HashMap<Integer, Integer> outlinks;
-
     private double gama;
 
     private long N;
 
     public final static int iteration = 20;
 
+    public HashMap<Integer, Integer> docToTopic;
+
+    public HashMap<Integer, ArrayList<Integer>> docToTopicList;
+
+    public int curTop;
+
 
     public TopicSensitivePageRank(int row, int col){
         sparseMatrix = new SparseMatrix(row, col);
         N = Math.max(sparseMatrix.rows, sparseMatrix.columns);
+        docToTopic = new HashMap<Integer, Integer>();
+        docToTopicList = new HashMap<Integer, ArrayList<Integer>>();
     }
 
     public void setArguments(double alpha, double beta, double gama){
@@ -36,7 +43,6 @@ public class TopicSensitivePageRank extends LinkParentBase implements LinkBase {
     @Override
     public void run() {
         SparseVector r = new SparseVector();
-        //TODO: how big should this N be? Should it form a square matrix?
         for(int i = 0; i < N; i++){
             r.addEntry(i + 1, 1.0 / (N * 1.0));
         }
@@ -54,14 +60,14 @@ public class TopicSensitivePageRank extends LinkParentBase implements LinkBase {
     private SparseVector oneIteration(SparseMatrix matrix, SparseVector r){
         SparseVector returnVector = new SparseVector();
 
-        //TODO: reformalize this part
         for(int i = 0; i < N; i++){
             double temp = 0;
             Vector c = matrix.getRowVector(i);
             for (int j = 0; j < c.getNumElement(); j++) {
                 SparseEntry e = (SparseEntry) c.getEntry(j);
-                temp += e.value * ((SparseEntry) r.getEntry(e.id - 1)).value * beta;
-                temp += ((1 - beta) * 1.0) / (N * 1.0);
+                //TODO: change to topic selective teleporation matrix with gama proportion.
+                temp += e.value * ((SparseEntry) r.getEntry(e.id - 1)).value *alpha;
+                temp += ((beta) * 1.0) / (N * 1.0);
             }
             returnVector.addEntry(i, temp);
         }

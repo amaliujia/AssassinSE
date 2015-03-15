@@ -13,6 +13,7 @@ import java.util.Scanner;
 public class TopicSensitivePageRankBuilder {
     public static TopicSensitivePageRank createTSPageRank(TopicSensitivePRModel model){
         HashMap<Integer, Integer> outlinks = new HashMap<Integer, Integer>();
+        HashMap<Integer, Integer> docToTopic = new HashMap<Integer, Integer>();
         String path = model.matrixPath;
 
         Scanner scanner = null;
@@ -67,6 +68,26 @@ public class TopicSensitivePageRankBuilder {
         }
 
         pageRank.setArguments(model.alpha, model.beta, model.gama);
+
+        try{
+            scanner = new Scanner(new File(model.docTopics));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        while (scanner.hasNext()){
+            line = scanner.nextLine();
+            String[] cell = line.split(" ");
+            int t = Integer.parseInt(cell[1]);
+            //int d = Integer.parseInt(cell[0]);
+            if(docToTopic.containsKey(t)){
+                docToTopic.put(t, docToTopic.get(t) + 1);
+            }else{
+                docToTopic.put(t, 1);
+            }
+        }
+
+        pageRank.docToTopic = docToTopic;
+        pageRank.curTop = model.curTop;
 
         return pageRank;
     }
