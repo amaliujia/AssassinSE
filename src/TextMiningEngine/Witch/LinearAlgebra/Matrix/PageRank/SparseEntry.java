@@ -24,4 +24,9 @@ public class SparseEntry implements Entry {
     public void setValue(double v) {
         value = v;
     }
+
+    @Override
+    public int getId() {
+        return id;
+    }
 }

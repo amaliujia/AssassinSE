@@ -8,6 +8,7 @@ import TextMiningEngine.Witch.PageRank.PageRank.LinkBase;
 import TextMiningEngine.Witch.PageRank.PageRank.LinkParentBase;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -27,6 +28,7 @@ public class TopicSensitivePageRank extends LinkParentBase implements LinkBase {
 
     public int curTop;
 
+    public SparseVector topTel;
 
     public TopicSensitivePageRank(int row, int col){
         sparseMatrix = new SparseMatrix(row, col);
@@ -43,6 +45,8 @@ public class TopicSensitivePageRank extends LinkParentBase implements LinkBase {
     @Override
     public void run() {
         SparseVector r = new SparseVector();
+        topTel = createTopTel(curTop);
+
         for(int i = 0; i < N; i++){
             r.addEntry(i + 1, 1.0 / (N * 1.0));
         }
@@ -67,7 +71,11 @@ public class TopicSensitivePageRank extends LinkParentBase implements LinkBase {
                 SparseEntry e = (SparseEntry) c.getEntry(j);
                 //TODO: change to topic selective teleporation matrix with gama proportion.
                 temp += e.value * ((SparseEntry) r.getEntry(e.id - 1)).value *alpha;
-                temp += ((beta) * 1.0) / (N * 1.0);
+                temp += (beta * 1.0) / (N * 1.0);
+                for(int z = 0; z < topTel.size();  z++){
+                    int id =  topTel.getEntry(z).getId();
+                   temp = r.getEntry(id).getValue() * topTel.getEntry(z).getValue();
+                }
             }
             returnVector.addEntry(i, temp);
         }
@@ -81,5 +89,15 @@ public class TopicSensitivePageRank extends LinkParentBase implements LinkBase {
         }
 
         return returnVector;
+    }
+
+    private SparseVector createTopTel(int topic){
+        SparseVector c = new SparseVector();
+        ArrayList<Integer> t = docToTopicList.get(topic);
+        Collections.sort(t);
+        for(int i = 0; i < t.size(); i++){
+            c.addEntry(t.get(i), 1.0 / docToTopic.get(topic));
+        }
+        return c;
     }
 }

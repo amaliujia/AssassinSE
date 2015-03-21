@@ -34,4 +34,9 @@ public class SparseVector implements Vector {
     public void clear() {
         v.clear();
     }
+
+    @Override
+    public int size() {
+        return v.size();
+    }
 }

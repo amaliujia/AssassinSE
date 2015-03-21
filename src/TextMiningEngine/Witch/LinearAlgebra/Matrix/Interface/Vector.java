@@ -9,4 +9,6 @@ public interface Vector {
     public int getNumElement();
 
     public void clear();
+
+    public int size();
 }

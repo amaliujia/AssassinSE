@@ -7,4 +7,6 @@ public interface Entry {
     public double getValue();
 
     public void setValue(double v);
+
+    public int getId();
 }

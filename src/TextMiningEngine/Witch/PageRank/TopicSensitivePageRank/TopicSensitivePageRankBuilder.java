@@ -4,6 +4,7 @@ import SearchEngine.Assassin.RetrievalModel.TopicSensitivePRModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -14,6 +15,7 @@ public class TopicSensitivePageRankBuilder {
     public static TopicSensitivePageRank createTSPageRank(TopicSensitivePRModel model){
         HashMap<Integer, Integer> outlinks = new HashMap<Integer, Integer>();
         HashMap<Integer, Integer> docToTopic = new HashMap<Integer, Integer>();
+        HashMap<Integer, ArrayList<Integer>> docToTopicList = new HashMap<Integer, ArrayList<Integer>>();
         String path = model.matrixPath;
 
         Scanner scanner = null;
@@ -78,17 +80,25 @@ public class TopicSensitivePageRankBuilder {
             line = scanner.nextLine();
             String[] cell = line.split(" ");
             int t = Integer.parseInt(cell[1]);
-            //int d = Integer.parseInt(cell[0]);
+            int d = Integer.parseInt(cell[0]);
             if(docToTopic.containsKey(t)){
                 docToTopic.put(t, docToTopic.get(t) + 1);
             }else{
                 docToTopic.put(t, 1);
             }
+            ArrayList a;
+            if(docToTopicList.containsKey(t)){
+                a = docToTopicList.get(t);
+            }else{
+                a = new ArrayList<Integer>();
+            }
+            a.add(d);
+            docToTopicList.put(t, a);
         }
 
         pageRank.docToTopic = docToTopic;
         pageRank.curTop = model.curTop;
-
+        pageRank.docToTopicList = docToTopicList;
         return pageRank;
     }
 }

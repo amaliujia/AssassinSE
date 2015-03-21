@@ -116,7 +116,9 @@ public class QryEval {
             model = new LinkAnalysisModel();
         }else if(modelType.equals("QTSPR")){
             model = new TopicSensitivePRModel();
-        }else {
+        }else if(modelType.equals("Class")){
+            model = new ClassificationModel();
+        }else  {
             return;
         }
 
@@ -348,7 +350,9 @@ public class QryEval {
 
         }else if(model instanceof TopicSensitivePRModel){
             TopicSensitivePageRank tspr = TopicSensitivePageRankBuilder.createTSPageRank((TopicSensitivePRModel)model);
-            //tspr.run();
+            tspr.run();
+        }else if(model instanceof ClassificationModel){
+
         }else if(!params.containsKey("fb") || params.get("fb").equals("false")) { //normal search engine model
 
             for (int i = 0; i < keys.size(); i++) {
