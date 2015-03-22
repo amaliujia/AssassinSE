@@ -1,9 +1,9 @@
 package TextMiningEngine.Witch.PageRank.TopicSensitivePageRank;
 
+import TextMiningEngine.Witch.LinearAlgebra.Matrix.Interface.Vector;
 import TextMiningEngine.Witch.LinearAlgebra.Matrix.PageRank.SparseEntry;
 import TextMiningEngine.Witch.LinearAlgebra.Matrix.PageRank.SparseMatrix;
 import TextMiningEngine.Witch.LinearAlgebra.Matrix.PageRank.SparseVector;
-import TextMiningEngine.Witch.LinearAlgebra.Matrix.Interface.Vector;
 import TextMiningEngine.Witch.PageRank.PageRank.LinkBase;
 import TextMiningEngine.Witch.PageRank.PageRank.LinkParentBase;
 

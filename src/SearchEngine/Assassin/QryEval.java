@@ -2,7 +2,6 @@ package SearchEngine.Assassin;
 
 import SearchEngine.Assassin.DataStructure.SortEntity;
 import SearchEngine.Assassin.LearningToRank.SDLearningToRankEngine;
-import SearchEngine.Assassin.LearningToRank.SDLearningToRankPool;
 import SearchEngine.Assassin.Lucene.DocLengthStore;
 import SearchEngine.Assassin.Operators.*;
 import SearchEngine.Assassin.PesudoFeedback.SDPesudoFeedBackEngine;
