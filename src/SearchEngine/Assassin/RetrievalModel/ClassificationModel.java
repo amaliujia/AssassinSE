@@ -4,6 +4,9 @@ package SearchEngine.Assassin.RetrievalModel;
  * Created by amaliujia on 15-3-21.
  */
 public class ClassificationModel extends RetrievalModel {
+
+    public String algorithm;
+
     @Override
     public boolean setParameter(String parameterName, double value) {
         return false;
@@ -11,6 +14,11 @@ public class ClassificationModel extends RetrievalModel {
 
     @Override
     public boolean setParameter(String parameterName, String value) {
-        return false;
+        if(parameterName .equals("type")){
+            algorithm = value;
+        }else {
+            return false;
+        }
+        return true;
     }
 }
