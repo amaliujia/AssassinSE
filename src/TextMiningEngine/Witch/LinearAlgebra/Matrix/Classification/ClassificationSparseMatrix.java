@@ -65,4 +65,8 @@ public class ClassificationSparseMatrix implements Matrix {
     public Vector getRowVector(int i) {
         return rowVectors.get(i);
     }
+
+    public void addRowVector(ClassificationSparseVector v){
+        rowVectors.add(v);
+    }
 }

@@ -31,12 +31,12 @@ public class ClassificationSparseVector implements Vector {
 
     @Override
     public void clear() {
-
+      v.clear();
     }
 
     @Override
     public int size() {
-        return 0;
+        return v.size();
     }
 
     @Override

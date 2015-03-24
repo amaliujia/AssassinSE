@@ -3,6 +3,7 @@ package TextMiningEngine.Witch.Classification.Factory;
 import TextMiningEngine.Witch.Classification.Base.ClassificationAlgorithm;
 import TextMiningEngine.Witch.Classification.Logistic.LogisticAlgorithm;
 import TextMiningEngine.Witch.LinearAlgebra.Matrix.Classification.ClassificationSparseMatrix;
+import TextMiningEngine.Witch.LinearAlgebra.Matrix.Classification.ClassificationSparseVector;
 import TextMiningEngine.Witch.LinearAlgebra.Matrix.PageRank.SparseMatrix;
 
 import java.io.File;
@@ -26,6 +27,8 @@ public class AlgorithmFactory {
     private LogisticAlgorithm createLogistic(HashMap<String, String> params){
         LogisticAlgorithm lo = new LogisticAlgorithm();
 
+        lo.sparseMatrix = buildInputSpace(params.get(""));
+
         return lo;
     }
 
@@ -44,8 +47,26 @@ public class AlgorithmFactory {
         while (scanner.hasNext()){
             line = scanner.nextLine();
             String[] ss = line.split(" ");
-            ClassificationSparseMatrix
+            if(ss.length <= 1){
+                continue;
+            }
+            ClassificationSparseVector v = new ClassificationSparseVector();
+            v.label = Integer.parseInt(ss[0]);
+
+            for(int i = 1; i < ss.length; i++){
+                String[] sss = ss[i].split(":");
+                if(sss.length != 2){
+                    continue;
+                }
+                v.addEntry(Integer.parseInt(sss[0]), Double.parseDouble(sss[1]));
+            }
+
+            if(v.size() == 0){
+                continue;
+            }
+            m.addRowVector(v);
         }
-        return null;
+
+        return m;
     }
 }
