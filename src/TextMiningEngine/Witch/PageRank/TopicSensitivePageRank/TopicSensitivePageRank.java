@@ -52,7 +52,9 @@ public class TopicSensitivePageRank extends LinkParentBase implements LinkBase {
         }
         for(int i = 0; i < iteration; i++){
             r = oneIteration(sparseMatrix, r);
+            System.out.println("Finish " + i + " iteration...");
         }
+        System.out.println("Finished");
     }
 
     /**
@@ -69,24 +71,30 @@ public class TopicSensitivePageRank extends LinkParentBase implements LinkBase {
             Vector c = matrix.getRowVector(i);
             for (int j = 0; j < c.getNumElement(); j++) {
                 SparseEntry e = (SparseEntry) c.getEntry(j);
-                //TODO: change to topic selective teleporation matrix with gama proportion.
                 temp += e.value * ((SparseEntry) r.getEntry(e.id - 1)).value *alpha;
+
+                // still need identical matrix with 1/n to converge.
+                // also for little chance to jump to other topics
                 temp += (beta * 1.0) / (N * 1.0);
+
+                //compute topic sensitive score.
+                //Based on for topics
+                //TODO:
                 for(int z = 0; z < topTel.size();  z++){
                     int id =  topTel.getEntry(z).getId();
-                   temp = r.getEntry(id).getValue() * topTel.getEntry(z).getValue();
+                    temp += gama * r.getEntry(id).getValue() * topTel.getEntry(z).getValue();
                 }
             }
             returnVector.addEntry(i, temp);
         }
         //renormalize
-        double s = 0;
-        for(int i = 0; i < returnVector.getNumElement(); i++){
-            s += returnVector.getEntry(i).getValue();
-        }
-        for(int i = 0; i < returnVector.getNumElement(); i++) {
-            returnVector.getEntry(i).setValue(returnVector.getEntry(i).getValue() + ((1.0 - s) / (N * 1.0)));
-        }
+//        double s = 0;
+//        for(int i = 0; i < returnVector.getNumElement(); i++){
+//            s += returnVector.getEntry(i).getValue();
+//        }
+//        for(int i = 0; i < returnVector.getNumElement(); i++) {
+//            returnVector.getEntry(i).setValue(returnVector.getEntry(i).getValue() + ((1.0 - s) / (N * 1.0)));
+//        }
 
         return returnVector;
     }

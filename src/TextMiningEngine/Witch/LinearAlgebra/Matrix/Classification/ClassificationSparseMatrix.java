@@ -2,7 +2,6 @@ package TextMiningEngine.Witch.LinearAlgebra.Matrix.Classification;
 
 import TextMiningEngine.Witch.LinearAlgebra.Matrix.Interface.Matrix;
 import TextMiningEngine.Witch.LinearAlgebra.Matrix.Interface.Vector;
-import TextMiningEngine.Witch.LinearAlgebra.Matrix.PageRank.SparseVector;
 
 import java.util.ArrayList;
 import java.util.List;

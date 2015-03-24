@@ -11,10 +11,13 @@ public class LogisticAlgorithm extends ClassificationAlgorithm {
 
     public Matrix sparseMatrix;
 
+    public Matrix testMatrix;
+
     public Vector weights;
 
     @Override
     public void run() {
-
+        System.out.println("Got here");
     }
+
 }

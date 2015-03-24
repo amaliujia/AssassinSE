@@ -208,7 +208,8 @@ public class QryEval {
             TopicSensitivePageRank tspr = TopicSensitivePageRankBuilder.createTSPageRank((TopicSensitivePRModel)model);
             tspr.run();
         }else if(model instanceof ClassificationModel){
-            ClassificationAlgorithm classificationAlgorithm = AlgorithmFactory.create(((ClassificationModel) model).algorithm);
+            AlgorithmFactory factory = new AlgorithmFactory();
+            ClassificationAlgorithm classificationAlgorithm = factory.create(((ClassificationModel)model).algorithm, params);
             classificationAlgorithm.run();
         }else if(!params.containsKey("fb") || params.get("fb").equals("false")) { //normal search engine model
 

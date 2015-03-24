@@ -3,6 +3,7 @@ package TextMiningEngine.Witch.LinearAlgebra.Matrix.Classification;
 import TextMiningEngine.Witch.LinearAlgebra.Matrix.Interface.Entry;
 import TextMiningEngine.Witch.LinearAlgebra.Matrix.Interface.Vector;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +18,7 @@ public class ClassificationSparseVector implements Vector {
 
     public ClassificationSparseVector(){
         label = -1;
+        v = new ArrayList<Entry>();
     }
 
     @Override

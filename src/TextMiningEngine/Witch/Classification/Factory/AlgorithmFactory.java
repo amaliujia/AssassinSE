@@ -4,11 +4,11 @@ import TextMiningEngine.Witch.Classification.Base.ClassificationAlgorithm;
 import TextMiningEngine.Witch.Classification.Logistic.LogisticAlgorithm;
 import TextMiningEngine.Witch.LinearAlgebra.Matrix.Classification.ClassificationSparseMatrix;
 import TextMiningEngine.Witch.LinearAlgebra.Matrix.Classification.ClassificationSparseVector;
-import TextMiningEngine.Witch.LinearAlgebra.Matrix.PageRank.SparseMatrix;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -16,7 +16,7 @@ import java.util.Scanner;
  */
 public class AlgorithmFactory {
 
-    public ClassificationAlgorithm create(String type, HashMap<String, String> params) {
+    public ClassificationAlgorithm create(String type, Map<String, String> params) {
         if(type.equals("logistic")){
             return createLogistic(params);
         }
@@ -24,10 +24,11 @@ public class AlgorithmFactory {
     }
 
 
-    private LogisticAlgorithm createLogistic(HashMap<String, String> params){
+    private LogisticAlgorithm createLogistic(Map<String, String> params){
         LogisticAlgorithm lo = new LogisticAlgorithm();
 
-        lo.sparseMatrix = buildInputSpace(params.get(""));
+        lo.sparseMatrix = buildInputSpace(params.get("Css:train"));
+        lo.testMatrix = buildInputSpace(params.get("Css:test"));
 
         return lo;
     }
