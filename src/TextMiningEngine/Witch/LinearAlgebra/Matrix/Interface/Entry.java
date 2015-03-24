@@ -9,4 +9,5 @@ public interface Entry {
     public void setValue(double v);
 
     public int getId();
+
 }
