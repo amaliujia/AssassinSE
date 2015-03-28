@@ -21,6 +21,11 @@ public class SparseVector implements Vector {
     }
 
     @Override
+    public double dotproduct(Vector v) {
+        return 0;
+    }
+
+    @Override
     public Entry getEntry(int i) {
         return v.get(i);
     }

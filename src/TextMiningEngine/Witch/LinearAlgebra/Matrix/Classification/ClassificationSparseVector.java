@@ -46,4 +46,23 @@ public class ClassificationSparseVector implements Vector {
         v.add(new ClassificationEntry(col, value));
     }
 
+
+    public void setEntry(int i, double value){
+        v.get(i).setValue(value);
+    }
+
+    @Override
+    public double dotproduct(Vector v) {
+        if(this.size() < v.size()){
+            return v.dotproduct(this);
+        }
+
+        double temp = 0.0;
+        for(int i = 0; i < v.size(); i++){
+            Entry e = v.getEntry(i);
+            temp += this.v.get(e.getId()).getValue() * e.getValue();
+        }
+        return temp;
+    }
+
 }

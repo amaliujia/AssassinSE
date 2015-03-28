@@ -25,16 +25,6 @@ public class ClassificationSparseMatrix implements Matrix {
         columns = 0;
     }
 
-//    public ClassificationSparseMatrix(int row, int col){
-//        rows = row;
-//        columns = col;
-//        N = Math.max(rows, columns);
-//        rowVectors = new ArrayList<ClassificationSparseVector>();
-//        for(int i = 0; i < N; i++){
-//            rowVectors.add(new ClassificationSparseVector());
-//        }
-//    }
-
     @Override
     public Matrix mulMatrix(Matrix matrix) {
         return null;

@@ -7,7 +7,6 @@ import TextMiningEngine.Witch.LinearAlgebra.Matrix.Classification.Classification
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 

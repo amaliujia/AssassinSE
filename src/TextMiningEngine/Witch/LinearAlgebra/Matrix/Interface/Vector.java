@@ -13,4 +13,6 @@ public interface Vector {
     public int size();
 
     public void addEntry(int col, double value);
+
+    public double dotproduct(Vector v);
 }
