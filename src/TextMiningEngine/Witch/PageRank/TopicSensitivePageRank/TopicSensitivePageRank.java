@@ -57,6 +57,17 @@ public class TopicSensitivePageRank extends LinkParentBase implements LinkBase {
         System.out.println("Finished");
     }
 
+    private double sumTopicVec(){
+        int id;
+        double temp = 0.0;
+        for(int z = 0; z < topTel.size(); z++){
+            id = topTel.getEntry(z).getId();
+            temp += topTel.getEntry(z).getValue();
+        }
+
+        return temp;
+    }
+
     /**
      *
      * @param matrix
@@ -80,10 +91,11 @@ public class TopicSensitivePageRank extends LinkParentBase implements LinkBase {
                 //compute topic sensitive score.
                 //Based on for topics
                 //TODO:
-                for(int z = 0; z < topTel.size();  z++){
-                    int id =  topTel.getEntry(z).getId();
-                    temp += gama * r.getEntry(id).getValue() * topTel.getEntry(z).getValue();
-                }
+//                for(int z = 0; z < topTel.size();  z++){
+//                    int id =  topTel.getEntry(z).getId();
+//                    temp += gama * r.getEntry(id).getValue() * topTel.getEntry(z).getValue();
+//                }
+                temp += gama * 1/50 * sumTopicVec();
             }
             returnVector.addEntry(i, temp);
         }
