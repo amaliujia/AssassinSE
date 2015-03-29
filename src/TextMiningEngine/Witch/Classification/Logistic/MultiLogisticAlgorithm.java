@@ -25,11 +25,11 @@ public class MultiLogisticAlgorithm extends ClassificationAlgorithm {
 
     public List<Vector> weights;
 
-    private double rate = 0.1;
+    private double rate = 0.05;
 
     public TreeSet<Integer> labels;
 
-    private double dis = 1e-10;
+    private double dis = 1e-3;
 
     private List<Vector> wh = null;
 
