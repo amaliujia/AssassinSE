@@ -125,3 +125,5 @@ SVM/*
 output/standard.txt
 
 query/BM25
+
+Model/mlogistic.model

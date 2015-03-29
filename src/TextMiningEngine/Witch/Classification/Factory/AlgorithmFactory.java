@@ -8,7 +8,9 @@ import TextMiningEngine.Witch.LinearAlgebra.Matrix.Classification.Classification
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.TreeSet;
 
 /**
  * Created by amaliujia on 15-3-21.
