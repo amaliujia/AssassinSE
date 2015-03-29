@@ -42,7 +42,7 @@ public class ClassificationSparseMatrix implements Matrix {
 
     @Override
     public long getRowDimension() {
-        return rows;
+        return rowVectors.size();
     }
 
     @Override
@@ -57,5 +57,6 @@ public class ClassificationSparseMatrix implements Matrix {
 
     public void addRowVector(ClassificationSparseVector v){
         rowVectors.add(v);
+        rows++;
     }
 }

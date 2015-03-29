@@ -30,4 +30,21 @@ public class ClassificationEntry implements Entry {
     public int getId() {
         return id;
     }
+
+    @Override
+    public int setId(int id) {
+        this.id = id;
+        return 0;
+    }
+
+    @Override
+    public double norm() {
+        return 0;
+    }
+
+    @Override
+    public Entry copy() {
+        Entry e = new ClassificationEntry(this.id, this.value);
+        return e;
+    }
 }

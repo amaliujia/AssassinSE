@@ -10,4 +10,10 @@ public interface Entry {
 
     public int getId();
 
+    public int setId(int id);
+
+    public double norm();
+
+    public Entry copy();
+
 }

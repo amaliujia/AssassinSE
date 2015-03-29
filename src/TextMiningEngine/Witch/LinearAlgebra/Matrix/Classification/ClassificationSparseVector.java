@@ -23,7 +23,7 @@ public class ClassificationSparseVector implements Vector {
 
     @Override
     public Entry getEntry(int i) {
-        return null;
+        return v.get(i);
     }
 
     @Override
@@ -63,6 +63,30 @@ public class ClassificationSparseVector implements Vector {
             temp += this.v.get(e.getId()).getValue() * e.getValue();
         }
         return temp;
+    }
+
+    @Override
+    public double norm() {
+        double temp = 0;
+        for (int i = 0; i < v.size(); i++){
+            temp += Math.pow(v.get(i).getValue(), 2);
+        }
+
+        return Math.sqrt(temp);
+    }
+
+    @Override
+    public Vector copy() {
+        Vector vt = new ClassificationSparseVector();
+        for(int i = 0; i < v.size(); i++){
+            vt.addEntry(v.get(i).copy());
+        }
+        return vt;
+    }
+
+    @Override
+    public void addEntry(Entry e) {
+        v.add(e);
     }
 
 }

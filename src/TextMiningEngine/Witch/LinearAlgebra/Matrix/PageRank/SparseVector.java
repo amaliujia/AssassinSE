@@ -26,6 +26,21 @@ public class SparseVector implements Vector {
     }
 
     @Override
+    public double norm() {
+        return 0;
+    }
+
+    @Override
+    public Vector copy() {
+        return null;
+    }
+
+    @Override
+    public void addEntry(Entry e) {
+
+    }
+
+    @Override
     public Entry getEntry(int i) {
         return v.get(i);
     }

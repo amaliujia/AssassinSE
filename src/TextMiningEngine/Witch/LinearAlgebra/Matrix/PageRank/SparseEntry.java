@@ -29,4 +29,19 @@ public class SparseEntry implements Entry {
     public int getId() {
         return id;
     }
+
+    @Override
+    public int setId(int id) {
+        return 0;
+    }
+
+    @Override
+    public double norm() {
+        return 0;
+    }
+
+    @Override
+    public Entry copy() {
+        return null;
+    }
 }
