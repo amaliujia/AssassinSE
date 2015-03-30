@@ -15,6 +15,7 @@ Description
 
 AssassinSE is a text-based search engine. It defines its own query operators and implements different kinds of models, like boolean retrieval model, Okapi BM25 model and language statistic model. In addition, unsupervised pseudo relevance feedback and query expansion has been utilized to improve performance of this search engine. Furthermore, AssassinSE uses learning to rank (more specifically, SVM) to do relevance analyze.
 
+Then, based on this engine, I develop a text mining framework - WitchKit, which implements common text mining algorithms, like Clustering, Link Analysis, Classification, Recommendation, Learning to Rank, etc. 
 
 Milestones
 ==========
@@ -49,6 +50,13 @@ Milestones
 15. PageRank 
 
 16. Topic Sensitive Page Rank
+
+17. Binary Logistic Regression
+
+18. Multi-class Logistic Regression
+
+19. Parallel Linear Algebra Library
+
 
 Copyright
 =======
