@@ -28,17 +28,15 @@ public class AlgorithmFactory {
         return null;
     }
 
-
     private MultiLogisticAlgorithm createMultiLogistic(Map<String, String> params){
         MultiLogisticAlgorithm lo = new MultiLogisticAlgorithm();
         lo.sparseMatrix = buildInputSpace(params.get("Css:train"));
         lo.testMatrix = buildInputSpace(params.get("Css:test"));
         lo.labels = buildLabelSet(params.get("Css:train"));
 
-        lo.dimension = dimension;
+        lo.dimension = dimension + 1;
         return lo;
     }
-
 
     private BinaryLogisticAlgorithm createLogistic(Map<String, String> params){
         BinaryLogisticAlgorithm lo = new BinaryLogisticAlgorithm();
@@ -46,7 +44,7 @@ public class AlgorithmFactory {
         lo.sparseMatrix = buildInputSpace(params.get("Css:train"));
         lo.testMatrix = buildInputSpace(params.get("Css:test"));
 
-        lo.dimension = dimension;
+        lo.dimension = dimension + 1;
         return lo;
     }
 
@@ -96,6 +94,7 @@ public class AlgorithmFactory {
             }
             ClassificationSparseVector v = new ClassificationSparseVector();
             v.label = Integer.parseInt(ss[0]);
+            v.addEntry(0, -1);
 
             for(int i = 1; i < ss.length; i++){
                 String[] sss = ss[i].split(":");
@@ -113,7 +112,6 @@ public class AlgorithmFactory {
             }
             m.addRowVector(v);
         }
-
         return m;
     }
 }
