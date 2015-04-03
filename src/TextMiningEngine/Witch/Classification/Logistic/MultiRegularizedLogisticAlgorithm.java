@@ -15,9 +15,10 @@ import java.util.Random;
 import java.util.TreeSet;
 
 /**
- * Created by amaliujia on 15-3-28.
+ * Created by amaliujia on 15-3-30.
  */
-public class MultiLogisticAlgorithm extends ClassificationAlgorithm {
+public class MultiRegularizedLogisticAlgorithm extends ClassificationAlgorithm {
+
 
     public Matrix sparseMatrix;
 
@@ -29,11 +30,15 @@ public class MultiLogisticAlgorithm extends ClassificationAlgorithm {
 
     public TreeSet<Integer> labels;
 
-    private double dis = 1e-3;
+    private double dis = 1e-5;
+
+    private final double C = 1;
+
+
 
     private List<Vector> wh = null;
 
-    public MultiLogisticAlgorithm(){
+    public MultiRegularizedLogisticAlgorithm(){
         weights = new ArrayList<Vector>();
         labels = new TreeSet<Integer>();
 
@@ -50,12 +55,11 @@ public class MultiLogisticAlgorithm extends ClassificationAlgorithm {
 
     @Override
     public void run() {
-       for(int i = 0; i < labels.size(); i++){
-           weights.add(createRandomWeights());
-       }
+        for(int i = 0; i < labels.size(); i++){
+            weights.add(createRandomWeights());
+        }
 
         ParallelGradientDescent();
-        //GradientDescent();
         try {
             writeModle();
         } catch (IOException e) {
@@ -70,7 +74,7 @@ public class MultiLogisticAlgorithm extends ClassificationAlgorithm {
         Thread threads[] = new Thread[labels.size()];
         int i = 0;
         for(Integer t : labels){
-           threads[i] = new Thread(new graientDescentThread(t, i, weights.get(i)));
+            threads[i] = new Thread(new graientDescentThread(t, i, weights.get(i)));
             threads[i].start();
             //System.out.println(t);
             i++;
@@ -84,32 +88,6 @@ public class MultiLogisticAlgorithm extends ClassificationAlgorithm {
         }
     }
 
-    /**
-     *
-     */
-    private void GradientDescent(){
-       //for(int i = 0; i < 10000; i++){
-        int i = 0;
-        while(true) {
-            for (int j = 0; j < sparseMatrix.getRowDimension(); j++) {
-                Vector v = sparseMatrix.getRowVector(j);
-                int count = 0;
-                for (Integer t : labels) {
-                    trainOneLabel(t, v, weights.get(count));
-                    count += 1;
-                }
-            }
-            i++;
-            if(i % 1000 == 0){
-                System.out.println("Finish iteration " + i);
-            }
-            if (ifConverge()) {
-                break;
-            }
-        }
-       //}
-        System.out.println("Finsh iteration ");
-    }
 
     /**
      *
@@ -136,7 +114,7 @@ public class MultiLogisticAlgorithm extends ClassificationAlgorithm {
     private List<Vector> copyWeight(){
         List l = new ArrayList<Vector>();
         for(int i = 0; i < weights.size(); i++){
-           l.add(weights.get(i).copy());
+            l.add(weights.get(i).copy());
         }
         return l;
     }
@@ -147,7 +125,7 @@ public class MultiLogisticAlgorithm extends ClassificationAlgorithm {
      */
     private boolean ifConverge(){
         if(this.wh == null){
-           wh = copyWeight();
+            wh = copyWeight();
             return false;
         }
         for(int i = 0; i < wh.size(); i++){
@@ -184,9 +162,7 @@ public class MultiLogisticAlgorithm extends ClassificationAlgorithm {
             double f = err * v.getEntry(p).getValue() * rate + d;
             ((ClassificationSparseVector)weights).setEntry(id, f);
         }
-
     }
-
 
     /**
      *
@@ -201,7 +177,7 @@ public class MultiLogisticAlgorithm extends ClassificationAlgorithm {
         private Vector wt = null;
 
         public graientDescentThread(int l, int i, Vector w){
-           label = l;
+            label = l;
             index = i;
             ws = w;
         }
@@ -212,12 +188,13 @@ public class MultiLogisticAlgorithm extends ClassificationAlgorithm {
             while(true) {
                 for (int j = 0; j < sparseMatrix.getRowDimension(); j++) {
                     Vector v = sparseMatrix.getRowVector(j);
-                    trainOneLabelThread(label, v, ws);
+                     trainOneLabelThread(label, v, ws);
+
                 }
                 i++;
                 if(i % 1000 == 0){
                     System.out.println("Thread " + index + " in iteration " + i + " with distance " +
-                                        Math.abs(this.wt.norm() - this.ws.norm()));
+                            Math.abs(this.wt.norm() - this.ws.norm()));
                 }
 
                 if (ifConvergeThread()) {
@@ -231,12 +208,12 @@ public class MultiLogisticAlgorithm extends ClassificationAlgorithm {
                 this.wt = this.ws.copy();
                 return false;
             }
-           // for(int i = 0; i < wh.size(); i++){
-                if(Math.abs(this.wt.norm() - this.ws.norm()) > dis){
-                    //System.out.println(Math.abs(wh.get(i).norm() - weights.get(i).norm()));
-                    this.wt = ws.copy();
-                    return false;
-                }
+            // for(int i = 0; i < wh.size(); i++){
+            if(Math.abs(this.wt.norm() - this.ws.norm()) > dis){
+                //System.out.println(Math.abs(wh.get(i).norm() - weights.get(i).norm()));
+                this.wt = ws.copy();
+                return false;
+            }
             //}
             return true;
         }
@@ -262,9 +239,14 @@ public class MultiLogisticAlgorithm extends ClassificationAlgorithm {
                 int id = v.getEntry(p).getId();
                 double d = weights.getEntry(id).getValue();
                 double f = err * v.getEntry(p).getValue() * rate + d;
+                f += C * d;
                 ((ClassificationSparseVector)weights).setEntry(id, f);
+//                if(err * v.getEntry(p).getValue() * rate < dis){
+//                    return true;
+//                }
+//                System.out.println(err * v.getEntry(p).getValue());
             }
-
+           // return false;
         }
     }
 }

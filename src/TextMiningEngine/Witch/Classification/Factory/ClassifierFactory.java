@@ -1,69 +1,42 @@
 package TextMiningEngine.Witch.Classification.Factory;
 
-import TextMiningEngine.Witch.Classification.Base.ClassificationAlgorithm;
-import TextMiningEngine.Witch.Classification.Logistic.BinaryLogisticAlgorithm;
-import TextMiningEngine.Witch.Classification.Logistic.MultiLogisticAlgorithm;
-import TextMiningEngine.Witch.Classification.Logistic.MultiRegularizedLogisticAlgorithm;
+import TextMiningEngine.Witch.Classification.Base.Classifier;
+import TextMiningEngine.Witch.Classification.Classifier.MultiClassLogisticClassifier;
 import TextMiningEngine.Witch.LinearAlgebra.Matrix.Classification.ClassificationSparseMatrix;
 import TextMiningEngine.Witch.LinearAlgebra.Matrix.Classification.ClassificationSparseVector;
+import TextMiningEngine.Witch.LinearAlgebra.Matrix.Interface.Vector;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.TreeSet;
 
 /**
- * Created by amaliujia on 15-3-21.
+ * Created by amaliujia on 15-4-3.
  */
-public class AlgorithmFactory {
+public class ClassifierFactory {
 
     private int dimension = 0;
 
-    public ClassificationAlgorithm create(String type, Map<String, String> params) {
-        if(type.equals("logistic")){
-            return createLogistic(params);
-        }else if(type.equals("mlogistic")){
-            return createMultiLogistic(params);
-        }else if(type.equals("rmlogistic")){
-            return creatMultiRegularizedLogistic(params);
+    public Classifier create(String type, Map<String, String> params) {
+        if (type.equals("rmlogistic")) {
+            return createMultiRegularizedLogisticClassifier(params);
         }
         return null;
     }
 
-    private MultiRegularizedLogisticAlgorithm creatMultiRegularizedLogistic(Map<String, String> params){
-        MultiRegularizedLogisticAlgorithm lo = new MultiRegularizedLogisticAlgorithm();
-        lo.sparseMatrix = buildInputSpace(params.get("Css:train"));
-        //lo.testMatrix = buildInputSpace(params.get("Css:test"));
-        lo.labels = buildLabelSet(params.get("Css:train"));
+    public Classifier createMultiRegularizedLogisticClassifier(Map<String, String> params){
+        MultiClassLogisticClassifier lo = new MultiClassLogisticClassifier();
 
-        lo.dimension = dimension + 1;
-        return lo;
-    }
-
-
-    private MultiLogisticAlgorithm createMultiLogistic(Map<String, String> params){
-        MultiLogisticAlgorithm lo = new MultiLogisticAlgorithm();
-        lo.sparseMatrix = buildInputSpace(params.get("Css:train"));
-        //lo.testMatrix = buildInputSpace(params.get("Css:test"));
-        lo.labels = buildLabelSet(params.get("Css:train"));
-
-        lo.dimension = dimension + 1;
-        return lo;
-    }
-
-    private BinaryLogisticAlgorithm createLogistic(Map<String, String> params){
-        BinaryLogisticAlgorithm lo = new BinaryLogisticAlgorithm();
-
-        lo.sparseMatrix = buildInputSpace(params.get("Css:train"));
         lo.testMatrix = buildInputSpace(params.get("Css:test"));
-
-        lo.dimension = dimension + 1;
+        lo.model = buildModel(params.get("Css:model"));
         return lo;
+
     }
 
-    private TreeSet<Integer> buildLabelSet(String path){
-        TreeSet<Integer> s = new TreeSet<Integer>();
+    private ArrayList<Vector> buildModel(String path){
+        ArrayList<Vector> re = new ArrayList<Vector>();
 
         Scanner scanner = null;
 
@@ -77,16 +50,21 @@ public class AlgorithmFactory {
         while (scanner.hasNext()){
             line = scanner.nextLine();
             String[] ss = line.split(" ");
-            if(ss.length <= 1){
+            if(ss.length <= 2){
                 continue;
             }
-            int label = Integer.parseInt(ss[0]);
-            if (!s.contains(label)){
-               s.add(label);
+            ClassificationSparseVector v = new ClassificationSparseVector();
+            v.label = Integer.parseInt(ss[0]);
+            int dimension = Integer.parseInt(ss[1]);
+            for(int i = 0; i < dimension; i++){
+              v.addEntry(i, Double.parseDouble(ss[2 + i]));
             }
+            re.add(v);
         }
-        return s;
+
+        return re;
     }
+
 
     private ClassificationSparseMatrix buildInputSpace(String path){
         ClassificationSparseMatrix m = new ClassificationSparseMatrix();
@@ -128,4 +106,5 @@ public class AlgorithmFactory {
         }
         return m;
     }
+
 }

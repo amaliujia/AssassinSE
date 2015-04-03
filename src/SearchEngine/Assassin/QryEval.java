@@ -9,7 +9,9 @@ import SearchEngine.Assassin.RetrievalModel.*;
 import SearchEngine.Assassin.Util.DataCenter;
 import SearchEngine.Assassin.Util.Util;
 import TextMiningEngine.Witch.Classification.Base.ClassificationAlgorithm;
+import TextMiningEngine.Witch.Classification.Base.Classifier;
 import TextMiningEngine.Witch.Classification.Factory.AlgorithmFactory;
+import TextMiningEngine.Witch.Classification.Factory.ClassifierFactory;
 import TextMiningEngine.Witch.Clustering.BipartiteClustering;
 import TextMiningEngine.Witch.PageRank.PageRank.LinkAnalysisEngine;
 import TextMiningEngine.Witch.PageRank.TopicSensitivePageRank.TopicSensitivePageRank;
@@ -120,7 +122,9 @@ public class QryEval {
             model = new TopicSensitivePRModel();
         }else if(modelType.equals("Class")){
             model = new ClassificationModel();
-        }else  {
+        }else if(modelType.equals("Classi")) {
+            model = new ClassifierModel();
+        }else{
             return;
         }
 
@@ -157,6 +161,8 @@ public class QryEval {
             model.setParameter("gama",Double.parseDouble(params.get("TSPR:gama")));
             model.setParameter("top", (double)Integer.parseInt(params.get("TSPR:curTop")));
         }else if(model instanceof ClassificationModel){
+            model.setParameter("type", params.get("Css:type"));
+        }else if(model instanceof ClassifierModel){
             model.setParameter("type", params.get("Css:type"));
         }
 
@@ -211,6 +217,11 @@ public class QryEval {
             AlgorithmFactory factory = new AlgorithmFactory();
             ClassificationAlgorithm classificationAlgorithm = factory.create(((ClassificationModel)model).algorithm, params);
             classificationAlgorithm.run();
+        }else if(model instanceof ClassifierModel){
+            ClassifierFactory factory = new ClassifierFactory();
+            Classifier classifier = factory.create(((ClassifierModel)model).algorithm, params);
+            classifier.classify();
+
         }else if(!params.containsKey("fb") || params.get("fb").equals("false")) { //normal search engine model
 
             for (int i = 0; i < keys.size(); i++) {
