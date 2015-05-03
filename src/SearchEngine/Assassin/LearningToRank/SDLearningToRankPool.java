@@ -397,9 +397,6 @@ public class SDLearningToRankPool {
         // build vocabulary
         HashMap<String, Double> vocabulary = new HashMap<String, Double>();
 
-        if(docid == 272352) {
-            System.out.println();
-        }
         for(int j = 0; j < v.stemsLength(); j++) {
             String stem = v.stemString(j);
             if(stem != null && !vocabulary.containsKey(stem)) {
