@@ -127,3 +127,15 @@ output/standard.txt
 query/BM25
 
 Model/mlogistic.model
+
+*.gz
+
+*.tre
+
+*.warc
+
+index/*
+
+index3/*
+
+Resources/*
