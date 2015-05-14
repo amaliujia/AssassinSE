@@ -219,7 +219,10 @@ public class IndexTrec {
 		 *  Add metadata fields.
 		 */
 		doc.add (new StringField ("externalId", d.getName(), Field.Store.YES));
-		doc.add (new StringField ("date", d.getDate(), Field.Store.YES));
+            String data = d.getDate();
+            if(data != null) {
+                doc.add(new StringField("date", d.getDate(), Field.Store.YES));
+            }
 
 		/*
 		 *  Add the content fields.  Specify a Reader, so that the text is

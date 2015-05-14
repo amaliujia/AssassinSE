@@ -156,7 +156,7 @@ public class reformat {
 	      break;
 	    else if (!clueLine.equals ("WARC/0.18"))
 	        //System.out.println (clueLine);
-            rdrInlinks.write(clueLine);
+            rdrInlinks.write(clueLine + "\n");
 	    else {
 	        rdrClueWarc.reset ();
             clueLineNo--;
