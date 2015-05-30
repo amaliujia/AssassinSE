@@ -21,53 +21,55 @@ import java.io.*;
 import java.lang.Integer;
 
 /**
- *  @author Jamie Callan
+ * @author Jamie Callan
  */
 public class reformat {
 
   static int inlinkLineNo = 0;
-  static String inlinkDocid=null;
+  static String inlinkDocid = null;
 
-  public static void main (String[] args) throws IOException {
+  public static void main(String[] args) throws IOException {
 
     String clueLine = null;
     int clueLineNo = 0;
     String docid;
 
     if (args.length < 2) {
-      System.err.println ("Usage:  " + System.getProperty("sun.java.command")
-			  + " warcFile outFile");
+      System.err.println("Usage:  " + System.getProperty("sun.java.command")
+              + " warcFile outFile");
       return;
     }
 
-    BufferedReader rdrClueWarc = new BufferedReader (new FileReader (args[0]));
-    BufferedWriter rdrInlinks = new BufferedWriter (new FileWriter (args[1]));
+    BufferedReader rdrClueWarc = new BufferedReader(new FileReader(args[0]));
+    BufferedWriter rdrInlinks = new BufferedWriter(new FileWriter(args[1]));
 
     /*
      *  Skip the WARC file header.
      */
     clueLine = rdrClueWarc.readLine();
-    clueLineNo ++;
+    clueLineNo++;
 
     while (true) {
-      rdrClueWarc.mark (10*1024);
+      rdrClueWarc.mark(10 * 1024);
 
       clueLine = rdrClueWarc.readLine();
       clueLineNo++;
 
-      if (clueLine.equals ("WARC/0.18")) {
-	    rdrClueWarc.reset ();
-	    clueLineNo--;
-	    break;
-      };
-    };
+      if (clueLine.equals("WARC/0.18")) {
+        rdrClueWarc.reset();
+        clueLineNo--;
+        break;
+      }
+      ;
+    }
+    ;
 
     /*
      *  Each pass of this loop reads one document from the ClueWeb
      *  WARC file.
      */
     while (true) {
-      
+
       docid = null;
 
       /*
@@ -77,10 +79,9 @@ public class reformat {
       clueLineNo++;
 
       if (clueLine == null)
-	      break;
-      else
-	      if (! clueLine.equals ("WARC/0.18"))
-	          throw (new IOException ("WARC file error at line " + clueLineNo + "."));
+        break;
+      else if (!clueLine.equals("WARC/0.18"))
+        throw (new IOException("WARC file error at line " + clueLineNo + "."));
 
       //System.out.println ("<DOC>");
       rdrInlinks.write("<DOC>\n");
@@ -88,26 +89,26 @@ public class reformat {
        *  The document's WARC header.
        */
       while (true) {
-	    clueLine = rdrClueWarc.readLine ();
-	    clueLineNo++;
+        clueLine = rdrClueWarc.readLine();
+        clueLineNo++;
 
-	    if (clueLine.startsWith ("WARC-TREC-ID: ")) {
-	      docid = clueLine.substring ("WARC-TREC-ID: ".length());
-	      //System.out.println ("<DOCNO> " + docid + " </DOCNO>");
+        if (clueLine.startsWith("WARC-TREC-ID: ")) {
+          docid = clueLine.substring("WARC-TREC-ID: ".length());
+          //System.out.println ("<DOCNO> " + docid + " </DOCNO>");
           rdrInlinks.write("<DOCNO> " + docid + " </DOCNO>\n");
-	    } else if (clueLine.startsWith ("WARC-Target-URI: ")) {
-            //System.out.println("<DOCURL> " +  clueLine.substring("WARC-Target-URI: ".length()) + " </DOCURL>");
-          rdrInlinks.write("<DOCURL> " +  clueLine.substring("WARC-Target-URI: ".length()) + " </DOCURL>\n");
-        } else if (clueLine.startsWith ("WARC-") ||
-	            clueLine.startsWith ("Content-")) {
-                 continue;
+        } else if (clueLine.startsWith("WARC-Target-URI: ")) {
+          //System.out.println("<DOCURL> " +  clueLine.substring("WARC-Target-URI: ".length()) + " </DOCURL>");
+          rdrInlinks.write("<DOCURL> " + clueLine.substring("WARC-Target-URI: ".length()) + " </DOCURL>\n");
+        } else if (clueLine.startsWith("WARC-") ||
+                clueLine.startsWith("Content-")) {
+          continue;
         } else if (clueLine.length() == 0) {
-             break;
+          break;
         } else {
-            continue;
-            //throw (new IOException("WARC file error at line " + clueLineNo + "."));
-          }
+          continue;
+          //throw (new IOException("WARC file error at line " + clueLineNo + "."));
         }
+      }
 
       /*
        *  Find this document's links (if any) in the inlink file.
@@ -133,40 +134,45 @@ public class reformat {
       //System.out.println ("<DOCHDR>");
       rdrInlinks.write("<DOCHDR>\n");
       while (true) {
-	    clueLine = rdrClueWarc.readLine();
-	    clueLineNo++;
-	
-      	if (clueLine.length () > 0)
-	      //System.out.println (clueLine);
+        clueLine = rdrClueWarc.readLine();
+        clueLineNo++;
+
+        if (clueLine.length() > 0)
+          //System.out.println (clueLine);
           rdrInlinks.write(clueLine);
-	    else {
-	      //System.out.println ("</DOCHDR>");
+        else {
+          //System.out.println ("</DOCHDR>");
           rdrInlinks.write("</DOCHDR>\n");
-	      break;
-	    };
-      };
+          break;
+        }
+        ;
+      }
+      ;
 
       while (true) {
-	    rdrClueWarc.mark (10*1024*1024);
-	
-    	clueLine = rdrClueWarc.readLine();
-	    clueLineNo++;
-	
-	    if (clueLine == null)
-	      break;
-	    else if (!clueLine.equals ("WARC/0.18"))
-	        //System.out.println (clueLine);
-            rdrInlinks.write(clueLine + "\n");
-	    else {
-	        rdrClueWarc.reset ();
-            clueLineNo--;
-	        break;
-        };
-      };
+        rdrClueWarc.mark(10 * 1024 * 1024);
+
+        clueLine = rdrClueWarc.readLine();
+        clueLineNo++;
+
+        if (clueLine == null)
+          break;
+        else if (!clueLine.equals("WARC/0.18"))
+          //System.out.println (clueLine);
+          rdrInlinks.write(clueLine + "\n");
+        else {
+          rdrClueWarc.reset();
+          clueLineNo--;
+          break;
+        }
+        ;
+      }
+      ;
 
       //System.out.println ("</DOC>");
       rdrInlinks.write("</DOC>\n");
       rdrInlinks.flush();
-    };
+    }
+    ;
   }
 }
