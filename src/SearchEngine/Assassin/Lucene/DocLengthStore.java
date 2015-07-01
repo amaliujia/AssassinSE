@@ -1,5 +1,6 @@
 package SearchEngine.Assassin.Lucene;
 
+import SearchEngine.Assassin.QryEval;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.MultiDocValues;
 import org.apache.lucene.index.MultiFields;
@@ -18,7 +19,7 @@ public class DocLengthStore  {
     private  Map<String, NumericDocValues> values = new HashMap<String, NumericDocValues>();
 
     /**
-     * @param reader IndexReader object created in {@link SearchEngine.Assassin.QryEval}.
+     * @param reader IndexReader object created in {@link QryEval}.
      */
     public DocLengthStore(IndexReader reader) throws IOException {
         this.reader = reader;
