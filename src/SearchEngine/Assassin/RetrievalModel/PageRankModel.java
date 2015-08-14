@@ -13,4 +13,9 @@ public class PageRankModel extends RetrievalModel {
     public boolean setParameter(String parameterName, String value) {
         return false;
     }
+
+    @Override
+    public boolean setParamter(String parameterName, Object value) {
+        return false;
+    }
 }
