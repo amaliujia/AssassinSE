@@ -5,7 +5,6 @@ import TextMiningEngine.Witch.LinearAlgebra.Matrix.Classification.Classification
 import TextMiningEngine.Witch.LinearAlgebra.Matrix.Interface.Matrix;
 import TextMiningEngine.Witch.LinearAlgebra.Matrix.Interface.Vector;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 /**

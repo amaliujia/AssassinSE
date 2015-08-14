@@ -18,7 +18,6 @@
 package Indexer.Hunter;
 
 import java.io.*;
-import java.lang.Integer;
 
 /**
  * @author Jamie Callan
