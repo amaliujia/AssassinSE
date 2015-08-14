@@ -18,6 +18,7 @@ import org.apache.lucene.util.BytesRef;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 public class InvList {
@@ -86,7 +87,43 @@ public class InvList {
             this.df++;
             this.ctf += tf;
         }
+    }
 
+    public InvList(String termString, String fieldString, Set<Integer> docs) throws IOException {
+
+        //  Store the field name.  This is used by other query operators.
+        this.field = new String (fieldString);
+
+        //  Prepare to access the index.
+        BytesRef termBytes = new BytesRef(termString);
+        Term term = new Term(fieldString, termBytes);
+
+        if (QryEval.READER.docFreq(term) < 1) {
+            System.out.println("Failed to fetch invertied list for " + termString + " " + fieldString);
+            return;
+        }
+        //  Lookup the inverted list.
+
+        DocsAndPositionsEnum iList =
+                MultiFields.getTermPositionsEnum(QryEval.READER,
+                        MultiFields.getLiveDocs(QryEval.READER),
+                        fieldString, termBytes);
+
+        while (iList.nextDoc() != DocIdSetIterator.NO_MORE_DOCS) {
+            if (!docs.contains(iList.docID())){
+                continue;
+            }
+            int tf = iList.freq();
+
+            int[] positions = new int[tf];
+
+            for (int j = 0; j < tf; j++)
+                positions[j] = iList.nextPosition();
+
+            this.postings.add(new DocPosting(iList.docID(), positions));
+            this.df++;
+            this.ctf += tf;
+        }
     }
 
     /**

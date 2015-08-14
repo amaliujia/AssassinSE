@@ -125,7 +125,7 @@ public class QryopSlScore extends QryopSl {
             double a = Math.max(Math.log((N - df + 0.5)/(df + 0.5)), 0);
             double c =  (tf / (tf + k1 * ((1.0 - b) + b * (docLen / avgLen))));
             double d =  ((k3 + 1.0) * 1.0) / (k3 + 1.0);
-            double docScore =  a * c  * d ;
+            double docScore =  a * c * d ;
             result.docScores.add(docid, docScore);
         }
 
