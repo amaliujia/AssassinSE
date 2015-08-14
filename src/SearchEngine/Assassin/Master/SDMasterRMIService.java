@@ -16,13 +16,15 @@ import java.rmi.server.UnicastRemoteObject;
  */
 public class SDMasterRMIService extends UnicastRemoteObject implements MasterService {
 
+    private SDMasterNode masterNode;
 
-    protected SDMasterRMIService() throws RemoteException {
+    protected SDMasterRMIService(SDMasterNode node) throws RemoteException {
         super();
+        masterNode = node;
     }
 
     @Override
-    public void collectArgs(int df, int collection_size) throws RemoteException{
+    public void collectArgs(SDSlaveObject object, int df, int collection_size) throws RemoteException {
 
     }
 }

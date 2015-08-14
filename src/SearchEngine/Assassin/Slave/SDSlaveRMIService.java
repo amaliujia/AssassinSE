@@ -1,9 +1,7 @@
 package SearchEngine.Assassin.Slave;
 
 import SearchEngine.Assassin.Operators.QryResult;
-import SearchEngine.Assassin.Operators.Qryop;
 import SearchEngine.Assassin.Protocol.SlaveService;
-import SearchEngine.Assassin.QryEval;
 import SearchEngine.Assassin.RetrievalModel.RetrievalModel;
 
 import java.io.IOException;
@@ -21,8 +19,9 @@ public class SDSlaveRMIService extends UnicastRemoteObject implements SlaveServi
 
     private SDSlaveNode slaveNode;
 
-    protected SDSlaveRMIService() throws RemoteException {
+    protected SDSlaveRMIService(SDSlaveNode node) throws RemoteException {
         super();
+        slaveNode = node;
     }
 
     @Override
@@ -32,5 +31,10 @@ public class SDSlaveRMIService extends UnicastRemoteObject implements SlaveServi
         } catch (IOException e) {
             throw new RemoteException(e.toString());
         }
+    }
+
+    @Override
+    public void shutdown() throws RemoteException {
+        slaveNode.isShutdown = true;
     }
 }

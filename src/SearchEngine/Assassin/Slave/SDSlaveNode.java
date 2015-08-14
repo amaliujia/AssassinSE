@@ -2,11 +2,14 @@ package SearchEngine.Assassin.Slave;
 
 import SearchEngine.Assassin.Operators.QryResult;
 import SearchEngine.Assassin.Operators.Qryop;
+import SearchEngine.Assassin.Protocol.SlaveService;
 import SearchEngine.Assassin.QryEval;
 import SearchEngine.Assassin.RetrievalModel.RetrievalModel;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 /**
  * Created by amaliujia on 15-6-27.
@@ -18,9 +21,25 @@ public class SDSlaveNode {
         isShutdown = false;
     }
 
-    public void startService(){
-        while (!isShutdown){
-            // waiting
+
+    private void init() throws RemoteException {
+        Registry registry = LocateRegistry.getRegistry(11642);
+        SlaveService service = new SDSlaveRMIService(this);
+        registry.rebind(SlaveService.class.getCanonicalName(), service);
+    }
+
+    public void startService() throws RemoteException {
+        init();
+
+        // TODO: connect with master node.
+
+        while (!isShutdown) {
+            try {
+                // sleep 10 second.
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                isShutdown = true;
+            }
         }
 
         System.exit(0);

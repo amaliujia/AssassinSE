@@ -10,5 +10,8 @@ import java.rmi.RemoteException;
  * Created by amaliujia on 15-7-1.
  */
 public interface SlaveService extends Remote {
+
     QryResult query(String query, RetrievalModel model) throws RemoteException;
+
+    void shutdown() throws RemoteException;
 }
