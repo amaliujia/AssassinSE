@@ -1,5 +1,6 @@
 package SearchEngine.Assassin.Slave;
 
+import SearchEngine.Assassin.Master.SDIndexCollection;
 import SearchEngine.Assassin.Operators.QryResult;
 import SearchEngine.Assassin.Operators.Qryop;
 import SearchEngine.Assassin.Protocol.SlaveService;
@@ -16,20 +17,21 @@ import java.rmi.registry.Registry;
  */
 public class SDSlaveNode {
     public boolean isShutdown;
+    private SDSlaveIndexReader indexReader;
 
     public SDSlaveNode(){
         isShutdown = false;
     }
 
 
-    private void init() throws RemoteException {
+    private void initRMI() throws RemoteException {
         Registry registry = LocateRegistry.getRegistry(11642);
         SlaveService service = new SDSlaveRMIService(this);
         registry.rebind(SlaveService.class.getCanonicalName(), service);
     }
 
     public void startService() throws RemoteException {
-        init();
+        initRMI();
 
         // TODO: connect with master node.
 
@@ -50,4 +52,9 @@ public class SDSlaveNode {
         qTree = QryEval.parseQuery(query, model);
         return qTree.evaluate(model);
     }
+
+    public void updateIndexCollection(SDIndexCollection collection){
+        indexReader.setIndexColletion(collection);
+    }
+
 }
