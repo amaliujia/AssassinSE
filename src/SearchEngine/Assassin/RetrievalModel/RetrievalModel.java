@@ -8,7 +8,9 @@
 
 package SearchEngine.Assassin.RetrievalModel;
 
-public abstract class RetrievalModel {
+import java.io.Serializable;
+
+public abstract class RetrievalModel implements Serializable{
 
 
     /**
