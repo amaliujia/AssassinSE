@@ -25,6 +25,11 @@ public class RetrievalModelLearningToRank extends RetrievalModel {
     //docs
     public Set<Integer> docs;
 
+    public RetrievalModelLearningToRank(){
+        super();
+        docs = null;
+    }
+
     @Override
     public boolean setParameter(String parameterName, double value) {
         if(parameterName.equals("mu")) {
@@ -64,6 +69,11 @@ public class RetrievalModelLearningToRank extends RetrievalModel {
             docs = (Set<Integer>) value;
             return true;
         }
+        return false;
+    }
+
+    @Override
+    public boolean hasParameter(String parameterName) {
         return false;
     }
 }

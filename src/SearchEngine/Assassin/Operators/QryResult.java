@@ -16,8 +16,9 @@ import SearchEngine.Assassin.DataStructure.InvList;
 import SearchEngine.Assassin.DataStructure.ScoreList;
 
 import java.io.IOException;
+import java.io.Serializable;
 
-public class QryResult {
+public class QryResult implements Serializable{
 
     // Store the results of different types of query operators.
 

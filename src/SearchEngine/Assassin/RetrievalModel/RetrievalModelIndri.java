@@ -13,6 +13,12 @@ public class RetrievalModelIndri extends RetrievalModel {
     //docs
     public Set<Integer> docs;
 
+
+    public RetrievalModelIndri(){
+        super();
+        docs = null;
+    }
+
     /**
      *
      * @param parameterName The name of the parameter to set.
@@ -53,6 +59,15 @@ public class RetrievalModelIndri extends RetrievalModel {
             docs = (Set<Integer>) value;
             return true;
         }
+        return false;
+    }
+
+    @Override
+    public boolean hasParameter(String parameterName) {
+        if(parameterName == "docs" && docs != null){
+            return true;
+        }
+        // TODO: add other getter
         return false;
     }
 }

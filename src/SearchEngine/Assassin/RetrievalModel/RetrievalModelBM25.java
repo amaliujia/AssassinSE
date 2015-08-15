@@ -18,6 +18,11 @@ public class RetrievalModelBM25 extends RetrievalModel {
     public double k3;
     public Set<Integer> docs;
 
+    public RetrievalModelBM25(){
+        super();
+        docs = null;
+    }
+
     @Override
     public boolean setParameter(String parameterName, double value) {
         if(parameterName.equals("k1")) {
@@ -47,6 +52,15 @@ public class RetrievalModelBM25 extends RetrievalModel {
             docs = (Set<Integer>) value;
             return true;
         }
+        return false;
+    }
+
+    @Override
+    public boolean hasParameter(String parameterName) {
+        if(parameterName == "docs" && docs != null){
+            return true;
+        }
+        // TODO: add other getter
         return false;
     }
 }

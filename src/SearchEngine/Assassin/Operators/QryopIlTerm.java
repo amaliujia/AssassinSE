@@ -9,6 +9,7 @@ package SearchEngine.Assassin.Operators;
 
 import SearchEngine.Assassin.DataStructure.InvList;
 import SearchEngine.Assassin.RetrievalModel.RetrievalModel;
+import SearchEngine.Assassin.RetrievalModel.RetrievalModelBM25;
 
 import java.io.IOException;
 
@@ -57,7 +58,11 @@ public class QryopIlTerm extends QryopIl {
      */
     public QryResult evaluate(RetrievalModel r) throws IOException {
         QryResult result = new QryResult();
-        result.invertedList = new InvList(this.term, this.field);
+        if(r.hasParameter("docs")){
+            result.invertedList = new InvList(this.term, this.field, ((RetrievalModelBM25)r).docs);
+        }else{
+            result.invertedList = new InvList(this.term, this.field);
+        }
         return result;
     }
 

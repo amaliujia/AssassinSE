@@ -53,4 +53,9 @@ public class TopicSensitivePRModel extends RetrievalModel {
     public boolean setParameter(String parameterName, Object value) {
         return false;
     }
+
+    @Override
+    public boolean hasParameter(String parameterName) {
+        return false;
+    }
 }

@@ -36,4 +36,7 @@ public abstract class RetrievalModel implements Serializable{
      *  @return true if the parameter is set successfully, false otherwise.
      */
     public abstract boolean setParameter(String parameterName, Object value);
+
+
+    public abstract boolean hasParameter(String parameterName);
 }
