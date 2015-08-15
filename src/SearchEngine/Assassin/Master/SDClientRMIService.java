@@ -1,7 +1,6 @@
 package SearchEngine.Assassin.Master;
 
 import SearchEngine.Assassin.Protocol.ClientService;
-import sun.security.ntlm.Client;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;

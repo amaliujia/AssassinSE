@@ -32,7 +32,7 @@ public class RetrievalModelUnrankedBoolean extends RetrievalModel {
     }
 
     @Override
-    public boolean setParamter(String parameterName, Object value) {
+    public boolean setParameter(String parameterName, Object value) {
         return false;
     }
 }

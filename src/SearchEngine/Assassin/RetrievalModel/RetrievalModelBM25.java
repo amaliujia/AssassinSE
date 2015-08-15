@@ -1,7 +1,6 @@
 package SearchEngine.Assassin.RetrievalModel;
 
 import SearchEngine.Assassin.Lucene.DocLengthStore;
-import sun.rmi.server.InactiveGroupException;
 
 import java.util.Set;
 
@@ -43,8 +42,9 @@ public class RetrievalModelBM25 extends RetrievalModel {
     }
 
     @Override
-    public boolean setParamter(String parameterName, Object value) {
+    public boolean setParameter(String parameterName, Object value) {
         if(parameterName.equals("docs")){
+            docs = (Set<Integer>) value;
             return true;
         }
         return false;

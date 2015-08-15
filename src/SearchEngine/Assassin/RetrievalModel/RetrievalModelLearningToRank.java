@@ -2,6 +2,8 @@ package SearchEngine.Assassin.RetrievalModel;
 
 import SearchEngine.Assassin.Lucene.DocLengthStore;
 
+import java.util.Set;
+
 /**
  * Created by amaliujia on 14-11-11.
  */
@@ -19,6 +21,9 @@ public class RetrievalModelLearningToRank extends RetrievalModel {
     public static double k1;
     public static double b;
     public static double k3;
+
+    //docs
+    public Set<Integer> docs;
 
     @Override
     public boolean setParameter(String parameterName, double value) {
@@ -54,7 +59,11 @@ public class RetrievalModelLearningToRank extends RetrievalModel {
     }
 
     @Override
-    public boolean setParamter(String parameterName, Object value) {
+    public boolean setParameter(String parameterName, Object value) {
+        if(parameterName.equals("docs")){
+            docs = (Set<Integer>) value;
+            return true;
+        }
         return false;
     }
 }

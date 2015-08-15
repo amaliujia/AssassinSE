@@ -1,4 +1,7 @@
 package SearchEngine.Assassin.RetrievalModel;
+
+import java.util.Set;
+
 /**
  * Created by amaliujia on 14-9-25.
  */
@@ -6,6 +9,10 @@ public class RetrievalModelIndri extends RetrievalModel {
     public double mu;
     public double lambda;
     public String smoothing;
+
+    //docs
+    public Set<Integer> docs;
+
     /**
      *
      * @param parameterName The name of the parameter to set.
@@ -41,7 +48,11 @@ public class RetrievalModelIndri extends RetrievalModel {
     }
 
     @Override
-    public boolean setParamter(String parameterName, Object value) {
+    public boolean setParameter(String parameterName, Object value) {
+        if(parameterName.equals("docs")){
+            docs = (Set<Integer>) value;
+            return true;
+        }
         return false;
     }
 }

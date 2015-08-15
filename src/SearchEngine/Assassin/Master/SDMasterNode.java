@@ -1,14 +1,21 @@
 package SearchEngine.Assassin.Master;
 
+import SearchEngine.Assassin.Operators.QryResult;
 import SearchEngine.Assassin.Protocol.MasterService;
 import SearchEngine.Assassin.Protocol.SlaveService;
+import SearchEngine.Assassin.RetrievalModel.RetrievalModel;
+import SearchEngine.Assassin.RetrievalModel.RetrievalModelBM25;
+import SearchEngine.Assassin.RetrievalModel.RetrievalModelLearningToRank;
+import SearchEngine.Assassin.RetrievalModel.RetrievalModelRankedBoolean;
 import SearchEngine.Assassin.Util.Constant;
+import com.sun.corba.se.impl.naming.cosnaming.NamingUtils;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -62,6 +69,47 @@ public class SDMasterNode {
      * @return
      */
     public Map<Integer, Double> query(String query){
+        String newQuery = expandQuery(query);
+        Set<Integer> docs;
+        QryResult result;
+        RetrievalModel model;
+
+        model = new RetrievalModelRankedBoolean();
+        result = distributedSearch(query, model);
+
+
+        model = new RetrievalModelBM25();
+        // model.setParameter("docs", (Object)docs);
+        result = distributedSearch(query, model);
+
+        model = new RetrievalModelLearningToRank();
+        // model.setParameter("docs", (Object)docs);
+        result = distributedSearch("docs", model);
         return null;
     }
+
+
+    private String expandQuery(String query){
+        double url = 0.0;
+        double keywords = 0.0;
+        double body = 0.3;
+        double title =0.3;
+        double inlink = 0.2;
+
+        double w1 = 0.1;
+        double w2 = 0.9;
+
+
+        return query;
+    }
+
+    private QryResult distributedSearch(String query, RetrievalModel model){
+        return null;
+    }
+
+
+    private Map<String, Double> QryResultToMap(QryResult result){
+        return null;
+    }
+
 }

@@ -23,6 +23,18 @@ public class ScoreListEntry implements Comparable<ScoreListEntry> {
 
 
     public int compareTo(ScoreListEntry b) {
-        return 0;
+        if(score < b.getScore()){
+            return -1;
+        }else if(score > b.getScore()){
+            return 1;
+        }
+
+        if(docid < b.getDocid()){
+            return -1;
+        }else if(docid > b.getDocid()) {
+            return 1;
+        }else{
+            return 0;
+        }
     }
 }
