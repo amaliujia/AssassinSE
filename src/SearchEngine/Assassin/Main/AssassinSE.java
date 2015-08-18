@@ -14,6 +14,8 @@ public class AssassinSE {
         }else if(args[0].equals("slave")){
             SDSlaveNode slaveNode = new SDSlaveNode();
             slaveNode.startService();
+        }else if(args[0].equals("client")){
+
         }else{
             throw new Exception("Wrong argument");
         }

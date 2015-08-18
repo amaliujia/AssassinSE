@@ -35,24 +35,46 @@ public class SDMasterNode {
     public void startService() throws RemoteException {
         initRMI();
 
-        while (!isShutdown) {
+        while (slaveToService.size() < 1){
             try {
-                // sleep 10 second.
-                Thread.sleep(10000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
-                Iterator<SlaveService> iter = slaveToService.values().iterator();
-                while (iter.hasNext()){
-                    SlaveService service = iter.next();
-                    service.shutdown();
-                }
-                isShutdown = true;
+                e.printStackTrace();
             }
         }
-        System.exit(0);
+
+        new Thread(){
+            public void run(){
+                while (!isShutdown) {
+                    try {
+                        // sleep 10 second.
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e) {
+                        Iterator<SlaveService> iter = slaveToService.values().iterator();
+                        while (iter.hasNext()){
+                            SlaveService service = iter.next();
+                            try {
+                                service.shutdown();
+                            } catch (RemoteException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                        isShutdown = true;
+                    }
+                }
+                System.exit(0);
+            }
+        }.start();
     }
 
+    public void collectArgs(SDSlaveObject object, int df, int collection_size) throws RemoteException {
+        SlaveService service = (SlaveService) LocateRegistry.getRegistry(object.getHostAddress(), object.getPort());
+        slaveToService.put(object, service);
+    }
+
+
     private void initRMI() throws RemoteException {
-        Registry registry = LocateRegistry.getRegistry(Constant.MASTER_PORT);
+        Registry registry = LocateRegistry.createRegistry(Constant.MASTER_PORT);
         MasterService service = new SDMasterRMIService(this);
         registry.rebind(MasterService.class.getCanonicalName(), service);
     }
@@ -71,21 +93,28 @@ public class SDMasterNode {
      * @return
      */
     public Map<Integer, Double> query(String query){
-        String newQuery = expandQuery(query);
-        Set<Integer> docs;
-        QryResult result;
-        RetrievalModel model;
+        System.out.println("query");
+//        String newQuery = expandQuery(query);
+//        Set<Integer> docs;
+//        QryResult result;
+//        RetrievalModel model;
+//
+//        model = new RetrievalModelRankedBoolean();
+//        result = distributedSearch(query, model);
+//        // top 1M pages to BM25 retrieval.
+//        docs = docsMapToSet(result, 1000000);
 
-        model = new RetrievalModelRankedBoolean();
-        result = distributedSearch(query, model);
+//        model = new RetrievalModelBM25();
+//        model.setParameter("docs", (Object)docs);
+//        result = distributedSearch(query, model);
+//        // top 1k pages to learning to rank.
+//        docs = docsMapToSet(result, 1000);
+//
+//        model = new RetrievalModelLearningToRank();
+//        model.setParameter("docs", (Object)docs);
+//        result = distributedSearch("docs", model);
 
-        model = new RetrievalModelBM25();
-        // model.setParameter("docs", (Object)docs);
-        result = distributedSearch(query, model);
-
-        model = new RetrievalModelLearningToRank();
-        // model.setParameter("docs", (Object)docs);
-        result = distributedSearch("docs", model);
+//          return QryResultToMap(result, 1000);
         return null;
     }
 
@@ -120,10 +149,13 @@ public class SDMasterNode {
     }
 
 
-    private Map<String, Double> QryResultToMap(QryResult result){
+    private Map<Integer, Double> QryResultToMap(QryResult result, int top){
         return null;
     }
 
+    private Set<Integer> docsMapToSet(QryResult result, int top){
+        return null;
+    }
 
     private QryResult mergeQryResult(QryResult r1, QryResult r2){
         r1.docScores.scores.addAll(r2.docScores.scores);
