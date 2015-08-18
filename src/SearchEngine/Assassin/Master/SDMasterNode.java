@@ -1,5 +1,7 @@
 package SearchEngine.Assassin.Master;
 
+import SearchEngine.Assassin.MultiThreadingLib.FuturePattern.FutureData;
+import SearchEngine.Assassin.MultiThreadingLib.FuturePattern.FutureExecutor;
 import SearchEngine.Assassin.Operators.QryResult;
 import SearchEngine.Assassin.Protocol.MasterService;
 import SearchEngine.Assassin.Protocol.SlaveService;
@@ -8,11 +10,11 @@ import SearchEngine.Assassin.RetrievalModel.RetrievalModelBM25;
 import SearchEngine.Assassin.RetrievalModel.RetrievalModelLearningToRank;
 import SearchEngine.Assassin.RetrievalModel.RetrievalModelRankedBoolean;
 import SearchEngine.Assassin.Util.Constant;
-import com.sun.corba.se.impl.naming.cosnaming.NamingUtils;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -77,7 +79,6 @@ public class SDMasterNode {
         model = new RetrievalModelRankedBoolean();
         result = distributedSearch(query, model);
 
-
         model = new RetrievalModelBM25();
         // model.setParameter("docs", (Object)docs);
         result = distributedSearch(query, model);
@@ -104,12 +105,29 @@ public class SDMasterNode {
     }
 
     private QryResult distributedSearch(String query, RetrievalModel model){
-        return null;
+        ArrayList<FutureData> data = new ArrayList<FutureData>();
+        FutureExecutor executor = new FutureExecutor();
+
+        for (SDSlaveObject object : slaveToService.keySet()){
+            FutureData futureData = executor.request(slaveToService.get(object), query, model);
+            data.add(futureData);
+        }
+        QryResult result = new QryResult();
+        for (FutureData futureData : data){
+           return mergeQryResult(result, futureData.getContent());
+        }
+        return result;
     }
 
 
     private Map<String, Double> QryResultToMap(QryResult result){
         return null;
+    }
+
+
+    private QryResult mergeQryResult(QryResult r1, QryResult r2){
+        r1.docScores.scores.addAll(r2.docScores.scores);
+        return r1;
     }
 
 }
