@@ -13,7 +13,7 @@ This is a witch who can do magic and fantastic thing.
 Description
 ==========
 
-AssassinSE is a text-based search engine. It defines its own query operators and implements different kinds of models, like boolean retrieval model, Okapi BM25 model and language statistic model. In addition, unsupervised pseudo relevance feedback and query expansion has been utilized to improve performance of this search engine. Furthermore, AssassinSE uses learning to rank (more specifically, SVM) to do relevance analyze.
+AssassinSE is a distributed, large scale text-based search engine. It defines its own query operators and implements different kinds of models, like boolean retrieval model, Okapi BM25 model and language statistic model. In addition, unsupervised pseudo relevance feedback and query expansion has been utilized to improve performance of this search engine. Furthermore, AssassinSE uses learning to rank (more specifically, SVM) to do relevance analyze. AssassinSE works on a web corpus which contains 15M webpages and launches on a cluster with 10 nodes.
 
 Then, based on this engine, I develop a text mining framework - WitchKit, which implements common text mining algorithms, like Clustering, Link Analysis, Classification, Recommendation, Learning to Rank, etc. 
 
@@ -56,6 +56,8 @@ Milestones
 18. Multi-class Logistic Regression
 
 19. Parallel Linear Algebra Library
+
+20. Distributed Search Engine Architecture Design and Implementation
 
 
 Copyright
