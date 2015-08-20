@@ -70,7 +70,7 @@ public class SDMasterNode {
         query("djs");
     }
 
-    public void collectArgs(SDSlaveObject object, int df, int collection_size) throws RemoteException{
+    public void collectArgs(SDSlaveObject object, SDIndexCollection collection) throws RemoteException{
         Registry registry = LocateRegistry.getRegistry(object.getHostAddress(), object.getPort());
 
         try {

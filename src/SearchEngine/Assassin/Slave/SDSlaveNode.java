@@ -83,7 +83,7 @@ public class SDSlaveNode {
         Registry registry = LocateRegistry.getRegistry(Constant.MASTER_HOST, Constant.MASTER_PORT);
         MasterService service = (MasterService) registry.lookup(MasterService.class.getCanonicalName());
         SDSlaveObject object = createObject();
-        service.collectArgs(object, 0, 0);
+        service.collectArgs(object, indexReader.getCollection());
     }
 
     public void startService(String path) throws RemoteException, FileNotFoundException {

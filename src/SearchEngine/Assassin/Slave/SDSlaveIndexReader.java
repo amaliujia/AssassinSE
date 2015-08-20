@@ -37,4 +37,12 @@ public class SDSlaveIndexReader {
     public void setIndexColletion(SDIndexCollection colletion){
         this.collection = colletion;
     }
+
+    public SDIndexCollection getCollection(){
+        return collection;
+    }
+
+    public IndexReader getREADER() {
+        return READER;
+    }
 }
