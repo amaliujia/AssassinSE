@@ -1,5 +1,6 @@
 package SearchEngine.Assassin.DataStructure;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
 
@@ -8,7 +9,7 @@ import java.util.Vector;
  */
 //  Utility class that makes it easier to construct postings.
 
-public class DocPosting implements Comparable<DocPosting> {
+public class DocPosting implements Comparable<DocPosting>, Serializable {
 
     public int docid = 0;
     public int tf = 0;

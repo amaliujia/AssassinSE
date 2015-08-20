@@ -11,6 +11,7 @@ import SearchEngine.Assassin.RetrievalModel.RetrievalModelLearningToRank;
 import SearchEngine.Assassin.RetrievalModel.RetrievalModelRankedBoolean;
 import SearchEngine.Assassin.Util.Constant;
 
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -65,11 +66,20 @@ public class SDMasterNode {
                 System.exit(0);
             }
         }.start();
+
+        query("djs");
     }
 
-    public void collectArgs(SDSlaveObject object, int df, int collection_size) throws RemoteException {
-        SlaveService service = (SlaveService) LocateRegistry.getRegistry(object.getHostAddress(), object.getPort());
-        slaveToService.put(object, service);
+    public void collectArgs(SDSlaveObject object, int df, int collection_size) throws RemoteException{
+        Registry registry = LocateRegistry.getRegistry(object.getHostAddress(), object.getPort());
+
+        try {
+            SlaveService service = (SlaveService)registry.lookup(SlaveService.class.getCanonicalName());
+            slaveToService.put(object, service);
+        } catch (NotBoundException e) {
+            slaveToService.put(object, null);
+        }
+
     }
 
 
@@ -93,14 +103,13 @@ public class SDMasterNode {
      * @return
      */
     public Map<Integer, Double> query(String query){
-        System.out.println("query");
-//        String newQuery = expandQuery(query);
-//        Set<Integer> docs;
-//        QryResult result;
-//        RetrievalModel model;
-//
-//        model = new RetrievalModelRankedBoolean();
-//        result = distributedSearch(query, model);
+        String newQuery = expandQuery(query);
+        Set<Integer> docs;
+        QryResult result;
+        RetrievalModel model;
+
+        model = new RetrievalModelRankedBoolean();
+        result = distributedSearch(query, model);
 //        // top 1M pages to BM25 retrieval.
 //        docs = docsMapToSet(result, 1000000);
 
@@ -143,7 +152,7 @@ public class SDMasterNode {
         }
         QryResult result = new QryResult();
         for (FutureData futureData : data){
-           return mergeQryResult(result, futureData.getContent());
+           result = mergeQryResult(result, futureData.getContent());
         }
         return result;
     }

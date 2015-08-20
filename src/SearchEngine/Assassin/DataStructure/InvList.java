@@ -16,12 +16,13 @@ import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.util.BytesRef;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-public class InvList {
+public class InvList implements Serializable{
 
     //  Class variables.
     public int ctf = 0;

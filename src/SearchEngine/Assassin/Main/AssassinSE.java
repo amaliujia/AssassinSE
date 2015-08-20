@@ -13,7 +13,7 @@ public class AssassinSE {
             masterNode.startService();
         }else if(args[0].equals("slave")){
             SDSlaveNode slaveNode = new SDSlaveNode();
-            slaveNode.startService();
+            slaveNode.startService(args[1]);
         }else if(args[0].equals("client")){
 
         }else{

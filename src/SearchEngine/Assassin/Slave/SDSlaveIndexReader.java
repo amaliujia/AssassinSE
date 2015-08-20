@@ -1,7 +1,13 @@
 package SearchEngine.Assassin.Slave;
 
 import SearchEngine.Assassin.Master.SDIndexCollection;
+import SearchEngine.Assassin.QryEval;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.store.FSDirectory;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by amaliujia on 15-8-15.
@@ -18,6 +24,15 @@ public class SDSlaveIndexReader {
 
     private SDIndexCollection collection;
 
+    public SDSlaveIndexReader(String indexPath){
+        try {
+            READER = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        QryEval.READER =  READER;
+
+    }
 
     public void setIndexColletion(SDIndexCollection colletion){
         this.collection = colletion;

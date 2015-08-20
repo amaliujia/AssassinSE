@@ -1,9 +1,11 @@
 package SearchEngine.Assassin.DataStructure;
 
+import java.io.Serializable;
+
 /**
  * Created by amaliujia on 14-9-7.
  */
-public class ScoreListEntry implements Comparable<ScoreListEntry> {
+public class ScoreListEntry implements Comparable<ScoreListEntry>, Serializable {
 
     private int docid;
     private double score;

@@ -1,9 +1,11 @@
 package SearchEngine.Assassin.Master;
 
+import java.io.Serializable;
+
 /**
  * @author amaliujia
  */
-public class SDSlaveObject {
+public class SDSlaveObject implements Serializable{
     private String hostAddress;
     private int port;
 

@@ -4,13 +4,14 @@
  */
 package SearchEngine.Assassin.DataStructure;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ScoreList {
+public class ScoreList implements Serializable{
 
-    public List<ScoreListEntry> scores = new ArrayList<ScoreListEntry>();
+    public ArrayList<ScoreListEntry> scores = new ArrayList<ScoreListEntry>();
 
     /**
      *  Append a document score to a score list.
