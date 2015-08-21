@@ -1,7 +1,6 @@
 package SearchEngine.Assassin.RetrievalModel;
 
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by amaliujia on 14-9-25.

@@ -3,7 +3,6 @@ package SearchEngine.Assassin.RetrievalModel;
 import SearchEngine.Assassin.Lucene.DocLengthStore;
 
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by amaliujia on 14-9-21.

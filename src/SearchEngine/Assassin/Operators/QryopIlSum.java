@@ -1,7 +1,6 @@
 package SearchEngine.Assassin.Operators;
 
 import SearchEngine.Assassin.RetrievalModel.RetrievalModel;
-import SearchEngine.Assassin.Util.DataCenter;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -56,7 +55,6 @@ public class QryopIlSum extends QryopSl {
     public QryResult evaluate(RetrievalModel r) throws IOException {
         allocDaaTPtrs(r);
         QryResult result = new QryResult();
-        DataCenter dataCenter = DataCenter.sharedDataCenter();
 
         // use hashtable to compute and save intermediate scroes.
         HashMap<Integer, Double> map = new HashMap<Integer, Double>();

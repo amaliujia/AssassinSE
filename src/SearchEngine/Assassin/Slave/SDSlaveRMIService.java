@@ -1,6 +1,5 @@
 package SearchEngine.Assassin.Slave;
 
-import SearchEngine.Assassin.Master.SDIndexCollection;
 import SearchEngine.Assassin.Operators.QryResult;
 import SearchEngine.Assassin.Protocol.SlaveService;
 import SearchEngine.Assassin.RetrievalModel.RetrievalModel;

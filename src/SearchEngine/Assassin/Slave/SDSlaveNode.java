@@ -1,6 +1,5 @@
 package SearchEngine.Assassin.Slave;
 
-import SearchEngine.Assassin.Master.SDIndexCollection;
 import SearchEngine.Assassin.Master.SDSlaveObject;
 import SearchEngine.Assassin.Operators.QryResult;
 import SearchEngine.Assassin.Operators.Qryop;
@@ -21,7 +20,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 

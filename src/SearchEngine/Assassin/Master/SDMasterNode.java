@@ -7,7 +7,6 @@ import SearchEngine.Assassin.Protocol.MasterService;
 import SearchEngine.Assassin.Protocol.SlaveService;
 import SearchEngine.Assassin.RetrievalModel.RetrievalModel;
 import SearchEngine.Assassin.RetrievalModel.RetrievalModelBM25;
-import SearchEngine.Assassin.RetrievalModel.RetrievalModelLearningToRank;
 import SearchEngine.Assassin.RetrievalModel.RetrievalModelRankedBoolean;
 import SearchEngine.Assassin.Util.Constant;
 
