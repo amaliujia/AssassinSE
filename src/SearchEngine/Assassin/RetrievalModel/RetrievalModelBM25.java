@@ -2,6 +2,7 @@ package SearchEngine.Assassin.RetrievalModel;
 
 import SearchEngine.Assassin.Lucene.DocLengthStore;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -10,13 +11,13 @@ import java.util.Set;
 public class RetrievalModelBM25 extends RetrievalModel {
 
     // BM25
-    public DocLengthStore docLengthStore;
+    public transient DocLengthStore docLengthStore; // do not send via RMI.
     public int numDocs;
     public int avgLenDoc;
     public double k1;
     public double b;
     public double k3;
-    public Set<Integer> docs;
+    public HashSet<Integer> docs;
 
     public RetrievalModelBM25(){
         super();
@@ -49,7 +50,7 @@ public class RetrievalModelBM25 extends RetrievalModel {
     @Override
     public boolean setParameter(String parameterName, Object value) {
         if(parameterName.equals("docs")){
-            docs = (Set<Integer>) value;
+            docs = (HashSet<Integer>) value;
             return true;
         }
         return false;

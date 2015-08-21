@@ -38,9 +38,4 @@ public class SDSlaveRMIService extends UnicastRemoteObject implements SlaveServi
     public void shutdown() throws RemoteException {
         slaveNode.isShutdown = true;
     }
-
-    @Override
-    public void updateIndexCollection(SDIndexCollection collection) throws RemoteException {
-        slaveNode.updateIndexCollection(collection);
-    }
 }

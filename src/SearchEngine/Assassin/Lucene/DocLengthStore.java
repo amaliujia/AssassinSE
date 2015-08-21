@@ -6,14 +6,16 @@ import org.apache.lucene.index.MultiDocValues;
 import org.apache.lucene.index.MultiFields;
 import org.apache.lucene.index.NumericDocValues;
 
+import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * DocLengthStore is used to access the document lengths of indexed docs.
  */
-public class DocLengthStore  {
+public class DocLengthStore {
 
     private IndexReader reader;
     private  Map<String, NumericDocValues> values = new HashMap<String, NumericDocValues>();

@@ -1,5 +1,6 @@
 package SearchEngine.Assassin.RetrievalModel;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -11,7 +12,7 @@ public class RetrievalModelIndri extends RetrievalModel {
     public String smoothing;
 
     //docs
-    public Set<Integer> docs;
+    public HashSet<Integer> docs;
 
 
     public RetrievalModelIndri(){
@@ -56,7 +57,7 @@ public class RetrievalModelIndri extends RetrievalModel {
     @Override
     public boolean setParameter(String parameterName, Object value) {
         if(parameterName.equals("docs")){
-            docs = (Set<Integer>) value;
+            docs = (HashSet<Integer>) value;
             return true;
         }
         return false;

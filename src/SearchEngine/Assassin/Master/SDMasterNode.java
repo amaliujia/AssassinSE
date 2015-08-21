@@ -15,10 +15,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -44,6 +41,23 @@ public class SDMasterNode {
             }
         }
 
+        running();
+        query("djs");
+    }
+
+    public void collectArgs(SDSlaveObject object, SDIndexCollection collection) throws RemoteException{
+        Registry registry = LocateRegistry.getRegistry(object.getHostAddress(), object.getPort());
+
+        try {
+            SlaveService service = (SlaveService)registry.lookup(SlaveService.class.getCanonicalName());
+            slaveToService.put(object, service);
+        } catch (NotBoundException e) {
+            slaveToService.put(object, null);
+        }
+
+    }
+
+    private void running(){
         new Thread(){
             public void run(){
                 while (!isShutdown) {
@@ -66,22 +80,7 @@ public class SDMasterNode {
                 System.exit(0);
             }
         }.start();
-
-        query("djs");
     }
-
-    public void collectArgs(SDSlaveObject object, SDIndexCollection collection) throws RemoteException{
-        Registry registry = LocateRegistry.getRegistry(object.getHostAddress(), object.getPort());
-
-        try {
-            SlaveService service = (SlaveService)registry.lookup(SlaveService.class.getCanonicalName());
-            slaveToService.put(object, service);
-        } catch (NotBoundException e) {
-            slaveToService.put(object, null);
-        }
-
-    }
-
 
     private void initRMI() throws RemoteException {
         Registry registry = LocateRegistry.createRegistry(Constant.MASTER_PORT);
@@ -108,14 +107,18 @@ public class SDMasterNode {
         QryResult result;
         RetrievalModel model;
 
+        // Boolean retrieval distributed search.
         model = new RetrievalModelRankedBoolean();
         result = distributedSearch(query, model);
-//        // top 1M pages to BM25 retrieval.
-//        docs = docsMapToSet(result, 1000000);
+        // top 1M pages to BM25 retrieval.
+        docs = docsMapToSet(result, 1000000);
 
-//        model = new RetrievalModelBM25();
-//        model.setParameter("docs", (Object)docs);
-//        result = distributedSearch(query, model);
+        // BM25 retrieval distributed search.
+        model = new RetrievalModelBM25();
+        model.setParameter("docs", (Object)docs);
+        //TODO: setup global arguments.
+
+        result = distributedSearch(query, model);
 //        // top 1k pages to learning to rank.
 //        docs = docsMapToSet(result, 1000);
 //
@@ -162,13 +165,19 @@ public class SDMasterNode {
         return null;
     }
 
-    private Set<Integer> docsMapToSet(QryResult result, int top){
-        return null;
+    private HashSet<Integer> docsMapToSet(QryResult result, int top){
+        HashSet<Integer> docs = new HashSet<Integer>();
+        result.docScores.sort();
+
+        int size = result.docScores.scores.size();
+        for(int i = 0; i < top && i < size; i++){
+            docs.add(result.docScores.scores.get(i).getDocid());
+        }
+        return docs;
     }
 
     private QryResult mergeQryResult(QryResult r1, QryResult r2){
         r1.docScores.scores.addAll(r2.docScores.scores);
         return r1;
     }
-
 }

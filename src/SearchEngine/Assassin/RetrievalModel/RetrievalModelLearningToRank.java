@@ -2,6 +2,7 @@ package SearchEngine.Assassin.RetrievalModel;
 
 import SearchEngine.Assassin.Lucene.DocLengthStore;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -15,7 +16,7 @@ public class RetrievalModelLearningToRank extends RetrievalModel {
     public String smoothing;
 
     // BM25
-    public DocLengthStore docLengthStore;
+    public transient DocLengthStore docLengthStore;
     public int numDocs;
     public int avgLenDoc;
     public static double k1;
@@ -23,7 +24,7 @@ public class RetrievalModelLearningToRank extends RetrievalModel {
     public static double k3;
 
     //docs
-    public Set<Integer> docs;
+    public HashSet<Integer> docs;
 
     public RetrievalModelLearningToRank(){
         super();
@@ -66,7 +67,7 @@ public class RetrievalModelLearningToRank extends RetrievalModel {
     @Override
     public boolean setParameter(String parameterName, Object value) {
         if(parameterName.equals("docs")){
-            docs = (Set<Integer>) value;
+            docs = (HashSet<Integer>) value;
             return true;
         }
         return false;

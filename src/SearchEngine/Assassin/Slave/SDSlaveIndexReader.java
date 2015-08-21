@@ -22,8 +22,6 @@ public class SDSlaveIndexReader {
      */
     public IndexReader READER;
 
-    private SDIndexCollection collection;
-
     public SDSlaveIndexReader(String indexPath){
         try {
             READER = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
@@ -32,14 +30,6 @@ public class SDSlaveIndexReader {
         }
         QryEval.READER =  READER;
 
-    }
-
-    public void setIndexColletion(SDIndexCollection colletion){
-        this.collection = colletion;
-    }
-
-    public SDIndexCollection getCollection(){
-        return collection;
     }
 
     public IndexReader getREADER() {

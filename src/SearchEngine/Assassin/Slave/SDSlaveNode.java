@@ -46,6 +46,11 @@ public class SDSlaveNode {
         registry.rebind(SlaveService.class.getCanonicalName(), service);
     }
 
+    /**
+     * Read configuration from config file.
+     * @param path
+     * @throws FileNotFoundException
+     */
     private void ReadArg(String path) throws FileNotFoundException {
         // read in the parameter file; one parameter per line in format of key=value
         params = new HashMap<String, String>();
@@ -86,17 +91,7 @@ public class SDSlaveNode {
         service.collectArgs(object, indexReader.getCollection());
     }
 
-    public void startService(String path) throws RemoteException, FileNotFoundException {
-        ReadArg(path);
-        InitIndexReader();
-        initRMI();
-
-        try {
-            connect();
-        } catch (Exception e) {
-            System.out.println(e.toString());
-            Util.fatalError("kill slave");
-        }
+    private void running(){
 
         new Thread(){
             public void run(){
@@ -111,7 +106,21 @@ public class SDSlaveNode {
                 System.exit(0);
             }
         }.start();
+    }
 
+    public void startService(String path) throws RemoteException, FileNotFoundException {
+        ReadArg(path);
+        InitIndexReader();
+        initRMI();
+
+        try {
+            connect();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            Util.fatalError("kill slave");
+        }
+
+        running();
     }
 
     public QryResult query(String query, RetrievalModel model) throws IOException {

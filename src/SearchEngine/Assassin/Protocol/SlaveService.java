@@ -15,6 +15,4 @@ public interface SlaveService extends Remote {
     QryResult query(String query, RetrievalModel model) throws RemoteException;
 
     void shutdown() throws RemoteException;
-
-    void updateIndexCollection(SDIndexCollection collection) throws RemoteException;
 }
