@@ -1,11 +1,15 @@
 package SearchEngine.Assassin.RetrievalModel;
 
+import SearchEngine.Assassin.Lucene.DocLengthStore;
+
 import java.util.HashSet;
 
 /**
  * Created by amaliujia on 14-9-25.
  */
 public class RetrievalModelIndri extends RetrievalModel {
+    public transient DocLengthStore docLengthStore; // do not send via RMI.
+
     public double mu;
     public double lambda;
     public String smoothing;

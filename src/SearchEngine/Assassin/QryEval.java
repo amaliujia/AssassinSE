@@ -132,11 +132,17 @@ public class QryEval {
             DataCenter.k1 = Double.parseDouble(params.get("BM25:k_1"));
             DataCenter.b = Double.parseDouble(params.get("BM25:b"));
             DataCenter.k3 = Double.parseDouble(params.get("BM25:k_3"));
+            model.setParameter("k1", Double.parseDouble(params.get("BM25:k_1")));
+            model.setParameter("b", Double.parseDouble(params.get("BM25:b")));
+            model.setParameter("k3", Double.parseDouble(params.get("BM25:k_3")));
+            model.setParameter("numDocs", READER.numDocs());
+            ((RetrievalModelBM25)model).docLengthStore = docLengthStore;
             System.out.println("BM25 parameters  " + DataCenter.k1 + "  " + DataCenter.b + "  " + DataCenter.k3);
         } else if(model instanceof RetrievalModelIndri) {
             model.setParameter("mu", Double.parseDouble(params.get("Indri:mu")));
             model.setParameter("lambda",1 - Double.parseDouble(params.get("Indri:lambda")));
             model.setParameter("smoothing", params.get("Indri:smoothing"));
+            ((RetrievalModelIndri)model).docLengthStore = docLengthStore;
         } else if(model instanceof RetrievalModelLearningToRank) {
             model.setParameter("mu", Double.parseDouble(params.get("Indri:mu")));
             model.setParameter("lambda",Double.parseDouble(params.get("Indri:lambda")));

@@ -10,7 +10,6 @@ package SearchEngine.Assassin.Operators;
 import SearchEngine.Assassin.DataStructure.InvList;
 import SearchEngine.Assassin.QryEval;
 import SearchEngine.Assassin.RetrievalModel.*;
-import SearchEngine.Assassin.Util.DataCenter;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -88,7 +87,7 @@ public class QryopSlScore extends QryopSl {
             double tf = result.invertedList.getTf(i);
             double p = 0;
             double collectionLen = QryEval.READER.getSumTotalTermFreq(filed);
-            double lenDoc = DataCenter.sharedDataCenter().docLengthStore.getDocLength(this.filed, docid);
+            double lenDoc = indri.docLengthStore.getDocLength(this.filed, docid);
             double pmle = ((double)this.ctf / collectionLen);
             p = (((indri.lambda * (tf + (indri.mu * pmle))) / (lenDoc + indri.mu))) +
                 ((1 - indri.lambda) * pmle);
@@ -107,21 +106,20 @@ public class QryopSlScore extends QryopSl {
      * @throws IOException
      */
     public QryResult evaluateBM25(RetrievalModel r) throws IOException {
-        DataCenter dataCenter = DataCenter.sharedDataCenter();
         QryResult result = args.get(0).evaluate(r);
-        int N = dataCenter.numDocs;
+        int N = ((RetrievalModelBM25)r).numDocs;
         int df =  result.invertedList.df;
         String field = result.invertedList.field;
-        double k1 = DataCenter.k1;
-        double k3 = DataCenter.k3;
-        double b = DataCenter.b;
+        double k1 = ((RetrievalModelBM25)r).k1;
+        double k3 = ((RetrievalModelBM25)r).k3;
+        double b = ((RetrievalModelBM25)r).b;
         double avgLen = (double)QryEval.READER.getSumTotalTermFreq(field)
                         / (double)QryEval.READER.getDocCount(field);
         // core part of algorithm. logic is similar with #OR, iterate all docid
         for(int i = 0; i < result.invertedList.df; i++) {
             int docid = result.invertedList.getDocid(i);
             double tf = result.invertedList.getTf(i);
-            double docLen = dataCenter.docLengthStore.getDocLength(field, docid);
+            double docLen = ((RetrievalModelBM25)r).docLengthStore.getDocLength(field, docid);
             double a = Math.max(Math.log((N - df + 0.5)/(df + 0.5)), 0);
             double c =  (tf / (tf + k1 * ((1.0 - b) + b * (docLen / avgLen))));
             double d =  ((k3 + 1.0) * 1.0) / (k3 + 1.0);
@@ -200,8 +198,7 @@ public class QryopSlScore extends QryopSl {
             double tf = 0;
             double p = 0;
             double collectionLen = QryEval.READER.getSumTotalTermFreq(filed);
-            double lenDoc = DataCenter.sharedDataCenter().docLengthStore.
-                            getDocLength(this.filed, (int)docid);
+            double lenDoc = indri.docLengthStore.getDocLength(this.filed, (int) docid);
             double pmle = (double)this.ctf / collectionLen;
             p = (indri.lambda * ((tf + (indri.mu * pmle)) / (lenDoc + indri.mu))) +
                 ((1 - indri.lambda) * pmle);

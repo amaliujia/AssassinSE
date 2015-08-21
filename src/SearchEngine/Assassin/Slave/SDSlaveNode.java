@@ -90,7 +90,6 @@ public class SDSlaveNode {
     }
 
     private void running(){
-
         new Thread(){
             public void run(){
                 while (!isShutdown) {
