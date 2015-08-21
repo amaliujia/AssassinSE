@@ -6,4 +6,7 @@ package SearchEngine.Assassin.Master;
 public class SDIndexManager {
     private SDIndexCollection collection;
 
+    public SDIndexCollection getCollection(){
+        return collection;
+    }
 }

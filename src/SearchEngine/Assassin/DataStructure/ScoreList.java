@@ -40,6 +40,9 @@ public class ScoreList implements Serializable{
         return this.scores.get(n).getScore();
     }
 
+    public void setDocid(int n, int id){
+        this.scores.get(n).setDocid(id);
+    }
 
     public void sort() {
         Collections.sort(scores);

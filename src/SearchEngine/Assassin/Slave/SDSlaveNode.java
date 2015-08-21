@@ -1,5 +1,6 @@
 package SearchEngine.Assassin.Slave;
 
+import SearchEngine.Assassin.Master.SDIndexCollection;
 import SearchEngine.Assassin.Master.SDSlaveObject;
 import SearchEngine.Assassin.Operators.QryResult;
 import SearchEngine.Assassin.Operators.Qryop;
@@ -82,14 +83,15 @@ public class SDSlaveNode {
         return object;
     }
 
-    private void connect() throws RemoteException, NotBoundException{
+    private void connect() throws IOException, NotBoundException{
         Registry registry = LocateRegistry.getRegistry(Constant.MASTER_HOST, Constant.MASTER_PORT);
         MasterService service = (MasterService) registry.lookup(MasterService.class.getCanonicalName());
+        int offset = service.assignSlaveID();
+        indexReader.setBase(offset);
+
         SDSlaveObject object = createObject();
-
-
-
-        service.collectArgs(object, null);
+        SDIndexCollection indexCollection = new SDIndexCollection(indexReader);
+        service.collectArgs(object, indexCollection);
     }
 
     private void running(){
@@ -129,7 +131,13 @@ public class SDSlaveNode {
         Qryop qTree;
         qTree = QryEval.parseQuery(query, model);
         QryResult result = qTree.evaluate(model);
-        System.out.println("Finished retrieval");
+        return addOffsetToDocID(result, indexReader.getBase());
+    }
+
+    private QryResult addOffsetToDocID(QryResult result, int offset){
+        for(int i = 0; i < result.docScores.scores.size(); i++){
+            result.docScores.setDocid(i, result.docScores.scores.get(i).getDocid() + offset);
+        }
         return result;
     }
 }

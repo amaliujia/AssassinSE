@@ -21,11 +21,21 @@ public class SDSlaveIndexReader {
      */
     public IndexReader READER;
 
+    private int base;
+
     public SDSlaveIndexReader(String indexPath){
         try {
             this.READER = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setBase(int offset){
+        base = offset * 5000000;
+    }
+
+    public int getBase(){
+        return base;
     }
 }

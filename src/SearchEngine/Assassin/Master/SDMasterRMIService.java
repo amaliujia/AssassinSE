@@ -27,4 +27,9 @@ public class SDMasterRMIService extends UnicastRemoteObject implements MasterSer
     public void collectArgs(SDSlaveObject object, SDIndexCollection collection) throws RemoteException {
         masterNode.collectArgs(object, collection);
     }
+
+    @Override
+    public int assignSlaveID() throws RemoteException {
+        return masterNode.assignSlaveID();
+    }
 }

@@ -7,6 +7,7 @@ import SearchEngine.Assassin.Protocol.MasterService;
 import SearchEngine.Assassin.Protocol.SlaveService;
 import SearchEngine.Assassin.RetrievalModel.RetrievalModel;
 import SearchEngine.Assassin.RetrievalModel.RetrievalModelBM25;
+import SearchEngine.Assassin.RetrievalModel.RetrievalModelLearningToRank;
 import SearchEngine.Assassin.RetrievalModel.RetrievalModelRankedBoolean;
 import SearchEngine.Assassin.Util.Constant;
 
@@ -16,16 +17,20 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author amaliujia
  */
 public class SDMasterNode {
     private ConcurrentHashMap<SDSlaveObject, SlaveService> slaveToService;
+    private SDIndexManager indexManager;
     private boolean isShutdown;
+    public static AtomicInteger maxId = new AtomicInteger(0);
 
     public SDMasterNode(){
         slaveToService = new ConcurrentHashMap<SDSlaveObject, SlaveService>();
+        indexManager = new SDIndexManager();
         isShutdown = false;
     }
 
@@ -50,10 +55,15 @@ public class SDMasterNode {
         try {
             SlaveService service = (SlaveService)registry.lookup(SlaveService.class.getCanonicalName());
             slaveToService.put(object, service);
+            indexManager.getCollection().mergeWithCollection(collection);
+
         } catch (NotBoundException e) {
             slaveToService.put(object, null);
         }
+    }
 
+    public int assignSlaveID() {
+        return maxId.getAndIncrement();
     }
 
     private void running(){
@@ -118,15 +128,15 @@ public class SDMasterNode {
         //TODO: setup global arguments.
 
         result = distributedSearch(query, model);
-//        // top 1k pages to learning to rank.
-//        docs = docsMapToSet(result, 1000);
-//
-//        model = new RetrievalModelLearningToRank();
-//        model.setParameter("docs", (Object)docs);
-//        result = distributedSearch("docs", model);
+        // top 1k pages to learning to rank.
+        docs = docsMapToSet(result, 1000);
 
-//          return QryResultToMap(result, 1000);
-        return null;
+        model = new RetrievalModelLearningToRank();
+        model.setParameter("docs", (Object)docs);
+        //TODO: setup global arguments.
+        result = distributedSearch("docs", model);
+
+        return QryResultToMap(result, 1000);
     }
 
 

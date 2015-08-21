@@ -23,6 +23,9 @@ public class ScoreListEntry implements Comparable<ScoreListEntry>, Serializable 
         return docid;
     }
 
+    public void setDocid(int n){
+        docid = n;
+    }
 
     public int compareTo(ScoreListEntry b) {
         if(score < b.getScore()){

@@ -8,6 +8,7 @@
 package SearchEngine.Assassin.DataStructure;
 
 import SearchEngine.Assassin.QryEval;
+import SearchEngine.Assassin.Slave.SDSlaveNode;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DocsAndPositionsEnum;
 import org.apache.lucene.index.MultiFields;
@@ -111,7 +112,7 @@ public class InvList implements Serializable{
                         fieldString, termBytes);
 
         while (iList.nextDoc() != DocIdSetIterator.NO_MORE_DOCS) {
-            if (!docs.contains(iList.docID())){
+            if (!docs.contains(iList.docID() + SDSlaveNode.indexReader.getBase())){
                 continue;
             }
             int tf = iList.freq();

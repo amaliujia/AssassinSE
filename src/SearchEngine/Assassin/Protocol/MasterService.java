@@ -19,4 +19,7 @@ public interface MasterService extends Remote {
      * @throws RemoteException
      */
     void collectArgs(SDSlaveObject object, SDIndexCollection collection) throws RemoteException;
+
+
+    int assignSlaveID() throws RemoteException;
 }

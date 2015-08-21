@@ -5,10 +5,12 @@ import SearchEngine.Assassin.Slave.SDSlaveIndexReader;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.NumericDocValues;
 
+import javax.print.DocFlavor;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -16,10 +18,10 @@ import java.util.Map;
  */
 public class SDIndexCollection implements Serializable {
     private int numOfDocs;
-    private Map<String, Map<Integer, Long>> docLenMap;
-    private Map<String, Double> avgDocLenCntMap;
-    private Map<String, Integer> fieldDocCntMap;
-    private Map<String, Long> fieldLenMap;
+    private HashMap<String, Map<Integer, Long>> docLenMap;
+    private HashMap<String, Double> avgDocLenCntMap;
+    private HashMap<String, Integer> fieldDocCntMap;
+    private HashMap<String, Long> fieldLenMap;
 
     public SDIndexCollection(SDSlaveIndexReader sr) throws IOException {
         final String[] fields = {"body", "title", "url", "keywords"};
@@ -41,7 +43,8 @@ public class SDIndexCollection implements Serializable {
                 if (fieldDocLenMap.containsKey(docid)){
                     continue;
                 }else{
-                    fieldDocLenMap.put(docid, dls.getDocLength(field, docid));
+                    // should save doc id in gloabal index id system.
+                    fieldDocLenMap.put(docid + sr.getBase(), dls.getDocLength(field, docid));
                 }
             }
             this.docLenMap.put(field, fieldDocLenMap);
@@ -50,6 +53,21 @@ public class SDIndexCollection implements Serializable {
             this.fieldLenMap.put(field, fieldLen);
         }
 
+    }
+
+    public HashMap<String, Map<Integer, Long>> getDocLenMap(){
+        return docLenMap;
+    }
+    public HashMap<String, Double> getAvgDocLenCntMap(){
+        return avgDocLenCntMap;
+    }
+
+    private HashMap<String, Integer> getFieldDocCntMap(){
+        return fieldDocCntMap;
+    }
+
+    private HashMap<String, Long> getFieldLenMap(){
+        return fieldLenMap;
     }
 
     public long getFieldLength(String field){
@@ -85,5 +103,13 @@ public class SDIndexCollection implements Serializable {
             return 0;
         }
         return this.docLenMap.get(field).get(docid);
+    }
+
+    public void mergeWithCollection(SDIndexCollection collection){
+        this.numOfDocs += collection.getNumOfDocs();
+        this.avgDocLenCntMap.putAll(collection.getAvgDocLenCntMap());
+        this.fieldLenMap.putAll(collection.getFieldLenMap());
+        this.fieldDocCntMap.putAll(collection.getFieldDocCntMap());
+        this.docLenMap.putAll(collection.getDocLenMap());
     }
 }
