@@ -12,7 +12,18 @@ import java.rmi.RemoteException;
  */
 public interface SlaveService extends Remote {
 
+    /**
+     * Ask slave node do a search on query and retrieval model.
+     * @param query
+     * @param model
+     * @return
+     * @throws RemoteException
+     */
     QryResult query(String query, RetrievalModel model) throws RemoteException;
 
+    /**
+     * Shut down slave node.
+     * @throws RemoteException
+     */
     void shutdown() throws RemoteException;
 }

@@ -10,5 +10,13 @@ import java.rmi.RemoteException;
  * Created by amaliujia on 15-7-1.
  */
 public interface MasterService extends Remote {
+    /**
+     * Collect index statistics from slave node.
+     * @param object
+     *             Object that represents slave node including address, port and so on.
+     * @param collection
+     *              Contains index statistics of index.
+     * @throws RemoteException
+     */
     void collectArgs(SDSlaveObject object, SDIndexCollection collection) throws RemoteException;
 }
