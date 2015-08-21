@@ -88,7 +88,7 @@ public class SDSlaveNode {
         Registry registry = LocateRegistry.getRegistry(Constant.MASTER_HOST, Constant.MASTER_PORT);
         MasterService service = (MasterService) registry.lookup(MasterService.class.getCanonicalName());
         SDSlaveObject object = createObject();
-        service.collectArgs(object, indexReader.getCollection());
+        service.collectArgs(object, null);
     }
 
     private void running(){
@@ -130,9 +130,4 @@ public class SDSlaveNode {
         System.out.println("Finished retrieval");
         return result;
     }
-
-    public void updateIndexCollection(SDIndexCollection collection){
-        indexReader.setIndexColletion(collection);
-    }
-
 }
