@@ -23,15 +23,9 @@ public class SDSlaveIndexReader {
 
     public SDSlaveIndexReader(String indexPath){
         try {
-            READER = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
+            this.READER = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        QryEval.READER =  READER;
-
-    }
-
-    public IndexReader getREADER() {
-        return READER;
     }
 }

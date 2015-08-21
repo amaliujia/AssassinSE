@@ -86,6 +86,9 @@ public class SDSlaveNode {
         Registry registry = LocateRegistry.getRegistry(Constant.MASTER_HOST, Constant.MASTER_PORT);
         MasterService service = (MasterService) registry.lookup(MasterService.class.getCanonicalName());
         SDSlaveObject object = createObject();
+
+
+
         service.collectArgs(object, null);
     }
 
@@ -109,6 +112,8 @@ public class SDSlaveNode {
         ReadArg(path);
         InitIndexReader();
         initRMI();
+
+
 
         try {
             connect();

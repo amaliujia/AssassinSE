@@ -38,4 +38,7 @@ public class DocLengthStore {
     public long getDocLength(String fieldname, int docid) throws IOException {
         return values.get(fieldname).get(docid);
     }
+    public Map<String, NumericDocValues> getLengthMap(){
+        return this.values;
+    }
 }
