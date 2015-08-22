@@ -13,6 +13,8 @@ import java.rmi.server.UnicastRemoteObject;
  * d. Query process request
  * e. Query process result
  * f. Task monitering
+ *
+ * @author amaliujia
  */
 public class SDMasterRMIService extends UnicastRemoteObject implements MasterService {
 

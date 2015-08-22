@@ -1,5 +1,6 @@
 package SearchEngine.Assassin.Slave;
 
+import SearchEngine.Assassin.Master.SDIndexCollection;
 import SearchEngine.Assassin.QryEval;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -21,7 +22,9 @@ public class SDSlaveIndexReader {
      */
     public IndexReader READER;
 
+    private SDIndexCollection collection;
     private int base;
+    private int offset;
 
     public SDSlaveIndexReader(String indexPath){
         try {
@@ -33,9 +36,23 @@ public class SDSlaveIndexReader {
 
     public void setBase(int offset){
         base = offset * 5000000;
+        this.offset = offset;
     }
 
     public int getBase(){
         return base;
     }
+
+    public void updateCollection(SDIndexCollection collection){
+        this.collection = collection;
+    }
+
+    public SDIndexCollection getCollection(){
+        return collection;
+    }
+
+    public int getOffset(){
+        return offset;
+    }
+
 }

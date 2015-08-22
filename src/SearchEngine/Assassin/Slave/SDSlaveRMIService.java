@@ -1,5 +1,6 @@
 package SearchEngine.Assassin.Slave;
 
+import SearchEngine.Assassin.Master.SDIndexCollection;
 import SearchEngine.Assassin.Operators.QryResult;
 import SearchEngine.Assassin.Protocol.SlaveService;
 import SearchEngine.Assassin.RetrievalModel.RetrievalModel;
@@ -31,6 +32,11 @@ public class SDSlaveRMIService extends UnicastRemoteObject implements SlaveServi
         } catch (IOException e) {
             throw new RemoteException(e.toString());
         }
+    }
+
+    @Override
+    public void updateIndexCollection(SDIndexCollection collection) throws RemoteException {
+        SDSlaveNode.indexReader.updateCollection(collection);
     }
 
     @Override

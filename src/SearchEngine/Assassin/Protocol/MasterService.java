@@ -20,6 +20,10 @@ public interface MasterService extends Remote {
      */
     void collectArgs(SDSlaveObject object, SDIndexCollection collection) throws RemoteException;
 
-
+    /**
+     * As a centralize server, master node assigns an unique id to slave node.
+     * @return
+     * @throws RemoteException
+     */
     int assignSlaveID() throws RemoteException;
 }

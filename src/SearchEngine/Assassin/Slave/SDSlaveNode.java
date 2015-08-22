@@ -73,6 +73,10 @@ public class SDSlaveNode {
         indexReader = new SDSlaveIndexReader(params.get("indexPath"));
     }
 
+    /**
+     *
+     * @return
+     */
     private SDSlaveObject createObject() {
         SDSlaveObject object = null;
         try {
@@ -83,6 +87,11 @@ public class SDSlaveNode {
         return object;
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws NotBoundException
+     */
     private void connect() throws IOException, NotBoundException{
         Registry registry = LocateRegistry.getRegistry(Constant.MASTER_HOST, Constant.MASTER_PORT);
         MasterService service = (MasterService) registry.lookup(MasterService.class.getCanonicalName());
@@ -90,6 +99,7 @@ public class SDSlaveNode {
         indexReader.setBase(offset);
 
         SDSlaveObject object = createObject();
+        object.setOffset(indexReader.getOffset());
         SDIndexCollection indexCollection = new SDIndexCollection(indexReader);
         service.collectArgs(object, indexCollection);
     }
@@ -110,12 +120,16 @@ public class SDSlaveNode {
         }.start();
     }
 
+    /**
+     *
+     * @param path
+     * @throws RemoteException
+     * @throws FileNotFoundException
+     */
     public void startService(String path) throws RemoteException, FileNotFoundException {
         ReadArg(path);
         InitIndexReader();
         initRMI();
-
-
 
         try {
             connect();
@@ -127,6 +141,13 @@ public class SDSlaveNode {
         running();
     }
 
+    /**
+     *
+     * @param query
+     * @param model
+     * @return
+     * @throws IOException
+     */
     public QryResult query(String query, RetrievalModel model) throws IOException {
         Qryop qTree;
         qTree = QryEval.parseQuery(query, model);
@@ -134,6 +155,12 @@ public class SDSlaveNode {
         return addOffsetToDocID(result, indexReader.getBase());
     }
 
+    /**
+     *
+     * @param result
+     * @param offset
+     * @return
+     */
     private QryResult addOffsetToDocID(QryResult result, int offset){
         for(int i = 0; i < result.docScores.scores.size(); i++){
             result.docScores.setDocid(i, result.docScores.scores.get(i).getDocid() + offset);

@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 /**
- * Created by amaliujia on 15-8-15.
+ * @author amaliujia
  */
 public class SDIndexCollection implements Serializable {
     private int numOfDocs;
@@ -22,6 +22,10 @@ public class SDIndexCollection implements Serializable {
     private HashMap<String, Double> avgDocLenCntMap;
     private HashMap<String, Integer> fieldDocCntMap;
     private HashMap<String, Long> fieldLenMap;
+
+    public SDIndexCollection(){
+
+    }
 
     public SDIndexCollection(SDSlaveIndexReader sr) throws IOException {
         final String[] fields = {"body", "title", "url", "keywords"};

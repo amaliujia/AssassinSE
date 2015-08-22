@@ -6,7 +6,7 @@ import SearchEngine.Assassin.RetrievalModel.RetrievalModel;
 import java.rmi.RemoteException;
 
 /**
- * Created by amaliujia on 15-8-18.
+ * @author amaliujia
  */
 public class FutureExecutor {
     public FutureData request(final SlaveService slaveService, final String query, final RetrievalModel model) {

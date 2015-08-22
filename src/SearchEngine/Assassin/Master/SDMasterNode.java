@@ -45,6 +45,7 @@ public class SDMasterNode {
             }
         }
 
+
         running();
         query("djs");
     }
@@ -56,7 +57,6 @@ public class SDMasterNode {
             SlaveService service = (SlaveService)registry.lookup(SlaveService.class.getCanonicalName());
             slaveToService.put(object, service);
             indexManager.getCollection().mergeWithCollection(collection);
-
         } catch (NotBoundException e) {
             slaveToService.put(object, null);
         }

@@ -1,5 +1,6 @@
 package SearchEngine.Assassin.Protocol;
 
+import SearchEngine.Assassin.Master.SDIndexCollection;
 import SearchEngine.Assassin.Operators.QryResult;
 import SearchEngine.Assassin.RetrievalModel.RetrievalModel;
 
@@ -19,6 +20,13 @@ public interface SlaveService extends Remote {
      * @throws RemoteException
      */
     QryResult query(String query, RetrievalModel model) throws RemoteException;
+
+    /**
+     * Master updates collection in slave node.
+     * @param collection
+     * @throws RemoteException
+     */
+    void updateIndexCollection(SDIndexCollection collection) throws RemoteException;
 
     /**
      * Shut down slave node.
