@@ -127,6 +127,7 @@ public class SDMasterNode {
         model.setParameter("docs", (Object)docs);
         //TODO: setup global arguments.
 
+
         result = distributedSearch(query, model);
         // top 1k pages to learning to rank.
         docs = docsMapToSet(result, 1000);

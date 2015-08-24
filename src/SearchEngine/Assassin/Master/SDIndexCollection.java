@@ -2,15 +2,9 @@ package SearchEngine.Assassin.Master;
 
 import SearchEngine.Assassin.Lucene.DocLengthStore;
 import SearchEngine.Assassin.Slave.SDSlaveIndexReader;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.NumericDocValues;
-
-import javax.print.DocFlavor;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 /**
