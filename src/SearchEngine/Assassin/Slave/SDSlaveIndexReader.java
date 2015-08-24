@@ -1,7 +1,6 @@
 package SearchEngine.Assassin.Slave;
 
 import SearchEngine.Assassin.Master.SDIndexCollection;
-import SearchEngine.Assassin.QryEval;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.FSDirectory;
