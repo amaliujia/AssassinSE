@@ -2,7 +2,6 @@ package SearchEngine.Assassin.Master;
 
 import SearchEngine.Assassin.Lucene.DocLengthStore;
 import SearchEngine.Assassin.Slave.SDSlaveIndexReader;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
