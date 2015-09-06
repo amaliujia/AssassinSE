@@ -1,23 +1,6 @@
 from TaskTable import TaskTable
 from threading import Condition
 import thread
-"""
-# called by each thread
-def get_url(q, url):
-    q.put(urllib2.urlopen(url).read())
-
-theurls = ["http://google.com", "http://yahoo.com"]
-
-q = Queue.Queue()
-
-for u in theurls:
-    t = threading.Thread(target=get_url, args = (q,u))
-    t.daemon = True
-    t.start()
-
-s = q.get()
-print s
-"""
 
 class scheduler:
     table = None
@@ -28,8 +11,10 @@ class scheduler:
     def __init__(self):
         self.table = TaskTable()
         self.id = 0
-        self.table_lock = thread.allocate_lock()
         self.condition = Condition()
+        self.table_lock = thread.allocate_lock()
+
+
 
     def add_task(self, link, title, type):
         task = {}
@@ -40,15 +25,23 @@ class scheduler:
         task['id'] = self.id
         self.id += 1
         task['status'] = "wait"
-        self.table_lock.acquire()
+
+        self.condition.acquire()
         self.table.add_task(task)
-        self.table_lock.release()
+        self.condition.notify()
+        self.condition.release()
 
 
     def get_task(self):
-        self.table_lock.acquire()
-        task = self.table.get_pending_task()
-        self.table_lock.release()
+        self.condition.acquire()
+        task = None
+        while True:
+            task = self.table.get_pending_task()
+            if task == None:
+                self.condition.wait()
+            else:
+                self.condition.release()
+                break;
         return task
 
     def task_finish(self, task):
