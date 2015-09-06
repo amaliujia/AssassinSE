@@ -143,3 +143,5 @@ Resources/*
 out/*
 
 webpages/*
+
+src/WebClawerEngine/Berserker/Python/.idea/*
