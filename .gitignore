@@ -151,3 +151,5 @@ src/WebClawerEngine/Berserker/Python/.idea/*
 src/WebClawerEngine/Berserker/Python/.idea/workspace.xml
 
 src/WebClawerEngine/Berserker/Python/scheduler.pyc
+
+src/WebClawerEngine/Berserker/Python/.idea/vcs.xml
