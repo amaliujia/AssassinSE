@@ -24,7 +24,6 @@ public class SDIndexCollection implements Serializable {
     public SDIndexCollection(SDSlaveIndexReader sr) throws IOException {
         final String[] fields = {"body", "title", "url", "keywords"};
 
-
         this.numOfDocs = sr.READER.numDocs();
         this.avgDocLenCntMap = new HashMap<String, Double>();
         this.fieldDocCntMap = new HashMap<String, Integer>();
@@ -50,7 +49,6 @@ public class SDIndexCollection implements Serializable {
             this.fieldDocCntMap.put(field, fieldDocCnt);
             this.fieldLenMap.put(field, fieldLen);
         }
-
     }
 
     public HashMap<String, Map<Integer, Long>> getDocLenMap(){
