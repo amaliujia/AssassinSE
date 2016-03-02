@@ -9,6 +9,7 @@ This is a text mining framework.
 
 This is a witch who can do magic and fantastic thing.
 
+(To be continue: Berserker, Hunter, and new Witch)
 
 Description
 ==========
