@@ -60,6 +60,11 @@ Milestones
 20. Distributed Search Engine Architecture Design and Implementation
 
 
+TODO
+=======
+1. Large scale web crawler (to crawl twitts. Question is, how to test)
+2. Matrxi Factorization (should built in text mining library. And the question is, how to design this library)
+
 Copyright
 =======
 
