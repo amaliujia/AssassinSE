@@ -18,7 +18,6 @@ public class PageRank extends LinkParentBase implements LinkBase{
 
     }
 
-    @Override
     public void run() {
         SparseVector r = new SparseVector();
         //TODO: how big should this N be? Should it form a square matrix?
